@@ -1,0 +1,37 @@
+/* SyntaxHighlightedCode.module.css */
+.codeContainer {
+    background-color: #fdf6e3;
+    padding: 10px;
+    border-radius: 5px;
+    width: fit-content;
+    overflow: auto;
+    white-space: pre;
+    display: block;
+    font-size: 16px;
+    line-height: 2.15;
+    margin: 0 auto;
+    color: "#073642";
+}
+
+
+
+.comment {
+    color: #6a737d;
+    font-style: italic;
+}
+
+.tag {
+    color: #859900;
+    font-weight: bold;
+    /* Solarized green */
+}
+
+.attribute {
+    color: #b58900;
+    /* Solarized yellow */
+}
+
+.number {
+    color: #268bd2;
+    /* Solarized blue */
+}
