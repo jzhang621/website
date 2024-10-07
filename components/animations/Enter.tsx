@@ -5,43 +5,96 @@ import SVGElementSnippet, { AnimatedSVGElementSnippet } from "../editor/SVGEleme
 import SVGWrapper from "../editor/SVGWrapperElement";
 
 const data = { opacity: 0 };
-const svg = { width: 850, height: 300 };
+const svg = { width: 600, height: 600 };
 
-export const EnteringGroup: React.FC<{ ease: "linear" | "cubic" | "elastic"; duration: number }> = ({ ease = "cubic", duration = 3 }) => {
+export const EnteringGroup: React.FC<{
+    ease: "linear" | "cubic" | "elastic";
+    duration: number;
+}> = ({ ease = "cubic", duration = 3 }) => {
+    const boxWidth = 250;
+    const translate = `translate(${svg.width - boxWidth / 2},${svg.height - boxWidth / 2})`;
+
     return (
-        <div className="flex my-4 gap-4">
+        <div className="flex mx-auto w-[90%] my-12">
             <AnimatedValueProvider
                 animations={{
                     opacity: { from: data.opacity, to: 1, duration, ease },
                 }}
             >
                 <SVGWrapper name="svg" attributes={{ width: svg.width, height: svg.height }}>
-                    <AnimatedSVGElementSnippet data={{ ...data, name: "g" }}>
-                        <SVGElementSnippet level={2} data={{ name: "rect", x: 20, y: 10, width: 250, height: 250, fill: "white", strokeWidth: 2, stroke: "black" }} />
+                    <AnimatedSVGElementSnippet data={{ ...data, name: "g", transform: translate }}>
+                        <SVGElementSnippet
+                            level={2}
+                            data={{
+                                name: "rect",
+                                width: boxWidth,
+                                height: boxWidth,
+                                fill: "white",
+                                "stroke-width": 2,
+                                stroke: "black",
+                            }}
+                        />
                         <br />
-                        <SVGElementSnippet level={2} data={{ name: "rect", x: 270, y: 10, width: 250, height: 250, fill: "white", strokeWidth: 2, stroke: "black" }} />
-                        <br />
-                        <SVGElementSnippet level={2} data={{ name: "rect", x: 540, y: 10, width: 250, height: 250, fill: "white", strokeWidth: 2, stroke: "black" }} />
+                        <SVGElementSnippet
+                            level={2}
+                            data={{
+                                name: "text",
+                                x: boxWidth / 2,
+                                y: boxWidth / 2,
+                                "font-size": 100,
+                                fill: "black",
+                                "dominant-baseline": "middle",
+                                "text-anchor": "middle",
+                            }}
+                        >
+                            {" ".repeat(6)}3<br />
+                        </SVGElementSnippet>
                         <br />
                     </AnimatedSVGElementSnippet>
                 </SVGWrapper>
 
-                <AnimatedSVGGroup>
-                    <rect x={20} y={10} width={250} height={250} fill="white" strokeWidth={2} stroke="black" />
-                    <rect x={270} y={10} width={250} height={250} fill="white" strokeWidth={2} stroke="black" />
-                    <rect x={20 + 2 * 250} y={10} width={250} height={250} fill="white" strokeWidth={2} stroke="black" />
+                <AnimatedSVGGroup {...svg}>
+                    <g transform="translate(50,50)">
+                        <rect
+                            width={250}
+                            height={250}
+                            fill="white"
+                            strokeWidth={2}
+                            stroke="black"
+                            rx="4"
+                        />
+                        <text
+                            x={250 / 2}
+                            y={250 / 2}
+                            fontSize={100}
+                            fill="black"
+                            dominantBaseline={"middle"}
+                            textAnchor={"middle"}
+                            fontFamily="monospace"
+                        >
+                            3
+                        </text>
+                    </g>
                 </AnimatedSVGGroup>
             </AnimatedValueProvider>
         </div>
     );
 };
 
-const AnimatedSVGGroup: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const AnimatedSVGGroup: React.FC<{ children: React.ReactNode; width: number; height: number }> = ({
+    children,
+    width,
+    height,
+}) => {
     const { values } = useAnimatedValuesContext();
 
     return (
-        <svg width={svg.width} height={svg.height}>
-            <g opacity={values.opacity}>{children}</g>
-        </svg>
+        <div className="flex-1 max-h-[600px] relative w-full flex items-center justify-center bg-[#fdf6e399]">
+            <svg height={"100%"} className="mx-auto" viewBox={`0 0 ${width} ${height}`}>
+                <g opacity={values.opacity} transform={"translate(475, 475}"}>
+                    {children}
+                </g>
+            </svg>
+        </div>
     );
 };

@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import { easeCubicInOut, easeElasticInOut, easeLinear } from "d3-ease";
+import { easeCubicInOut, easeElasticInOut, easeLinear, easeBounceInOut } from "d3-ease";
 
 // Utility function to get the appropriate easing function
-const getEasingFunction = (ease: string | undefined) => {
+export const getEasingFunction = (ease: string | undefined) => {
     switch (ease) {
         case "cubic":
             return easeCubicInOut;

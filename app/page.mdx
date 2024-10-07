@@ -1,27 +1,77 @@
-import EditableSVGCodeEditor from '@/components/editor/EditableSVGEditor'
-import { GrowingRectangle, MovingRectangle, HighlightedRectangle } from '@/components/animations/Rectangles'
-import { EnteringGroup } from '@/components/animations/Enter'
-import EasingGraph from '@/components/visualization/EasingFunctions'
+import EditableSVGCodeEditor from "@/components/editor/EditableSVGEditor";
+import {
+    GrowingRectangle,
+    MovingRectangle,
+    HighlightedRectangle,
+} from "@/components/animations/Rectangles";
+import { EnteringGroup } from "@/components/animations/Enter";
 
-## Animating Size
+# Animating SVG for Fun (and profit?)
 
-<GrowingRectangle />
+In 2024, I made a lot animations like the one below for [Hello Interview](www.hellointerview.com), a software engineering interview prep platform. A few people have since asked me how I created those animations, so I decided to write this guide.
 
-## Animating Location (Movement)
+This guide has two parts. In Part 1 (this part), we'll get a feel for the diffrent animations we can create with SVG. In Part 2, we'll learn how to best structure a React application to create animations like the one above.
+
+## The Very Basics of SVG
+
+SVG is a markup language for drawing shapes on web pages. You tell the browser what shapes to draw, where to draw them, along with other optional details like the color, size, and opacity - and the browser goes off and does it for you.
+
+Here's an example of SVG code that draws a rectangle. We tell the browser to draw a rectangle, and then specify the rectangle's location and appearance via **attributes**, which are listed as key="value" pairs. A few of the attributes are interactive, so please tinker with them to see what they do.
+
+{/* TODO: add the ability to annotate wtih info about the corresponding attirbute to the SVG image when you hover  */}
+
+<EditableSVGCodeEditor />
+
+Note: If you copy and paste the SVG code and open it in a browser, you won't see the background grid. It's there to help you visualize the rectangle's position and because I like it.
+
+To learn more about the cool things you can create with SVG, check out [MDN's SVG tutorial](https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial).
+
+## Our First Animation
+
+We can create our first SVG animation by changing the value of an attribute over time. For example, by gradually increasing the `width` attribute, we can animate a growing rectangle.
 
 
+
+<div className="mx-auto w-5/6 my-12">
+    <GrowingRectangle ease="linear" />
+</div>
+
+
+### More Realistic Animations
+
+In the above animation, the `width` attribute increases at a constant, linear rate.
+
+But motion in real life isn't linear. To create a more realistic animation, we want something that starts off slow, gradually picks up speed in the middle, and slows down again near the end. We can achieve that by using **easings**.
+
+In the animation below, we apply a *cubic easing function* to the `width` attribute. To visualize how this function works, I've also plotted the value of `width` over the course of the animation. Note how the shape of the curve matches our description of how more realistic motion behaves.
+
+
+<div className="mx-auto w-5/6 my-12">
+    <GrowingRectangle ease="cubic" showEasingChart={true} />
+</div>
+
+## Animating Movement
+
+Easing functions are a lot of fun!
+
+In the animation below, we make the rectangle move from left to right by changing its `x` attribute.
 
 <MovingRectangle />
 
-## Emphasizing Rectangle
+We've also injected some personality by applying an *elastic easing function*. This particular easing function causes the rectangle to oscillate slightly backwards in the beginning, as if it's gathering momentum before moving forward, e.g. someone crouching as they prepare to sprint. It also causes the rectangle to overshoot its final position before stopping, making it feel like its coming to a sudden stop.
 
-<HighlightedRectangle />
 
-## Entering Group
+
+To learn more about easing functions, check out [this resource](https://easings.net/).
+
+## The \<g\> Element
+
+When creating SVG animations, you'll make frequent use of the `<g>` or **grouping element**, which is used to group SVG elements together. Any attributes applied to a `<g>` element are inherited by its children, which provides a convenient way to animate multiple elements at once.
+
+In the animation below, we use a grouping element to group a `<rect>` and `<text>` together. By animating the `opacity` attribute of that `<g>` element, we can make the rectangle and text fade in together.
+
+
 
 <EnteringGroup />
 
-## Easings
-
-
-
+## Changing Values

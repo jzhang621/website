@@ -12,11 +12,24 @@ interface SVGElementSnippetProps {
     tabSize?: number;
     level?: number;
     children?: React.ReactNode;
+    highlights?: string[];
 }
+
+const jsxToSvgMap = {
+    strokeWidth: "stroke-width",
+    fontSize: "font-size",
+    dominantBaseline: "dominant-baseline",
+    textAnchor: "text-anchor",
+};
 
 const SPACE = " ";
 
-export const AnimatedSVGElementSnippet: React.FC<SVGElementSnippetProps> = ({ data, tabSize = 2, level = 1, children }) => {
+export const AnimatedSVGElementSnippet: React.FC<SVGElementSnippetProps> = ({
+    data,
+    tabSize = 2,
+    level = 1,
+    children,
+}) => {
     const { name, ...attributes } = data;
 
     const { values } = useAnimatedValuesContext();
@@ -26,25 +39,53 @@ export const AnimatedSVGElementSnippet: React.FC<SVGElementSnippetProps> = ({ da
         ...values,
     };
 
+    const highlights = Object.keys(values);
+
     return (
-        <SVGElementSnippet data={{ name, ...mergedAttributes }} tabSize={tabSize} level={level}>
+        <SVGElementSnippet
+            data={{ name, ...mergedAttributes }}
+            tabSize={tabSize}
+            level={level}
+            highlights={highlights}
+        >
             {children}
         </SVGElementSnippet>
     );
 };
 
-const SVGElementSnippet: React.FC<SVGElementSnippetProps> = ({ data, tabSize = 2, level = 1, children }) => {
+const SVGElementSnippet: React.FC<SVGElementSnippetProps> = ({
+    data,
+    tabSize = 2,
+    level = 1,
+    children,
+    highlights = [],
+}) => {
     const { name, ...attributes } = data;
 
     const renderAttributes = () => {
-        return Object.entries(attributes).map(([key, value]) => (
-            <span key={key}>
-                {SPACE.repeat(tabSize * (1 + level))}
-                <span className={styles.attribute}>{key}</span>
-                {`="${value}"`}
-                <br />
-            </span>
-        ));
+        return Object.entries(attributes).map(([key, value]) => {
+            const content = (
+                <>
+                    {SPACE.repeat(tabSize * (1 + level))}
+                    <span className={styles.attribute}>
+                        {jsxToSvgMap[key as keyof typeof jsxToSvgMap] ?? key}
+                    </span>
+                    {`="${value}"`}
+                    <br />
+                </>
+            );
+
+            // highlight the attribute that is being animated
+            if (highlights.includes(key)) {
+                return (
+                    <div key={key} className="bg-slate-100 rounded-sm">
+                        {content}
+                    </div>
+                );
+            }
+
+            return <span key={key}>{content}</span>;
+        });
     };
 
     return (

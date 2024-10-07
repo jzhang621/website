@@ -1,5 +1,8 @@
 import React from "react";
 import styles from "./SVGSyntax.module.css"; // Assume styles for highlighting
+import { Source_Code_Pro } from "next/font/google";
+
+const sourceCodePro = Source_Code_Pro({ subsets: ["latin"], weight: ["400", "700"] });
 
 interface SVGWrapperProps {
     name: string;
@@ -19,7 +22,9 @@ const SVGWrapperElementSnippet: React.FC<SVGWrapperProps> = ({ name, attributes,
     };
 
     return (
-        <div className={`text-slate-700 border border-gray-200 p-8`}>
+        <div
+            className={`text-sm max-h-[600px] w-fit overflow-y-auto overflow-x-hidden leading-7 ${sourceCodePro.className} text-slate-700 border-r-[6px] border-[rgb(253,226,154)] border-solid p-8 bg-[#fdf6e399]`}
+        >
             <pre>
                 <code>
                     <span className={styles.tag}>{`<${name} `}</span>

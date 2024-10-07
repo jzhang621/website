@@ -1,7 +1,7 @@
 /* SyntaxHighlightedCode.module.css */
 .codeContainer {
-    background-color: #fdf6e3;
-    padding: 10px;
+    background-color: #fdf6e399;
+        padding: 2rem;
     border-radius: 5px;
     width: fit-content;
     overflow: auto;
@@ -12,8 +12,6 @@
     margin: 0 auto;
     color: "#073642";
 }
-
-
 
 .comment {
     color: #6a737d;
@@ -32,6 +30,6 @@
 }
 
 .number {
-    color: #268bd2;
+    color: #415A77;
     /* Solarized blue */
 }
