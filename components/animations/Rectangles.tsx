@@ -23,7 +23,7 @@ const data = {
     rx: 4,
 };
 
-const Comparision: React.FC<{}> = ({}) => {
+const Comparision: React.FC = ({}) => {
     const { values, restartAnimations, progress, restartKey } = useAnimatedValuesContext();
 
     const { widthLinear, widthCubic } = values;
@@ -72,7 +72,7 @@ const Comparision: React.FC<{}> = ({}) => {
     );
 };
 
-export const ComparisionRectangles: React.FC<{}> = ({}) => {
+export const ComparisionRectangles: React.FC = ({}) => {
     return (
         <AnimatedValueProvider
             animations={{
