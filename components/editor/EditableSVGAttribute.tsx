@@ -35,6 +35,7 @@ const EditableAttribute: React.FC<EditableAttributeProps> = ({ name, label, valu
                     onChange={handleChange}
                     min={min}
                     max={max}
+                    step={5}
                     className={styles.number}
                     style={{
                         width: "60px",

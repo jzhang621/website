@@ -1,8 +1,25 @@
 import { useState, useEffect } from "react";
-import { easeCubicInOut, easeElasticInOut, easeLinear, easeBounceInOut } from "d3-ease";
+import {
+    easeCubicInOut,
+    easeElasticInOut,
+    easeLinear,
+    easeExpIn,
+    easeBounceInOut,
+    easePolyInOut,
+    easeExpOut,
+} from "d3-ease";
+
+export type Ease =
+    | "cubic"
+    | "elastic"
+    | "linear"
+    | "easeInExpo"
+    | "easeBounceInOut"
+    | "easePolyInOut"
+    | "easeOutExpo";
 
 // Utility function to get the appropriate easing function
-export const getEasingFunction = (ease: string | undefined) => {
+export const getEasingFunction = (ease: Ease) => {
     switch (ease) {
         case "cubic":
             return easeCubicInOut;
@@ -10,6 +27,14 @@ export const getEasingFunction = (ease: string | undefined) => {
             return easeElasticInOut;
         case "linear":
             return easeLinear;
+        case "easeInExpo":
+            return easeExpIn;
+        case "easeOutExpo":
+            return easeExpOut;
+        case "easePolyInOut":
+            return easePolyInOut;
+        case "easeBounceInOut":
+            return easeBounceInOut;
         default:
             return easeLinear;
     }
@@ -19,16 +44,23 @@ interface AnimatedValue {
     from: number;
     to: number;
     duration: number; // In seconds
-    ease?: "linear" | "cubic" | "elastic";
+    ease: Ease;
 }
 
-// Updated hook to handle multiple animated values and restart logic
-export const useEasedValues = (animations: Record<string, AnimatedValue>, restartKey: number) => {
-    const [values, setValues] = useState<Record<string, number>>(Object.keys(animations).reduce((acc, key) => ({ ...acc, [key]: animations[key].from }), {}));
+// Updated hook to handle multiple animated values, restart logic, and play control
+export const useEasedValues = (
+    animations: Record<string, AnimatedValue>,
+    restartKey: number,
+    isPlaying: boolean // Add isPlaying as a parameter
+) => {
+    const [values, setValues] = useState<Record<string, number>>(
+        Object.keys(animations).reduce((acc, key) => ({ ...acc, [key]: animations[key].from }), {})
+    );
     const [progress, setProgress] = useState(0);
-    const [easedProgress, setEasedProgress] = useState(0);
 
     useEffect(() => {
+        if (!isPlaying) return; // Do nothing if not playing
+
         const animationKeys = Object.keys(animations);
         const animationFrames: number[] = [];
 
@@ -44,7 +76,9 @@ export const useEasedValues = (animations: Record<string, AnimatedValue>, restar
                 const elapsed = timestamp - start;
                 const t = Math.min(elapsed / (duration * 1000), 1); // Normalize time to range [0, 1]
                 const easedProgress = easingFunction(t); // Apply easing function
-                const newValue = parseFloat((from * (1 - easedProgress) + to * easedProgress).toFixed(4));
+                const newValue = parseFloat(
+                    (from * (1 - easedProgress) + to * easedProgress).toFixed(4)
+                );
 
                 setValues((prevValues) => ({
                     ...prevValues,
@@ -52,7 +86,6 @@ export const useEasedValues = (animations: Record<string, AnimatedValue>, restar
                 }));
 
                 setProgress(elapsed / (duration * 1000));
-                setEasedProgress(easedProgress);
 
                 if (t < 1) {
                     animationFrames.push(requestAnimationFrame(animate));
@@ -63,10 +96,10 @@ export const useEasedValues = (animations: Record<string, AnimatedValue>, restar
         });
 
         return () => {
-            // Cleanup: Cancel animation frames if component unmounts
+            // Cleanup: Cancel animation frames if component unmounts or animation stops
             animationFrames.forEach((frame) => cancelAnimationFrame(frame));
         };
-    }, [animations, restartKey]);
+    }, [animations, restartKey, isPlaying]); // Add isPlaying to the dependency array
 
-    return { values, progress, easedProgress };
+    return { values, progress };
 };

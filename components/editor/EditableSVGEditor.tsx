@@ -5,6 +5,7 @@ import EditableAttribute from "./EditableSVGAttribute";
 import { Source_Code_Pro } from "next/font/google";
 import styles from "./SVGSyntax.module.css";
 import SVGGrid from "../SVGGrid";
+import { ACCENT, BLUE, BLUE_ACCENT, COGNAC, COGNAC_ACCENT, SAGE, SAGE_ACCENT } from "@/palette";
 
 const sourceCodePro = Source_Code_Pro({ subsets: ["latin"], weight: ["400", "700"] });
 
@@ -29,13 +30,17 @@ const Rectangle: React.FC<SvgRectangleProps> = ({ attributes }) => {
     const { svgWidth, svgHeight, width, height, fill, strokeWidth, stroke, x, y, rx } = attributes;
 
     return (
-        <svg viewBox={`0 0 ${svgWidth} ${svgHeight}`} className="bg-white mx-auto" height="100%">
+        <svg
+            viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+            className="mx-auto bg-[#fdf6e399]"
+            width="100%"
+        >
             <SVGGrid
                 width={svgWidth}
                 height={svgHeight}
-                cellSize={50}
-                stroke="#dbeafe"
-                strokeWidth={0.5}
+                cellSize={100}
+                stroke={ACCENT}
+                strokeWidth={1.5}
             />
             <rect
                 width={width}
@@ -72,12 +77,12 @@ const SVGEditor: React.FC = () => {
         svgHeight: 500,
         width: 300,
         height: 300,
-        fill: "white",
-        stroke: "#a1a1aa",
-        strokeWidth: 2,
+        fill: COGNAC,
+        stroke: COGNAC_ACCENT,
+        strokeWidth: 3,
         x: 100,
         y: 100,
-        rx: 2,
+        rx: 3,
     });
 
     const handleAttributeChange = (name: string, value: string | number) => {
@@ -88,7 +93,9 @@ const SVGEditor: React.FC = () => {
     };
 
     const syntaxHighlighted = (
-        <div className={`${styles.codeContainer} text-slate-700 p-8`}>
+        <div
+            className={`rounded-sm text-sm max-h-[600px] w-fit overflow-y-auto overflow-x-hidden leading-8 ${sourceCodePro.className} text-slate-700 p-8 bg-[#fdf6e399]`}
+        >
             <pre>
                 <code className={sourceCodePro.className}>
                     <span className={styles.tag}>&lt;svg</span>{" "}
@@ -118,7 +125,8 @@ const SVGEditor: React.FC = () => {
                         label="width"
                         value={attributes.width}
                         onValueChange={handleAttributeChange}
-                        min={300}
+                        min={200}
+                        
                         max={400}
                     />
                     <br />
@@ -128,7 +136,7 @@ const SVGEditor: React.FC = () => {
                         label="height"
                         value={attributes.height}
                         onValueChange={handleAttributeChange}
-                        min={300}
+                        min={200}
                         max={400}
                     />
                     <br />
@@ -137,7 +145,7 @@ const SVGEditor: React.FC = () => {
                         name="fill"
                         label="fill"
                         value={attributes.fill}
-                        options={["white", "black", "red", "blue"]}
+                        options={["#a2a77f", "#8ea77F", "#a7987f"]}
                         onValueChange={handleAttributeChange}
                     />
                     <br />
@@ -146,7 +154,7 @@ const SVGEditor: React.FC = () => {
                         name="stroke"
                         label="stroke"
                         value={attributes.stroke}
-                        options={["#a1a1aa", "#000000", "#FF0000"]}
+                        options={["#8a9063", "#739063", "#908063"]}
                         onValueChange={handleAttributeChange}
                     />
                     <br />
@@ -173,9 +181,9 @@ const SVGEditor: React.FC = () => {
 
     // return <TwoPane content={syntaxHighlighted} visual={visual} />;
     return (
-        <div className="flex w-[90%] mx-auto mt-16 mb-8">
-            <div>{syntaxHighlighted}</div>
-            <div className="w-full">{visual}</div>
+        <div className="grid grid-cols-2 gap-2 p-4">
+            <div className="rounded-lg h-fit-content mx-auto">{syntaxHighlighted}</div>
+            <div className="w-fit-content">{visual}</div>
         </div>
     );
 };

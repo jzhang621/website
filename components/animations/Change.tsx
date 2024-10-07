@@ -1,6 +1,6 @@
 "use client";
 import { AnimatedValueProvider, useAnimatedValuesContext } from "@/contexts/AnimatedValuesProvider";
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import SVGElementSnippet, { AnimatedSVGElementSnippet } from "../editor/SVGElementSnippet";
 import SVGWrapper from "../editor/SVGWrapperElement";
 import { ACCENT, BLUE, BLUE_ACCENT, COGNAC, COGNAC_ACCENT, SAGE, SAGE_ACCENT } from "@/palette";
@@ -25,9 +25,10 @@ const rect = {
     rx: 4,
 };
 
-const text = {
-    x: boxWidth / 2,
-    y: boxWidth / 2,
+const g = {
+    name: "g",
+    transform: `translate(${(svg.width - boxWidth) / 2},${(svg.height - boxWidth) / 2})`,
+
     fontSize: 134,
     fill: "white",
     dominantBaseline: "middle",
@@ -35,12 +36,16 @@ const text = {
     fontFamily: "monospace",
 };
 
-const translate = `translate(${(svg.width - boxWidth) / 2},${(svg.height - boxWidth) / 2})`;
+const text = {
+    opacity: 0,
+    x: boxWidth / 2,
+    y: boxWidth / 2,
+};
 
-export const EnteringGroup: React.FC<{
+export const Change: React.FC<{
     ease: Ease;
     duration: number;
-}> = ({ ease = "easeInExpo", duration = 3 }) => {
+}> = ({ ease = "cubic", duration = 3 }) => {
     return (
         <div className="grid grid-cols-2 gap-2 p-4">
             <AnimatedValueProvider
@@ -50,28 +55,35 @@ export const EnteringGroup: React.FC<{
             >
                 <div className="rounded-lg h-fit-content mx-auto">
                     <SVGWrapper name="svg" attributes={{ width: svg.width, height: svg.height }}>
-                        <AnimatedSVGElementSnippet
-                            data={{ ...data, name: "g", transform: translate }}
-                        >
-                            <SVGElementSnippet level={2} data={{ ...rect, name: "rect" }} />
+                        <SVGElementSnippet data={g}>
+                            {" ".repeat(4)}
+                            <span className="text-gray-400">{`<rect ... />`}</span>
                             <br />
-                            <SVGElementSnippet level={2} data={{ ...text, name: "text" }}>
+                            <AnimatedSVGElementSnippet level={2} data={{ ...text, name: "text" }}>
+                                {" ".repeat(6)}5<br />
+                            </AnimatedSVGElementSnippet>
+                            <br />
+                            <AnimatedSVGElementSnippet
+                                invert
+                                level={2}
+                                data={{ ...text, name: "text" }}
+                            >
                                 {" ".repeat(6)}3<br />
-                            </SVGElementSnippet>
+                            </AnimatedSVGElementSnippet>
                             <br />
-                        </AnimatedSVGElementSnippet>
+                        </SVGElementSnippet>
                     </SVGWrapper>
                 </div>
 
                 <div className="space-y-2">
                     <AnimatedSVGGroup {...svg}>
                         <rect {...rect} />
-                        <text {...text}>3</text>
                     </AnimatedSVGGroup>
                     <EasingChart
                         valueName="opacity"
                         width={400}
                         height={120}
+                        invert
                         startY={data.opacity}
                         endY={1}
                         easingType={ease}
@@ -88,7 +100,8 @@ const AnimatedSVGGroup: React.FC<{ children: React.ReactNode; width: number; hei
     width,
     height,
 }) => {
-    const { values, restartAnimations, progress, restartKey } = useAnimatedValuesContext();
+    const { values, restartAnimations, restartKey, progress } = useAnimatedValuesContext();
+    const { opacity } = values;
 
     return (
         <div className="max-h-[600px] relative w-full flex items-center justify-center ">
@@ -104,8 +117,14 @@ const AnimatedSVGGroup: React.FC<{ children: React.ReactNode; width: number; hei
                     stroke={ACCENT}
                     strokeWidth={1.5}
                 />
-                <g opacity={values.opacity} transform={translate}>
+                <g {...g}>
                     {children}
+                    <text {...text} opacity={opacity}>
+                        5
+                    </text>
+                    <text {...text} opacity={1 - opacity}>
+                        3
+                    </text>
                 </g>
             </svg>
             <PlayButon onClick={restartAnimations} restartKey={restartKey} progress={progress} />

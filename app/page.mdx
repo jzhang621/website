@@ -3,26 +3,35 @@ import {
     GrowingRectangle,
     MovingRectangle,
     HighlightedRectangle,
+    ComparisionRectangles
 } from "@/components/animations/Rectangles";
 import { EnteringGroup } from "@/components/animations/Enter";
+import { Change } from "@/components/animations/Change";
+import Note from "@/components/Note";
 
 # Animating SVG for Fun (and profit?)
 
-In 2024, I made a lot animations like the one below for [Hello Interview](www.hellointerview.com), a software engineering interview prep platform. A few people have since asked me how I created those animations, so I decided to write this guide.
+In 2024, I made a lot SVG animations like the one below for [Hello Interview](www.hellointerview.com), a software engineering interview prep platform. A few people have since asked me how I created those animations, so I decided to write a guide, which I've split into two parts.
 
-This guide has two parts. In Part 1 (this part), we'll get a feel for the diffrent animations we can create with SVG. In Part 2, we'll learn how to best structure a React application to create animations like the one above.
+In Part 1 (this part), we'll get a feel for the the types of animations we can create with SVG. We'll showcase what's possible and the components involved in creating an animation, without diving into any code.
+
+We'll cover the code in Part 2 <span className="text-sm text-gray-400">[coming soon!]</span>, and also cover best practices for structuring React components to create multi-step animations like the one above.
+
 
 ## The Very Basics of SVG
 
 SVG is a markup language for drawing shapes on web pages. You tell the browser what shapes to draw, where to draw them, along with other optional details like the color, size, and opacity - and the browser goes off and does it for you.
 
-Here's an example of SVG code that draws a rectangle. We tell the browser to draw a rectangle, and then specify the rectangle's location and appearance via **attributes**, which are listed as key="value" pairs. A few of the attributes are interactive, so please tinker with them to see what they do.
+Here's an example of SVG code that draws a rectangle. We specify the location and appearance of the rectangle via **attributes**, which are listed as key="value" pairs. The attributes with <span className="bg-white px-2 py-1">white backgrounds</span> are interactive, so please tinker with them to see what they do.
 
-{/* TODO: add the ability to annotate wtih info about the corresponding attirbute to the SVG image when you hover  */}
+Note that the background grid lines are not part of the SVG definition - they're just there to help you visualize the coordinate system.
 
-<EditableSVGCodeEditor />
 
-Note: If you copy and paste the SVG code and open it in a browser, you won't see the background grid. It's there to help you visualize the rectangle's position and because I like it.
+<div className="my-12  border-[#B0807038] mx-12">
+    <div className="my-4 mx-auto w-[90%]">
+        <EditableSVGCodeEditor />
+    </div>
+</div>
 
 To learn more about the cool things you can create with SVG, check out [MDN's SVG tutorial](https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial).
 
@@ -32,23 +41,43 @@ We can create our first SVG animation by changing the value of an attribute over
 
 
 
-<div className="mx-auto w-5/6 my-12">
-    <GrowingRectangle ease="linear" />
+<div className="my-12  border-[#B0807038] mx-12">
+    <div className="my-4 mx-auto w-[90%]">
+        <GrowingRectangle ease="linear" />
+    </div>
+</div>
+
+<Note>
+It's possible (and also easier) to create this animation and all the ones that follow using just the `<animate>` element (see [MDN's guide](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/animate)).
+
+However, being able to think of SVG animations as a series of attribute changes makes it easier to create complex animations using React, for reasons we'll discuss in Part 2.
+</Note>
+
+
+## Towards More Realistic Animations
+
+In the above animation, the `width` attribute increases at a constant, linear rate, which we can see from its plot above.
+
+But motion in real life isn't linear. To create a more realistic animation, we want something that starts off slow, gradually picks up speed in the middle, and slows down again near the end. We can achieve that affect by using **easings**.
+
+In the animation below, we apply a *cubic easing function* to the `width` attribute. Note how the shape of the curve in the plot below the rectangle matches our description of how more realistic motion behaves.
+
+
+<div className="my-12  border-[#B0807038] mx-12">
+    <div className="my-4 mx-auto w-[90%]">
+        <GrowingRectangle ease="cubic" />
+    </div>
+</div>
+
+Here's the linear and the cubic easing functions shown side by side for easier comparison.
+
+<div className="my-4 mx-auto w-[66%]">
+    <ComparisionRectangles />
 </div>
 
 
-### More Realistic Animations
 
-In the above animation, the `width` attribute increases at a constant, linear rate.
-
-But motion in real life isn't linear. To create a more realistic animation, we want something that starts off slow, gradually picks up speed in the middle, and slows down again near the end. We can achieve that by using **easings**.
-
-In the animation below, we apply a *cubic easing function* to the `width` attribute. To visualize how this function works, I've also plotted the value of `width` over the course of the animation. Note how the shape of the curve matches our description of how more realistic motion behaves.
-
-
-<div className="mx-auto w-5/6 my-12">
-    <GrowingRectangle ease="cubic" showEasingChart={true} />
-</div>
+To learn more about easing functions, check out [this resource](https://easings.net/).
 
 ## Animating Movement
 
@@ -56,13 +85,15 @@ Easing functions are a lot of fun!
 
 In the animation below, we make the rectangle move from left to right by changing its `x` attribute.
 
-<MovingRectangle />
 
-We've also injected some personality by applying an *elastic easing function*. This particular easing function causes the rectangle to oscillate slightly backwards in the beginning, as if it's gathering momentum before moving forward, e.g. someone crouching as they prepare to sprint. It also causes the rectangle to overshoot its final position before stopping, making it feel like its coming to a sudden stop.
+We've also injected some personality by applying an *elastic* easing function. This particular easing function causes the rectangle to oscillate slightly backwards in the beginning, as if it's gathering momentum before moving forward, e.g. someone crouching as they prepare to sprint. It also causes the rectangle to overshoot its final position before stopping, making it feel like its coming to a sudden stop.
 
+<div className="my-12  border-[#B0807038] mx-12">
+    <div className="my-4 mx-auto w-[90%]">
+        <MovingRectangle />
+    </div>
+</div>
 
-
-To learn more about easing functions, check out [this resource](https://easings.net/).
 
 ## The \<g\> Element
 
@@ -71,7 +102,20 @@ When creating SVG animations, you'll make frequent use of the `<g>` or **groupin
 In the animation below, we use a grouping element to group a `<rect>` and `<text>` together. By animating the `opacity` attribute of that `<g>` element, we can make the rectangle and text fade in together.
 
 
-
-<EnteringGroup />
+<div className="my-12 border-[#B0807038]2">
+    <div className="my-4 mx-auto w-[90%]">
+        <EnteringGroup />
+    </div>
+</div>
 
 ## Changing Values
+
+Let's say we want to animate a value change, such as turning the 3 below into a 5.
+
+To do so, we can have an SVG element for both the new <span className="text-sm text-gray-600">(5)</span> and the old <span className="text-sm text-gray=400">(3)</span> value. The `opacity` of the new element goes from 0 to 1, while the `opacity` of the old element goes from 1 to 0.
+
+<div className="my-12 border-[#B0807038]">
+    <div className="my-4 mx-auto w-[90%]">
+        <Change />
+    </div>
+</div>

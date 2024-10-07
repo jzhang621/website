@@ -1,45 +1,92 @@
-import { AnimatedValueProvider } from "@/contexts/AnimatedValuesProvider";
+"use client";
+import { AnimatedValueProvider, useAnimatedValuesContext } from "@/contexts/AnimatedValuesProvider";
 import React from "react";
 import SVGElementSnippet, { AnimatedSVGElementSnippet } from "../editor/SVGElementSnippet";
-import AnimatedRectangle from "../visualization/AnimatedRectangle";
+import AnimatedRectangle from "../AnimatedRectangle";
 import SVGWrapper from "../editor/SVGWrapperElement";
-import EasingChart from "@/components/visualization/EasingChart";
-import { ACCENT_BLUE, BLUE } from "@/palette";
+import EasingChart from "@/components/EasingChart";
+import { BLUE_ACCENT, BLUE, COGNAC, COGNAC_ACCENT } from "@/palette";
+import { Ease } from "@/hooks/useEasedValues";
+import { Replay } from "@mui/icons-material";
+import PlayButon from "../ReplayButton";
 
 const svg = { width: 600, height: 600 };
 const data = {
     name: "rect",
-    fill: BLUE,
+    fill: COGNAC,
     x: 50,
-    y: svg.height / 2 - 210,
+    y: svg.height / 2 - 260 / 2,
     width: 260,
     height: 260,
-    strokeWidth: 3,
-    stroke: ACCENT_BLUE,
+    strokeWidth: 4,
+    stroke: COGNAC_ACCENT,
     rx: 4,
 };
 
-export const GrowingRectangle1: React.FC<{
-    ease: "linear" | "cubic" | "elastic";
-}> = ({ ease = "cubic" }) => {
+const Comparision: React.FC<{}> = ({}) => {
+    const { values, restartAnimations, progress, restartKey } = useAnimatedValuesContext();
+
+    const { widthLinear, widthCubic } = values;
+
+    const linearData = { ...data, width: widthLinear };
+
+    const linear = (
+        <div className="flex flex-col">
+            <div className="mb-4 mx-auto text-lg">Linear</div>
+            <AnimatedRectangle data={linearData} svg={svg} replay={false} />
+            <EasingChart
+                valueName="widthLinear"
+                width={400}
+                height={150}
+                startY={data.width}
+                endY={500}
+                easingType={"linear"}
+                yAxisLabel="width"
+            />
+        </div>
+    );
+
+    const cubicData = { ...data, width: widthCubic };
+    const cubic = (
+        <div className="flex flex-col">
+            <div className="mb-4 mx-auto text-lg">Cubic</div>
+            <AnimatedRectangle data={cubicData} svg={svg} replay={false} />
+            <EasingChart
+                valueName="widthCubic"
+                width={400}
+                height={150}
+                startY={data.width}
+                endY={500}
+                easingType={"cubic"}
+                yAxisLabel="width"
+            />
+        </div>
+    );
+
+    return (
+        <div className="relative grid grid-cols-2 gap-8 p-4 my-12">
+            {linear}
+            {cubic}
+            <PlayButon onClick={restartAnimations} progress={progress} restartKey={restartKey} />
+        </div>
+    );
+};
+
+export const ComparisionRectangles: React.FC<{}> = ({}) => {
     return (
         <AnimatedValueProvider
             animations={{
-                width: { from: data.width, to: 500, duration: 5, ease },
+                widthLinear: { from: data.width, to: 500, duration: 5, ease: "linear" },
+                widthCubic: { from: data.width, to: 500, duration: 5, ease: "cubic" },
             }}
         >
-            <div className="flex my-4">
-                <SVGWrapper name="svg" attributes={{ width: svg.width, height: svg.height }}>
-                    <AnimatedSVGElementSnippet data={data} />
-                </SVGWrapper>
-                <AnimatedRectangle data={data} svg={svg} ease={ease} />
-            </div>
+            <Comparision />
         </AnimatedValueProvider>
     );
 };
 
 export const GrowingRectangle: React.FC<{
-    ease: "linear" | "cubic" | "elastic";
+    ease: Ease;
 }> = ({ ease = "cubic" }) => {
     return (
         <AnimatedValueProvider
@@ -47,22 +94,34 @@ export const GrowingRectangle: React.FC<{
                 width: { from: data.width, to: 500, duration: 5, ease },
             }}
         >
-            <div className="flex my-4">
-                <SVGWrapper name="svg" attributes={{ width: svg.width, height: svg.height }}>
-                    <AnimatedSVGElementSnippet data={data} />
-                </SVGWrapper>
-                <AnimatedRectangle data={data} svg={svg} ease={ease} />
+            <div className="grid grid-cols-2 gap-2 p-4">
+                {/* <div className="flex items-center justify-center rounded-lg mx-auto "> */}
+                <div className="rounded-lg h-fit-content mx-auto">
+                    <SVGWrapper name="svg" attributes={{ width: svg.width, height: svg.height }}>
+                        <AnimatedSVGElementSnippet data={data} />
+                    </SVGWrapper>
+                </div>
+                <div className="space-y-2">
+                    <AnimatedRectangle data={data} svg={svg} />
+                    <EasingChart
+                        valueName="width"
+                        width={400}
+                        height={150}
+                        startY={data.width}
+                        endY={500}
+                        easingType={ease}
+                        yAxisLabel="width"
+                    />
+                </div>
             </div>
         </AnimatedValueProvider>
     );
 };
 
-export const MovingRectangle: React.FC<{ ease: "linear" | "cubic" | "elastic" }> = ({
-    ease = "elastic",
-}) => {
+export const MovingRectangle: React.FC<{ ease: Ease }> = ({ ease = "elastic" }) => {
     const x = { from: 75, to: 420, duration: 5, ease };
 
-    const height = 160;
+    const height = 200;
 
     const rect = { width: 100, height, y: svg.height / 2 - height / 2 };
 
@@ -72,31 +131,31 @@ export const MovingRectangle: React.FC<{ ease: "linear" | "cubic" | "elastic" }>
                 x,
             }}
         >
-            <div className="rounded-md flex flex-col  my-12 w-[85%] mx-auto border-2 border-[rgb(253,226,154)]">
-                <div className="flex">
+            <div className="grid grid-cols-2 gap-2 p-4 bg-gray-0">
+                {/* <div className="flex items-center justify-center rounded-lg mx-auto "> */}
+                <div className="rounded-lg h-fit-content mx-auto">
                     <SVGWrapper name="svg" attributes={{ width: svg.width, height: svg.height }}>
                         <AnimatedSVGElementSnippet data={{ ...data, ...rect }} />
                     </SVGWrapper>
-                    <AnimatedRectangle data={{ ...data, ...rect }} svg={svg} ease={ease} />
                 </div>
-                {/* <div className="w-full border-2 p-4">
+                <div className="space-y-2">
+                    <AnimatedRectangle data={{ ...data, ...rect }} svg={svg} />
                     <EasingChart
+                        valueName="x"
                         width={400}
-                        height={150}
+                        height={120}
                         startY={x.from}
                         endY={x.to}
-                        easingType="elastic"
+                        easingType={ease}
                         yAxisLabel="x"
                     />
-                </div> */}
+                </div>
             </div>
         </AnimatedValueProvider>
     );
 };
 
-export const HighlightedRectangle: React.FC<{ ease: "linear" | "cubic" | "elastic" }> = ({
-    ease = "cubic",
-}) => {
+export const HighlightedRectangle: React.FC<{ ease: Ease }> = ({ ease = "cubic" }) => {
     return (
         <div className="flex my-4">
             <AnimatedValueProvider

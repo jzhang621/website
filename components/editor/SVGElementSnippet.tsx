@@ -13,6 +13,7 @@ interface SVGElementSnippetProps {
     level?: number;
     children?: React.ReactNode;
     highlights?: string[];
+    invert?: boolean;
 }
 
 const jsxToSvgMap = {
@@ -29,17 +30,29 @@ export const AnimatedSVGElementSnippet: React.FC<SVGElementSnippetProps> = ({
     tabSize = 2,
     level = 1,
     children,
+    invert = false,
 }) => {
     const { name, ...attributes } = data;
 
     const { values } = useAnimatedValuesContext();
 
-    const mergedAttributes = {
+    let mergedAttributes = {
         ...attributes,
         ...values,
     };
 
     const highlights = Object.keys(values);
+
+    if (invert) {
+        for (const key in values) {
+            const value = 1 - values[key];
+
+            mergedAttributes = {
+                ...mergedAttributes,
+                [key]: value === 0 || value === 1 ? value : value.toFixed(4),
+            };
+        }
+    }
 
     return (
         <SVGElementSnippet
@@ -47,6 +60,7 @@ export const AnimatedSVGElementSnippet: React.FC<SVGElementSnippetProps> = ({
             tabSize={tabSize}
             level={level}
             highlights={highlights}
+            invert={invert}
         >
             {children}
         </SVGElementSnippet>
@@ -59,6 +73,7 @@ const SVGElementSnippet: React.FC<SVGElementSnippetProps> = ({
     level = 1,
     children,
     highlights = [],
+    invert = false,
 }) => {
     const { name, ...attributes } = data;
 
@@ -77,8 +92,10 @@ const SVGElementSnippet: React.FC<SVGElementSnippetProps> = ({
 
             // highlight the attribute that is being animated
             if (highlights.includes(key)) {
+                const invertColor = invert ? `bg-[#B0807045]` : `bg-[#98a86945]`;
+
                 return (
-                    <div key={key} className="bg-slate-100 rounded-sm">
+                    <div key={key} className={`${invertColor} rounded-md`}>
                         {content}
                     </div>
                 );

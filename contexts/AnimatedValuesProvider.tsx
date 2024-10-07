@@ -1,19 +1,19 @@
 "use client";
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { useEasedValues } from "@/hooks/useEasedValues";
+import { Ease, useEasedValues } from "@/hooks/useEasedValues";
 
 interface AnimatedValue {
     from: number;
     to: number;
     duration: number;
-    ease?: "linear" | "cubic" | "elastic";
+    ease: Ease;
 }
 
 interface AnimatedValueContextProps {
     values: Record<string, number>;
     restartAnimations: () => void;
     progress: number;
-    easedProgress: number;
+    restartKey: number;
 }
 
 const AnimationContext = createContext<AnimatedValueContextProps | undefined>(undefined);
@@ -32,13 +32,19 @@ interface AnimationProviderProps {
 }
 
 export const AnimatedValueProvider: React.FC<AnimationProviderProps> = ({ animations, children }) => {
-    const [restartKey, setRestartKey] = useState(0); // Track restart key for triggering restarts
+    const [restartKey, setRestartKey] = useState(0);
+    const [isPlaying, setIsPlaying] = useState(false);
 
-    const { values, progress, easedProgress } = useEasedValues(animations, restartKey); // Pass restartKey
+    const { values, progress } = useEasedValues(animations, restartKey, isPlaying);
 
     const restartAnimations = () => {
         setRestartKey((prevKey) => prevKey + 1); // Trigger restart
+        setIsPlaying(true); // Start the animation when play button is clicked
     };
 
-    return <AnimationContext.Provider value={{ easedProgress, values, restartAnimations, progress }}>{children}</AnimationContext.Provider>;
+    return (
+        <AnimationContext.Provider value={{ values, restartAnimations, progress, restartKey }}>
+            {children}
+        </AnimationContext.Provider>
+    );
 };

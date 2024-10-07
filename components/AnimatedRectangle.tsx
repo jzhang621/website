@@ -1,9 +1,9 @@
 "use client";
 import { useAnimatedValuesContext } from "@/contexts/AnimatedValuesProvider";
-import SVGGrid from "../SVGGrid";
-import ReplayButton from "../ReplayButton";
-import EasingChart from "./EasingChart";
+import SVGGrid from "./SVGGrid";
+import PlayButon from "./ReplayButton";
 import { ACCENT } from "@/palette";
+import { Ease } from "@/hooks/useEasedValues";
 
 interface RectangleAttributes {
     // svgWidth: number;
@@ -27,11 +27,11 @@ interface RectangleProps {
     data: RectangleAttributes;
     svg: SVGWrapperProps;
     children?: React.ReactNode;
-    ease?: "linear" | "cubic" | "elastic";
+    replay?: boolean;
 }
 
-const AnimatedRectangle: React.FC<RectangleProps> = ({ data, svg, children, ease = "cubic" }) => {
-    const { values, restartAnimations, progress } = useAnimatedValuesContext();
+const AnimatedRectangle: React.FC<RectangleProps> = ({ data, svg, children, replay = true }) => {
+    const { values, restartAnimations, progress, restartKey } = useAnimatedValuesContext();
 
     const mergedValues = {
         ...data,
@@ -45,10 +45,8 @@ const AnimatedRectangle: React.FC<RectangleProps> = ({ data, svg, children, ease
         Object.entries(mergedValues).filter(([_, value]) => value !== undefined)
     );
 
-    // TODO: make sure that the cellSize of the grid is a multiple of the width and height of the rectangle
-
     return (
-        <div className="max-h-[600px] gap-2 w-full flex flex-1 flex-col items-center justify-center bg-[#fdf6e399]">
+        <div className="max-h-[600px] gap-2 w-full flex flex-col items-center justify-center bg-[#fdf6e399]">
             <div className="relative w-full">
                 <svg width={"100%"} className="mx-auto" viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
                     <SVGGrid
@@ -62,28 +60,14 @@ const AnimatedRectangle: React.FC<RectangleProps> = ({ data, svg, children, ease
                     {children}
                     <rect {...filteredValues} />
                 </svg>
-                <ReplayButton onClick={restartAnimations} disabled={progress < 1} />
-                {/* <div className="absolute bottom-0 w-full p-2 bg-none rounded-md ">
-                    <EasingChart
-                        width={355}
-                        height={100}
-                        startY={data.width}
-                        endY={500}
-                        easingType={ease}
-                        yAxisLabel="width"
+                {replay && (
+                    <PlayButon
+                        onClick={restartAnimations}
+                        restartKey={restartKey}
+                        progress={progress}
                     />
-                </div> */}
+                )}
             </div>
-            {/* <div className="w-full p-2 bg-none rounded-md ">
-                <EasingChart
-                    width={355}
-                    height={100}
-                    startY={data.width}
-                    endY={500}
-                    easingType={ease}
-                    yAxisLabel="width"
-                />
-            </div> */}
         </div>
     );
 };
