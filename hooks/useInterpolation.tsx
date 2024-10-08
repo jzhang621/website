@@ -13,12 +13,24 @@ function useInterpolation<T>(
 ) {
     const totalFrames = Math.floor((duration / 1000) * FPS); // Calculate total frames for the duration
 
+    // Calculate the current frame for interpolation
+    const startFrame = currentStep * totalFrames;
+    const endFrame = startFrame + totalFrames;
+
     // currentStep is needed to tell this hook when to restart the current frame interval calculation.
-    const currentFrame = useCurrentFrame(0, totalFrames, currentStep);
+    const currentFrame = useCurrentFrame(startFrame, endFrame);
+
+    console.log({ currentStep, currentFrame, endFrame });
 
     const interpolatedEvents =
         prevEvent !== null
-            ? applyTransition(currentEvent, prevEvent, currentFrame, totalFrames, transition)
+            ? applyTransition(
+                  currentEvent,
+                  prevEvent,
+                  currentFrame - startFrame,
+                  totalFrames,
+                  transition
+              )
             : // if prevEvent is null, no interpolation is needed (first step of animation)
               currentEvent;
 

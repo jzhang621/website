@@ -4,7 +4,7 @@ export const FPS = 60;
 
 // currentStep is needed to tell this hook when to restart the current frame interval calculation.
 // i.e. when currentStep changes, another setInterval should be called to calculate the next frame.
-const useCurrentFrame = (startFrame: number, endFrame: number, currentStep: number) => {
+const useCurrentFrame = (startFrame: number, endFrame: number) => {
     const [currentFrame, setCurrentFrame] = useState(startFrame);
 
     useEffect(() => {
@@ -27,7 +27,7 @@ const useCurrentFrame = (startFrame: number, endFrame: number, currentStep: numb
 
         // cleanup function to clear the interval
         return () => clearInterval(interval);
-    }, [startFrame, endFrame, currentStep]);
+    }, [startFrame, endFrame]);
 
     return currentFrame;
 };
