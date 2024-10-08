@@ -1,23 +1,33 @@
 import { useState, useEffect } from "react";
 
-const useCurrentFrame = (startFrame: number, endFrame: number, fps = 30) => {
+export const FPS = 60;
+
+// currentStep is needed to tell this hook when to restart the current frame interval calculation.
+// i.e. when currentStep changes, another setInterval should be called to calculate the next frame.
+const useCurrentFrame = (startFrame: number, endFrame: number, currentStep: number) => {
     const [currentFrame, setCurrentFrame] = useState(startFrame);
 
     useEffect(() => {
-        // Reset the current frame when startFrame or endFrame change
+        // reset the current frame when startFrame or endFrame change
         setCurrentFrame(startFrame);
 
-        // The interval function to update the frame number
         const interval = setInterval(() => {
             setCurrentFrame((prevFrame) => {
                 const nextFrame = prevFrame + 1;
-                return nextFrame <= endFrame ? nextFrame : prevFrame;
-            });
-        }, 1000 / fps);
 
-        // Cleanup function to clear the interval
+                // stop incrementing if we've reached the endFrame
+                if (nextFrame > endFrame) {
+                    clearInterval(interval);
+                    return prevFrame;
+                }
+
+                return nextFrame;
+            });
+        }, 1000 / FPS);
+
+        // cleanup function to clear the interval
         return () => clearInterval(interval);
-    }, [startFrame, endFrame, fps]);
+    }, [startFrame, endFrame, currentStep]);
 
     return currentFrame;
 };

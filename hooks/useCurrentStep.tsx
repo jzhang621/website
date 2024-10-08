@@ -10,7 +10,7 @@ resetKey: when this key changes, current step is reset to 0 and will begin incre
 
 function useCurrentStep(
     totalSteps: number,
-    playInterval: number = 1000, // default time between steps in ms
+    duration: number = 1000, // default time between steps in ms
     resetKey = 0 // key to reset the animation to step 0
 ) {
     const [currentStep, setCurrentStep] = useState(0);
@@ -32,14 +32,14 @@ function useCurrentStep(
                     return prev;
                 }
             });
-        }, playInterval);
+        }, duration);
 
         return () => {
             if (intervalId) {
                 clearInterval(intervalId);
             }
         };
-    }, [totalSteps, playInterval, resetKey]);
+    }, [totalSteps, duration, resetKey]);
 
     return {
         currentStep,

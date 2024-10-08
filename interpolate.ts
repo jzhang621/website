@@ -20,27 +20,7 @@ export function interpolateValues(
     return interpolate(from, to)(t);
 }
 
-export interface State {
-    data: DataItem[];
-    variables: Variable[];
-}
 
-const variableTransition = (
-    currEvent: Variable,
-    prevEvent: Variable | null,
-    elapsed: number,
-    total: number
-): Variable => {
-    const { value: currValue } = currEvent;
-    // interpolate between the previous and current event
-    if (prevEvent) {
-        const { value: prevValue } = prevEvent;
-        return {
-            ...currEvent,
-            interpolatedValue: interpolateValues(prevValue, currValue, elapsed, total),
-        };
-    }
-    return currEvent;
-};
 
-export default variableTransition;
+
+

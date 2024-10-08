@@ -12,6 +12,12 @@ export interface Variable {
     interpolatedValue?: number; // Used for interpolation
 }
 
+
+export interface State {
+    data: DataItem[];
+    variables: Variable[];
+}
+
 interface ArrayVisualizationProps {
     data: DataItem[];
     variables: Variable[];
@@ -42,7 +48,9 @@ const Array: React.FC<ArrayVisualizationProps> = ({
             {data.map((item, idx) => (
                 <g
                     key={item.index}
-                    transform={`translate(${margin + item.index * boxSize}, ${margin})`}
+                    transform={`translate(${
+                        margin + (item.interpolatedIndex ?? item.index) * boxSize
+                    }, ${margin})`}
                 >
                     <rect
                         width={boxSize}

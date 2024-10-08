@@ -1,8 +1,7 @@
+import { useState, useEffect } from "react";
 import useCurrentStep from "./useCurrentStep"; // Assuming these are the paths
 import useInterpolation from "./useInterpolation";
-import { SlidingWindowMark } from "../SlidingWindow";
-import { State } from "@/interpolate";
-import { Variable } from "@/components/animations/Array";
+import { TransitionableFunction } from "@/transitions";
 
 /*
 Animates and interpolates between an array of animation events.
@@ -12,19 +11,32 @@ interval: time for each animation step in ms
 resetKey: when this key changes, current step is reset to 0 and begins animating again
 */
 
-function useAnimation(
-    marks: Variable[],
-    interval: number,
-    resetKey: number
+function useAnimation<T>(
+    marks: T[][],
+    duration: number, // Duration for each step in ms
+    resetKey: number,
+    transition: TransitionableFunction<T>
 ): {
     currentStep: number;
-    interpolatedEvents: SlidingWindowMark;
+    interpolatedEvents: T[];
     finished: boolean; // true when the entire animation has completed
 } {
-    const { currentStep } = useCurrentStep(marks.length, interval, resetKey);
+    const { currentStep } = useCurrentStep(marks.length, duration, resetKey);
 
-    // smoothly interpolates the values between marks[currentStep - 1] and marks[currentStep]
-    const { events: interpolatedEvents, finished } = useInterpolation(marks, currentStep, interval);
+    // smoothly interpolates all the entries between marks[currentStep - 1] and marks[currentStep]
+
+    const currentEvent = marks[currentStep]!;
+    const prevEvent = currentStep > 0 ? marks[currentStep - 1]! : null;
+
+    // currentFrame should be a concept here.
+
+    const { events: interpolatedEvents, finished } = useInterpolation<T>(
+        prevEvent,
+        currentEvent,
+        currentStep,
+        duration,
+        transition
+    );
 
     return {
         currentStep,
