@@ -3,20 +3,38 @@ import {
     GrowingRectangle,
     MovingRectangle,
     HighlightedRectangle,
-    ComparisionRectangles
+    ComparisionRectangles,
 } from "@/components/animations/Rectangles";
+import AnimatedArray from "@/components/animations/AnimatedArray";
 import { EnteringGroup } from "@/components/animations/Enter";
 import { Change } from "@/components/animations/Change";
 import Note from "@/components/Note";
+
+export const data = [
+  { index: 0, value: 10 },
+  { index: 1, value: 20 },
+  { index: 2, value: 30 },
+  { index: 3, value: 40 },
+  { index: 4, value: 50 }
+];
+
+export const variables = [
+  { name: 'i', value: 2 }
+];
 
 # Animating SVG for Fun (and profit?)
 
 In 2024, I made a lot SVG animations like the one below for [Hello Interview](https://www.hellointerview.com), a software engineering interview prep platform. A few people have since asked me how I created those animations, so I decided to write a guide, which I've split into two parts.
 
+<div className="my-12  border-[#B0807038] mx-12">
+    <div className="my-4 mx-auto w-[90%]">
+        <AnimatedArray />
+    </div>
+</div>
+
 In Part 1 (this part), we'll get a feel for the the types of animations we can create with SVG. We'll showcase what's possible and the components involved in creating an animation, without diving into any code.
 
 We'll cover the code in Part 2 <span className="text-sm text-gray-400">[coming soon!]</span>, and also cover best practices for structuring React components to create multi-step animations like the one above.
-
 
 ## The Very Basics of SVG
 
@@ -25,7 +43,6 @@ SVG is a markup language for drawing shapes on web pages. You tell the browser w
 Here's an example of SVG code that draws a rectangle. We specify the location and appearance of the rectangle via **attributes**, which are listed as key="value" pairs. The attributes with <span className="bg-white px-2 py-1">white backgrounds</span> are interactive, so please tinker with them to see what they do.
 
 Note that the background grid lines are not part of the SVG definition - they're just there to help you visualize the coordinate system.
-
 
 <div className="my-12  border-[#B0807038] mx-12">
     <div className="my-4 mx-auto w-[90%]">
@@ -39,8 +56,6 @@ To learn more about the cool things you can create with SVG, check out [MDN's SV
 
 We can create our first SVG animation by changing the value of an attribute over time. For example, by gradually increasing the `width` attribute, we can animate a growing rectangle.
 
-
-
 <div className="my-12  border-[#B0807038] mx-12">
     <div className="my-4 mx-auto w-[90%]">
         <GrowingRectangle ease="linear" />
@@ -51,8 +66,8 @@ We can create our first SVG animation by changing the value of an attribute over
 It's possible (and also easier) to create this animation and all the ones that follow using just the `<animate>` element (see [MDN's guide](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/animate)).
 
 However, being able to think of SVG animations as a series of attribute changes makes it easier to create complex animations using React, for reasons we'll discuss in Part 2.
-</Note>
 
+</Note>
 
 ## Towards More Realistic Animations
 
@@ -60,8 +75,7 @@ In the above animation, the `width` attribute increases at a constant, linear ra
 
 But motion in real life isn't linear. To create a more realistic animation, we want something that starts off slow, gradually picks up speed in the middle, and slows down again near the end. We can achieve that affect by using **easings**.
 
-In the animation below, we apply a *cubic easing function* to the `width` attribute. Note how the shape of the curve in the plot below the rectangle matches our description of how more realistic motion behaves.
-
+In the animation below, we apply a _cubic easing function_ to the `width` attribute. Note how the shape of the curve in the plot below the rectangle matches our description of how more realistic motion behaves.
 
 <div className="my-12  border-[#B0807038] mx-12">
     <div className="my-4 mx-auto w-[90%]">
@@ -75,8 +89,6 @@ Here's the linear and the cubic easing functions shown side by side for easier c
     <ComparisionRectangles />
 </div>
 
-
-
 To learn more about easing functions, check out [this resource](https://easings.net/).
 
 ## Animating Movement
@@ -85,8 +97,7 @@ Easing functions are a lot of fun!
 
 In the animation below, we make the rectangle move from left to right by changing its `x` attribute.
 
-
-We've also injected some personality by applying an *elastic* easing function. This particular easing function causes the rectangle to oscillate slightly backwards in the beginning, as if it's gathering momentum before moving forward, e.g. someone crouching as they prepare to sprint. It also causes the rectangle to overshoot its final position before stopping, making it feel like its coming to a sudden stop.
+We've also injected some personality by applying an _elastic_ easing function. This particular easing function causes the rectangle to oscillate slightly backwards in the beginning, as if it's gathering momentum before moving forward, e.g. someone crouching as they prepare to sprint. It also causes the rectangle to overshoot its final position before stopping, making it feel like its coming to a sudden stop.
 
 <div className="my-12  border-[#B0807038] mx-12">
     <div className="my-4 mx-auto w-[90%]">
@@ -94,13 +105,11 @@ We've also injected some personality by applying an *elastic* easing function. T
     </div>
 </div>
 
-
 ## The \<g\> Element
 
 When creating SVG animations, you'll make frequent use of the `<g>` or **grouping element**, which is used to group SVG elements together. Any attributes applied to a `<g>` element are inherited by its children, which provides a convenient way to animate multiple elements at once.
 
 In the animation below, we use a grouping element to group a `<rect>` and `<text>` together. By animating the `opacity` attribute of that `<g>` element, we can make the rectangle and text fade in together.
-
 
 <div className="my-12 border-[#B0807038]2">
     <div className="my-4 mx-auto w-[90%]">
