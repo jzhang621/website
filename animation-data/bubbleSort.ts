@@ -34,20 +34,12 @@ export const variables: Variable[][] = [
         { name: "i", value: 2 },
     ],
     [
-        { name: "j", value: 2 },
-        { name: "i", value: 3 },
+        { name: "j", value: 0 },
+        { name: "i", value: 1 },
     ],
     [
-        { name: "j", value: 1 },
-        { name: "i", value: 2 },
-    ],
-    [
-        { name: "j", value: 2 },
-        { name: "i", value: 3 },
-    ],
-    [
-        { name: "j", value: 2, exit: true },
-        { name: "i", value: 3, exit: true },
+        { name: "j", value: 0, exit: true },
+        { name: "i", value: 1, exit: true },
     ],
 ];
 
@@ -100,24 +92,7 @@ export const data: DataItem[][] = [
         { index: 3, value: 7 },
         { index: 1, value: 4 },
     ],
-    [
-        { index: 2, value: 5 },
-        { index: 0, value: 2 },
-        { index: 3, value: 7 },
-        { index: 1, value: 4 },
-    ],
-    [
-        { index: 2, value: 5 },
-        { index: 0, value: 2 },
-        { index: 3, value: 7 },
-        { index: 1, value: 4 },
-    ],
-    [
-        { index: 2, value: 5 },
-        { index: 0, value: 2 },
-        { index: 3, value: 7 },
-        { index: 1, value: 4 },
-    ],
+
     [
         { index: 2, value: 5 },
         { index: 0, value: 2 },
