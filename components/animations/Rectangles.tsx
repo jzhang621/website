@@ -31,8 +31,8 @@ const Comparision: React.FC = ({}) => {
     const linearData = { ...data, width: widthLinear };
 
     const linear = (
-        <div className="flex flex-col">
-            <div className="mb-4 mx-auto text-lg">Linear</div>
+        <div className="flex flex-col gap-4">
+            <div className="mb-2 md:mb-4 mx-auto text-lg">Linear</div>
             <AnimatedRectangle data={linearData} svg={svg} replay={false} />
             <EasingChart
                 valueName="widthLinear"
@@ -48,8 +48,8 @@ const Comparision: React.FC = ({}) => {
 
     const cubicData = { ...data, width: widthCubic };
     const cubic = (
-        <div className="flex flex-col">
-            <div className="mb-4 mx-auto text-lg">Cubic</div>
+        <div className="flex flex-col gap-4">
+            <div className="mb-2 md:mb-4 mx-auto text-lg">Cubic</div>
             <AnimatedRectangle data={cubicData} svg={svg} replay={false} />
             <EasingChart
                 valueName="widthCubic"
@@ -64,7 +64,7 @@ const Comparision: React.FC = ({}) => {
     );
 
     return (
-        <div className="relative grid grid-cols-2 gap-8 p-4 my-12">
+        <div className="relative grid grid-cols-2 md:gap-8 gap-2 p-4 my-12">
             {linear}
             {cubic}
             <PlayButton onClick={restartAnimations} progress={progress} restartKey={restartKey} />

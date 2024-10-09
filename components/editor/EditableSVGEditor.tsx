@@ -181,7 +181,7 @@ const SVGEditor: React.FC = () => {
 
     // return <TwoPane content={syntaxHighlighted} visual={visual} />;
     return (
-        <div className="grid grid-cols-2 gap-2 p-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 md:gap-4 p-4">
             <div className="rounded-lg h-fit-content mx-auto">{syntaxHighlighted}</div>
             <div className="w-fit-content">{visual}</div>
         </div>
