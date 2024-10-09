@@ -23,7 +23,7 @@ const SVGWrapperElementSnippet: React.FC<SVGWrapperProps> = ({ name, attributes,
 
     return (
         <div
-            className={`rounded-sm text-sm max-h-[600px] w-fit overflow-y-auto overflow-x-hidden leading-7 ${sourceCodePro.className} text-slate-700 p-8 bg-[#fdf6e399]`}
+            className={`rounded-sm text-xs md:text-sm max-h-[600px] w-fit overflow-y-auto overflow-x-hidden leading-7 ${sourceCodePro.className} text-slate-700 p-4 md:p-8 bg-[#fdf6e399]`}
         >
             <pre>
                 <code>

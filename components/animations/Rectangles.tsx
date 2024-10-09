@@ -85,27 +85,60 @@ export const ComparisionRectangles: React.FC = ({}) => {
     );
 };
 
-export const GrowingRectangle: React.FC<{
-    ease: Ease;
-}> = ({ ease = "cubic" }) => {
+// export const GrowingRectangle: React.FC<{
+//     ease: Ease;
+// }> = ({ ease = "cubic" }) => {
+//     return (
+//         <AnimatedValueProvider
+//             animations={{
+//                 width: { from: data.width, to: 500, duration: 5, ease },
+//             }}
+//         >
+//             <div className="grid grid-cols-2 gap-2 p-4">
+//                 {/* <div className="flex items-center justify-center rounded-lg mx-auto "> */}
+//                 <div className="rounded-lg h-fit-content mx-auto">
+//                     <SVGWrapper name="svg" attributes={{ width: svg.width, height: svg.height }}>
+//                         <AnimatedSVGElementSnippet data={data} />
+//                     </SVGWrapper>
+//                 </div>
+//                 <div className="space-y-2">
+//                     <AnimatedRectangle data={data} svg={svg} />
+//                     <EasingChart
+//                         valueName="width"
+//                         width={400}
+//                         height={150}
+//                         startY={data.width}
+//                         endY={500}
+//                         easingType={ease}
+//                         yAxisLabel="width"
+//                     />
+//                 </div>
+//             </div>
+//         </AnimatedValueProvider>
+//     );
+// };
+
+export const GrowingRectangle: React.FC<{ ease: Ease }> = ({ ease = "cubic" }) => {
     return (
         <AnimatedValueProvider
             animations={{
                 width: { from: data.width, to: 500, duration: 5, ease },
             }}
         >
-            <div className="grid grid-cols-2 gap-2 p-4">
-                {/* <div className="flex items-center justify-center rounded-lg mx-auto "> */}
-                <div className="rounded-lg h-fit-content mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 md:gap-4 p-4">
+                {/* SVG Wrapper */}
+                <div className="rounded-lg mx-auto">
                     <SVGWrapper name="svg" attributes={{ width: svg.width, height: svg.height }}>
                         <AnimatedSVGElementSnippet data={data} />
                     </SVGWrapper>
                 </div>
-                <div className="space-y-2">
+
+                {/* Animated Rectangle and Easing Chart */}
+                <div className="space-y-4">
                     <AnimatedRectangle data={data} svg={svg} />
                     <EasingChart
                         valueName="width"
-                        width={400}
+                        width={300} // Adjusted width for mobile
                         height={150}
                         startY={data.width}
                         endY={500}
@@ -131,7 +164,7 @@ export const MovingRectangle: React.FC<{ ease: Ease }> = ({ ease = "elastic" }) 
                 x,
             }}
         >
-            <div className="grid grid-cols-2 gap-2 p-4 bg-gray-0">
+            <div className="grid grid-cols-1 md:grid-cols-2 md:gap-4 p-4">
                 {/* <div className="flex items-center justify-center rounded-lg mx-auto "> */}
                 <div className="rounded-lg h-fit-content mx-auto">
                     <SVGWrapper name="svg" attributes={{ width: svg.width, height: svg.height }}>

@@ -47,7 +47,7 @@ export const Change: React.FC<{
     duration: number;
 }> = ({ ease = "cubic", duration = 3 }) => {
     return (
-        <div className="grid grid-cols-2 gap-2 p-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 md:gap-4 p-4">
             <AnimatedValueProvider
                 animations={{
                     opacity: { from: data.opacity, to: 1, duration, ease },
