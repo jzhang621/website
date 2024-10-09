@@ -22,12 +22,12 @@ export const variables = [
   { name: 'i', value: 2 }
 ];
 
-# Animating SVG for Fun (and profit?)
+# Animating SVG for Fun <span className="text-2xl text-gray-400">(and profit?)</span>
 
 In 2024, I made a lot SVG animations like the one below for [Hello Interview](https://www.hellointerview.com), a software engineering interview prep platform. A few people have since asked me how I created those animations, so I decided to write a guide, which I've split into two parts.
 
-<div className="my-12  border-[#B0807038] mx-12">
-    <div className="my-4 mx-auto w-[90%]">
+<div className="my-12  border-[#B0807038] lg:mx-12 mx-2">
+    <div className="my-4 mx-auto lg:w-[90%]">
         <AnimatedArray />
         <div className="text-center mx-auto text-sm text-gray-400 my-4">Bubble Sort, we meet again!</div>
     </div>
@@ -35,7 +35,7 @@ In 2024, I made a lot SVG animations like the one below for [Hello Interview](ht
 
 In Part 1 (this part), we'll get a feel for the the types of animations we can create with SVG. We'll showcase what's possible and the components involved in creating an animation, without diving into any code.
 
-We'll cover the code in Part 2 <span className="text-sm text-gray-400">[coming soon!]</span>, and also cover best practices for structuring React components to create multi-step animations like the one above.
+We'll cover the code in Part 2 <span className="text-sm text-gray-400">[coming soon!]</span>, as well as best practices for structuring React components to create multi-step animations like the one above.
 
 ## The Very Basics of SVG
 
@@ -45,8 +45,8 @@ Here's an example of SVG code that draws a rectangle. We specify the location an
 
 Note that the background grid lines are not part of the SVG definition - they're just there to help you visualize the coordinate system.
 
-<div className="my-12  border-[#B0807038] mx-12">
-    <div className="my-4 mx-auto w-[90%]">
+<div className="my-12  border-[#B0807038] lg:mx-12 mx-2">
+    <div className="my-4 mx-auto lg:w-[90%]">
         <EditableSVGCodeEditor />
     </div>
 </div>
@@ -57,8 +57,8 @@ To learn more about the cool things you can create with SVG, check out [MDN's SV
 
 We can create our first SVG animation by changing the value of an attribute over time. For example, by gradually increasing the `width` attribute, we can animate a growing rectangle.
 
-<div className="my-12  border-[#B0807038] mx-12">
-    <div className="my-4 mx-auto w-[90%]">
+<div className="my-12  border-[#B0807038] lg:mx-12 mx-2">
+    <div className="my-4 mx-auto lg:w-[90%]">
         <GrowingRectangle ease="linear" />
     </div>
 </div>
@@ -78,8 +78,8 @@ But motion in real life isn't linear. To create a more realistic animation, we w
 
 In the animation below, we apply a _cubic easing function_ to the `width` attribute. Note how the shape of the curve in the plot below the rectangle matches our description of how more realistic motion behaves.
 
-<div className="my-12  border-[#B0807038] mx-12">
-    <div className="my-4 mx-auto w-[90%]">
+<div className="my-12  border-[#B0807038] lg:mx-12 mx-2">
+    <div className="my-4 mx-auto lg:w-[90%]">
         <GrowingRectangle ease="cubic" />
     </div>
 </div>
@@ -100,8 +100,8 @@ In the animation below, we make the rectangle move from left to right by changin
 
 We've also injected some personality by applying an _elastic_ easing function. This particular easing function causes the rectangle to oscillate slightly backwards in the beginning, as if it's gathering momentum before moving forward, e.g. someone crouching as they prepare to sprint. It also causes the rectangle to overshoot its final position before stopping, making it feel like its coming to a sudden stop.
 
-<div className="my-12  border-[#B0807038] mx-12">
-    <div className="my-4 mx-auto w-[90%]">
+<div className="my-12  border-[#B0807038] lg:mx-12 mx-2">
+    <div className="my-4 mx-auto lg:w-[90%]">
         <MovingRectangle />
     </div>
 </div>
@@ -113,7 +113,7 @@ When creating SVG animations, you'll make frequent use of the `<g>` or **groupin
 In the animation below, we use a grouping element to group a `<rect>` and `<text>` together. By animating the `opacity` attribute of that `<g>` element, we can make the rectangle and text fade in together.
 
 <div className="my-12 border-[#B0807038]2">
-    <div className="my-4 mx-auto w-[90%]">
+    <div className="my-4 mx-auto lg:w-[90%]">
         <EnteringGroup />
     </div>
 </div>
@@ -125,7 +125,7 @@ Let's say we want to animate a value change, such as turning the 3 below into a 
 To do so, we can have an SVG element for both the new <span className="text-sm text-gray-600">(5)</span> and the old <span className="text-sm text-gray=400">(3)</span> value. The `opacity` of the new element goes from 0 to 1, while the `opacity` of the old element goes from 1 to 0.
 
 <div className="my-12 border-[#B0807038]">
-    <div className="my-4 mx-auto w-[90%]">
+    <div className="my-4 mx-auto lg:w-[90%]">
         <Change />
     </div>
 </div>
