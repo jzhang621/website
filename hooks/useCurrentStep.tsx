@@ -11,18 +11,19 @@ resetKey: when this key changes, current step is reset to 0 and will begin incre
 function useCurrentStep(
     totalSteps: number,
     duration: number = 1000, // default time between steps in ms
-    resetKey = 0 // key to reset the animation to step 0
+    resetKey = 0, // key to reset the animation to step 0,
+    isPlaying = false
 ) {
     const [currentStep, setCurrentStep] = useState(0);
 
     useEffect(() => {
-        let intervalId: number | undefined;
+        if (!isPlaying) return; // Do nothing if not playing
 
-        // If we are at the last step, set currentStep to 0
-        // This will be triggered by a change in resetKey
-        if (currentStep === totalSteps - 1) {
-            setCurrentStep(0);
-        }
+        let intervalId: number | undefined | NodeJS.Timeout;
+
+        // this will be triggered by a change in resetKey
+        setCurrentStep(0);
+
         intervalId = setInterval(() => {
             setCurrentStep((prev) => {
                 if (prev < totalSteps - 1) {
@@ -39,11 +40,9 @@ function useCurrentStep(
                 clearInterval(intervalId);
             }
         };
-    }, [totalSteps, duration, resetKey]);
+    }, [totalSteps, resetKey]);
 
-    return {
-        currentStep,
-    };
+    return currentStep;
 }
 
 export default useCurrentStep;

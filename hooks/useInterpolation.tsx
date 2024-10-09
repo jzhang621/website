@@ -1,64 +1,38 @@
-import { useState, useEffect } from "react";
 import { TransitionableFunction } from "@/transitions";
-import useCurrentFrame, { FPS } from "./useCurrentFrame";
-
-// const FPS = 30;
+import useProgress from "./useProgress";
 
 function useInterpolation<T>(
-    prevEvent: T[] | null,
     currentEvent: T[],
+    prevEvent: T[] | null,
     currentStep: number,
-    duration: number, // Duration for the animation
-    transition: TransitionableFunction<T>
+    duration: number,
+    transition: TransitionableFunction<T>,
+    isPlaying: boolean,
+    FPS = 60,
 ) {
-    const totalFrames = Math.floor((duration / 1000) * FPS); // Calculate total frames for the duration
+    // calculate the progress of the current step
+    const { progress } = useProgress(currentStep, duration, isPlaying, FPS);
 
-    // Calculate the current frame for interpolation
-    const startFrame = currentStep * totalFrames;
-    const endFrame = startFrame + totalFrames;
-
-    // currentStep is needed to tell this hook when to restart the current frame interval calculation.
-    const currentFrame = useCurrentFrame(startFrame, endFrame);
-
-    console.log({ currentStep, currentFrame, endFrame });
-
-    const interpolatedEvents =
-        prevEvent !== null
-            ? applyTransition(
-                  currentEvent,
-                  prevEvent,
-                  currentFrame - startFrame,
-                  totalFrames,
-                  transition
-              )
-            : // if prevEvent is null, no interpolation is needed (first step of animation)
-              currentEvent;
+    const interpolatedEvents = applyTransition(currentEvent, prevEvent, progress, transition);
 
     // Return the interpolated events and a flag for when the animation is finished
     return {
         events: interpolatedEvents,
-        finished: currentFrame >= totalFrames, // Finished when currentFrame reaches the total frames
+        progress,
+        finished: progress >= 1, // Finished when currentFrame reaches the total frames
     };
 }
 
 function applyTransition<T>(
     currentEvent: T[],
-    prevEvent: T[],
-    currentFrame: number,
-    totalFrames: number,
+    prevEvent: T[] | null,
+    progress: number,
     transition: TransitionableFunction<T>
 ): T[] {
-    const interpolatedValues: T[] = [];
-
-    // iterate over each item in the currentEvent and prevEvent and interpolate the values
-    for (let i = 0; i < currentEvent.length; i++) {
-        const prevValue = prevEvent[i];
-        const currentValue = currentEvent[i];
-        const interpolatedValue = transition(currentValue, prevValue, currentFrame, totalFrames);
-        interpolatedValues.push(interpolatedValue);
-    }
-
-    return interpolatedValues;
+    return currentEvent.map((currentValue, i) => {
+        const prevValue = prevEvent ? prevEvent[i] : null;
+        return transition(currentValue, prevValue, progress);
+    });
 }
 
 export default useInterpolation;

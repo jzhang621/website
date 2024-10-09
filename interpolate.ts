@@ -10,13 +10,12 @@ export function isColor(value: string): boolean {
 export function interpolateValues(
     from: number,
     to: number,
-    elapsed: number,
-    duration: number,
+    progress: number,
     easingFunction = easeCubicInOut
 ) {
     // const easingFunction = easePoly.exponent(1);
 
-    const t = easingFunction(elapsed / duration);
+    const t = easingFunction(progress);
     return interpolate(from, to)(t);
 }
 

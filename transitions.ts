@@ -1,15 +1,15 @@
 import { Variable, DataItem } from "./components/animations/Array";
 import { interpolateValues } from "./interpolate";
+import { easeExpIn, easeExpOut } from "d3-ease";
 
 export interface TransitionableFunction<T> {
-    (currEvent: T, prevEvent: T | null, elapsed: number, total: number): T;
+    (currEvent: T, prevEvent: T | null, progress: number): T;
 }
 
 export const variableTransition = (
     currEvent: Variable,
     prevEvent: Variable | null,
-    elapsed: number,
-    total: number
+    progress: number
 ): Variable => {
     const { value: currValue } = currEvent;
 
@@ -17,25 +17,35 @@ export const variableTransition = (
     if (prevEvent) {
         const { value: prevValue } = prevEvent;
         if (currValue !== prevValue) {
-            // console.log({
-            //     elapsed,
-            //     total,
-            //     interpolate: interpolateValues(prevValue, currValue, elapsed, total),
-            // });
             return {
                 ...currEvent,
-                interpolatedValue: interpolateValues(prevValue, currValue, elapsed, total),
+                interpolatedValue: interpolateValues(prevValue, currValue, progress),
+                progress: interpolateValues(0, 1, progress),
             };
         }
     }
+
+    if (currEvent.enter) {
+        return {
+            ...currEvent,
+            progress: interpolateValues(0, 1, progress),
+        };
+    }
+
+    if (currEvent.exit) {
+        return {
+            ...currEvent,
+            progress: interpolateValues(1, 0, progress, easeExpOut),
+        };
+    }
+
     return currEvent;
 };
 
 export const indexTransition = (
     currEvent: DataItem,
     prevEvent: DataItem | null,
-    elapsed: number,
-    total: number
+    progress: number
 ): DataItem => {
     const { index: currIndex } = currEvent;
 
@@ -44,7 +54,8 @@ export const indexTransition = (
         if (currIndex !== prevIndex) {
             return {
                 ...currEvent,
-                interpolatedIndex: interpolateValues(prevIndex, currIndex, elapsed, total),
+                interpolatedValue: interpolateValues(prevIndex, currIndex, progress),
+                progress: interpolateValues(0, 1, progress),
             };
         }
     }

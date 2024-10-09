@@ -1,17 +1,22 @@
 import React from "react";
+import SVGGrid from "../SVGGrid";
 
-export interface DataItem {
+interface InterpolatedItem {
+    interpolatedValue?: number;
+    progress?: number;
+    enter?: boolean;
+    exit?: boolean;
+}
+
+export interface DataItem extends InterpolatedItem {
     index: number;
     value: number;
-    interpolatedIndex?: number; // Used for interpolation
 }
 
-export interface Variable {
+export interface Variable extends InterpolatedItem {
     name: string;
-    value: number; // Represents the index
-    interpolatedValue?: number; // Used for interpolation
+    value: number;
 }
-
 
 export interface State {
     data: DataItem[];
@@ -23,6 +28,7 @@ interface ArrayVisualizationProps {
     variables: Variable[];
     boxSize?: number;
     margin?: number; // The margin around the content
+    marginX?: number; // The margin around the x-axis
 }
 
 const Array: React.FC<ArrayVisualizationProps> = ({
@@ -30,44 +36,74 @@ const Array: React.FC<ArrayVisualizationProps> = ({
     variables,
     boxSize = 50,
     margin = 20,
+    marginX = 40,
 }) => {
     const totalArrayWidth = data.length * boxSize;
 
-    // ViewBox dimensions (including margin)
-    const viewBoxWidth = totalArrayWidth + margin * 2;
+    // viewBox dimensions (including margin)
+    const viewBoxWidth = totalArrayWidth + marginX * 2;
     const viewBoxHeight = boxSize + margin * 2;
+
+    const rect = {
+        fill: "#a7de83",
+        stroke: "#84b067",
+        // stroke: "#c9684b",
+        strokeWidth: 1.5,
+        strokeOpacity: 0.85,
+        rx: 1,
+    };
+
+    const text = {
+        fontSize: 14,
+        fontWeight: 700,
+        fill: "#ffffe3",
+        opacity: 1,
+    };
+
+    const variableRect = {
+        fill: "none",
+        // stroke: "#fdfbd4",
+        stroke: "#68934C",
+        strokeWidth: 2,
+        rx: 1,
+        // rx: 2,
+    };
+
+    const buffer = 0.5;
 
     return (
         <svg
             width="100%"
             height="100%"
-            viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`}
+            viewBox={`${-buffer} ${-buffer} ${viewBoxWidth + buffer * 2} ${
+                viewBoxHeight + buffer * 2
+            }`}
             preserveAspectRatio="xMidYMid meet"
         >
             {/* Render the array elements */}
+            <SVGGrid
+                width={viewBoxWidth}
+                height={viewBoxHeight}
+                cellSize={boxSize / 2}
+                stroke={"#d3d3d3cc"}
+                strokeWidth={0.2}
+            />
+
             {data.map((item, idx) => (
                 <g
                     key={item.index}
                     transform={`translate(${
-                        margin + (item.interpolatedIndex ?? item.index) * boxSize
+                        marginX + (item.interpolatedValue ?? item.index) * boxSize
                     }, ${margin})`}
                 >
-                    <rect
-                        width={boxSize}
-                        height={boxSize}
-                        fill="lightblue"
-                        stroke="black"
-                        strokeWidth={2}
-                        rx={1}
-                    />
+                    <rect width={boxSize} height={boxSize} {...rect} />
                     <text
                         x={boxSize / 2}
                         y={boxSize / 2}
                         alignmentBaseline="middle"
                         fontFamily="monospace"
                         textAnchor="middle"
-                        fontSize="16"
-                        fill="black"
+                        {...text}
                     >
                         {item.value}
                     </text>
@@ -78,29 +114,22 @@ const Array: React.FC<ArrayVisualizationProps> = ({
             {variables.map((variable) => {
                 const dataIndex = variable.interpolatedValue ?? variable.value;
 
+                let opacity = 1;
+                if (variable.enter && variable.progress === undefined) {
+                    opacity = 0;
+                }
+
+                if ((variable.enter || variable.exit) && variable.progress !== undefined) {
+                    opacity = variable.progress;
+                }
+
                 return (
                     <g
                         key={variable.name}
-                        transform={`translate(${margin + dataIndex * boxSize}, ${margin})`}
+                        opacity={opacity}
+                        transform={`translate(${marginX + dataIndex * boxSize}, ${margin})`}
                     >
-                        <rect
-                            width={boxSize}
-                            height={boxSize}
-                            fill="none"
-                            stroke="green"
-                            strokeWidth={2}
-                        />
-                        <text
-                            x={boxSize / 2}
-                            y={-10}
-                            alignmentBaseline="middle"
-                            textAnchor="middle"
-                            fontFamily="monospace"
-                            fontSize="12"
-                            fill="black"
-                        >
-                            {variable.name}
-                        </text>
+                        <rect width={boxSize} height={boxSize} {...variableRect} />
                     </g>
                 );
             })}

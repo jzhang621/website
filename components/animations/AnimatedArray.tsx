@@ -1,75 +1,60 @@
 "use client";
-import useAnimation, { TransitionConfig } from "@/hooks/useAnimation";
-import Array, { State, Variable, DataItem } from "@/components/animations/Array";
+import useAnimation from "@/hooks/useAnimation";
+import Array, { Variable, DataItem } from "@/components/animations/Array";
 import { useState } from "react";
 import { indexTransition, variableTransition } from "@/transitions";
+import PlayButton from "../ReplayButton";
+import { data, variables } from "@/animation-data/bubbleSort";
+import {
+    Box,
+    CircularProgress,
+    CircularProgressProps,
+    LinearProgress,
+    Typography,
+} from "@mui/material";
 
-const AnimatedArray: React.FC = () => {
-    const variables: Variable[][] = [
-        [{ name: "i", value: 1 }],
-        [{ name: "i", value: 2 }],
-        [{ name: "i", value: 3 }],
-        [{ name: "i", value: 4 }],
-    ];
+const progressText = (currentStep: number, totalSteps: number) => {
+    return `${currentStep + 1} / ${totalSteps}`;
+};
 
-    const data: DataItem[][] = [
-        [
-            { index: 0, value: 10 },
-            { index: 1, value: 20 },
-            { index: 2, value: 30 },
-            { index: 3, value: 40 },
-            { index: 4, value: 50 },
-        ],
-        [
-            { index: 0, value: 10 },
-            { index: 4, value: 20 },
-            { index: 2, value: 30 },
-            { index: 3, value: 40 },
-            { index: 1, value: 50 },
-        ],
-        [
-            { index: 0, value: 10 },
-            { index: 4, value: 20 },
-            { index: 2, value: 30 },
-            { index: 3, value: 40 },
-            { index: 1, value: 50 },
-        ],
-        [
-            { index: 0, value: 10 },
-            { index: 4, value: 20 },
-            { index: 2, value: 30 },
-            { index: 3, value: 40 },
-            { index: 1, value: 50 },
-        ],
-    ];
+const ArrayWithAnimation: React.FC = () => {
+    const stepDuration = 750;
 
     const [resetKey, setResetKey] = useState(0);
-    const reset = () => {
+    const [isStarted, setIsStarted] = useState(false);
+
+    const restartAnimation = () => {
         setResetKey((prev) => prev + 1);
+        setIsStarted(true);
     };
 
-    const stepDuration = 1000;
+    const {
+        interpolatedEvents,
+        progress,
+        finished: variableFinished,
+    } = useAnimation<Variable>(variables, stepDuration, resetKey, variableTransition, isStarted);
 
-    const { currentStep, interpolatedEvents, finished } = useAnimation<Variable>(
-        variables,
-        stepDuration,
-        resetKey,
-        variableTransition
-    );
-
-    const { currentStep: dataStep, interpolatedEvents: dataEvents } = useAnimation<DataItem>(
-        data,
-        stepDuration,
-        resetKey,
-        indexTransition
-    );
+    const {
+        interpolatedEvents: dataEvents,
+        finished: dataFinished,
+        currentStep,
+    } = useAnimation<DataItem>(data, stepDuration, resetKey, indexTransition, isStarted);
 
     return (
-        <div>
-            <h1>Array Visualization Animation</h1>
-            <Array data={dataEvents} variables={interpolatedEvents} boxSize={60} margin={20} />
+        <div className="mt-12 relative">
+            <PlayButton
+                onClick={restartAnimation}
+                restartKey={resetKey}
+                progress={progress}
+                disabled={isStarted && (!variableFinished || !dataFinished)}
+            />
+            <Array data={dataEvents} variables={interpolatedEvents} boxSize={40} margin={10} />
+
+            <div className="absolute bottom-2 right-4 text-xs text-gray-400">
+                {progressText(currentStep - 1, data.length - 1)}
+            </div>
         </div>
     );
 };
 
-export default AnimatedArray;
+export default ArrayWithAnimation;

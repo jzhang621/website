@@ -1,7 +1,7 @@
 "use client";
 import { useAnimatedValuesContext } from "@/contexts/AnimatedValuesProvider";
 import SVGGrid from "./SVGGrid";
-import PlayButon from "./ReplayButton";
+import PlayButton from "./ReplayButton";
 import { ACCENT } from "@/palette";
 import { Ease } from "@/hooks/useEasedValues";
 
@@ -61,7 +61,7 @@ const AnimatedRectangle: React.FC<RectangleProps> = ({ data, svg, children, repl
                     <rect {...filteredValues} />
                 </svg>
                 {replay && (
-                    <PlayButon
+                    <PlayButton
                         onClick={restartAnimations}
                         restartKey={restartKey}
                         progress={progress}

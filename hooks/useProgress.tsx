@@ -1,13 +1,17 @@
 import { useState, useEffect } from "react";
 
-export const FPS = 60;
+const useProgress = (currentStep: number, duration: number, isPlaying: boolean, FPS: number) => {
+    const totalFrames = Math.floor((duration / 1000) * FPS); // Calculate total frames for the duration
 
-// currentStep is needed to tell this hook when to restart the current frame interval calculation.
-// i.e. when currentStep changes, another setInterval should be called to calculate the next frame.
-const useCurrentFrame = (startFrame: number, endFrame: number) => {
+    // Calculate the current frame for interpolation
+    const startFrame = currentStep * totalFrames;
+    const endFrame = startFrame + totalFrames;
+
     const [currentFrame, setCurrentFrame] = useState(startFrame);
 
     useEffect(() => {
+        if (!isPlaying) return; // Do nothing if not playing
+
         // reset the current frame when startFrame or endFrame change
         setCurrentFrame(startFrame);
 
@@ -27,9 +31,9 @@ const useCurrentFrame = (startFrame: number, endFrame: number) => {
 
         // cleanup function to clear the interval
         return () => clearInterval(interval);
-    }, [startFrame, endFrame]);
+    }, [currentStep, isPlaying]);
 
-    return currentFrame;
+    return { currentFrame, progress: (currentFrame - startFrame) / (endFrame - startFrame) };
 };
 
-export default useCurrentFrame;
+export default useProgress;

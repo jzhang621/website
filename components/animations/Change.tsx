@@ -5,7 +5,7 @@ import SVGElementSnippet, { AnimatedSVGElementSnippet } from "../editor/SVGEleme
 import SVGWrapper from "../editor/SVGWrapperElement";
 import { ACCENT, BLUE, BLUE_ACCENT, COGNAC, COGNAC_ACCENT, SAGE, SAGE_ACCENT } from "@/palette";
 import SVGGrid from "../SVGGrid";
-import PlayButon from "../ReplayButton";
+import PlayButton from "../ReplayButton";
 import EasingChart from "../EasingChart";
 import { Ease } from "@/hooks/useEasedValues";
 
@@ -127,7 +127,7 @@ const AnimatedSVGGroup: React.FC<{ children: React.ReactNode; width: number; hei
                     </text>
                 </g>
             </svg>
-            <PlayButon onClick={restartAnimations} restartKey={restartKey} progress={progress} />
+            <PlayButton onClick={restartAnimations} restartKey={restartKey} progress={progress} />
         </div>
     );
 };

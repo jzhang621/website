@@ -8,7 +8,7 @@ import EasingChart from "@/components/EasingChart";
 import { BLUE_ACCENT, BLUE, COGNAC, COGNAC_ACCENT } from "@/palette";
 import { Ease } from "@/hooks/useEasedValues";
 import { Replay } from "@mui/icons-material";
-import PlayButon from "../ReplayButton";
+import PlayButton from "../ReplayButton";
 
 const svg = { width: 600, height: 600 };
 const data = {
@@ -67,7 +67,7 @@ const Comparision: React.FC = ({}) => {
         <div className="relative grid grid-cols-2 gap-8 p-4 my-12">
             {linear}
             {cubic}
-            <PlayButon onClick={restartAnimations} progress={progress} restartKey={restartKey} />
+            <PlayButton onClick={restartAnimations} progress={progress} restartKey={restartKey} />
         </div>
     );
 };
