@@ -1,0 +1,51 @@
+import RGBSpace from '@/components/threejs/RGBSpace';
+import StaticRGBSpace from '@/components/threejs/StaticRGBSpace';
+import AnimatedRGBSpace from '@/components/threejs/AnimatedRGBSpace';
+import CanvasImage from '@/components/rgb/CanvasImage';
+import SVGImage from '@/components/rgb/SVGImage';
+import { extractRGBPoints, applyMatrixTransformation } from '@/data/utils';
+import { redwood } from '@/data/redwood';
+import ColorSwatch from '@/components/rgb/ColorSwatch';
+
+export const point = [66, 38, 92];
+
+## Colors as Vectors
+
+I think colors are a lot of fun. Turns out, they're also an engaging way to learn about vectors and vector spaces.
+
+Let's start with this color:
+
+<div className="my-8">
+  <ColorSwatch rgb={point} />
+</div>
+
+<div className="my-8">
+  <StaticRGBSpace points={[point]} width={800} height={500} />
+</div>
+
+
+export const redwoodPoints = extractRGBPoints(redwood);
+
+export const transformMatrix = [[1.5, 0, 0], [0, 1, 0], [0, 0, 1]];
+
+export const blackAndWhite = [[.33, .33, .33], [.33, .33, .33], [.33, .33, .33]];
+
+export const endPoints = extractRGBPoints(applyMatrixTransformation(redwood, blackAndWhite));
+
+
+
+{/* <CanvasImage matrix={[[.33, .33, .33], [.33, .33, .33], [.33, .33, .33]]} /> */}
+
+
+{/* <CanvasImage matrix={[[1.5, 0, 0], [0, 1, 0], [0, 0, 1]]} /> */}
+
+{/* <SVGImage width={512} /> */}
+
+
+<div className="my-8">
+  <AnimatedRGBSpace startPoints={redwoodPoints} transformMatrix={blackAndWhite} width={928} height={500} controlMode="click" />
+</div>
+
+<div className="my-8">
+  <AnimatedRGBSpace startPoints={redwoodPoints} endPoints={endPoints} width={928} height={500} controlMode="click" />
+</div>
