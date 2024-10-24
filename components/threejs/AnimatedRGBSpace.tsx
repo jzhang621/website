@@ -3,32 +3,33 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { AnimatedRGBSceneProps } from './types';
-import { createScene, createCustomAxes, createGrid, normalizeRGB, createRGBPoint, createRGBCube } from './utils';
-import { clampRGB } from '@/data/utils';
+import { createScene, createCustomAxes, createGrid, normalizeRGB, createRGBPoint } from './utils';
 import styles from './style.module.css';
+import useAnimationTime from '@/hooks/useAnimationTime';
 
 const AnimatedRGBSpace: React.FC<AnimatedRGBSceneProps> = ({
     startPoints = [],
     endPoints = [],
     width = window.innerWidth,
     height = window.innerHeight,
-    transformMatrix,
     animationDuration = 1000,
-    controlMode = 'button',
-    autoAnimate = false
+    controlMode = 'click',
 }) => {
     const canvasRef = useRef<HTMLDivElement>(null);
-    const [isAnimating, setIsAnimating] = useState(false);
     const animationRef = useRef<number>();
     const spheresRef = useRef<THREE.Mesh[]>([]);
     const linesRef = useRef<THREE.Line[]>([]);
 
+    const [isRunning, setIsRunning] = useState(false);
+    const elapsedTime = useAnimationTime(animationDuration, isRunning);
 
     useEffect(() => {
-        const { scene, camera, renderer } = createScene(width, height);
+        // console.log({ elapsedTime });
+        const { labelRenderer, scene, camera, renderer } = createScene(width, height);
 
         if (canvasRef.current) {
             canvasRef.current.appendChild(renderer.domElement);
+            canvasRef.current.appendChild(labelRenderer.domElement);
         }
 
         // Setup scene
@@ -42,49 +43,51 @@ const AnimatedRGBSpace: React.FC<AnimatedRGBSceneProps> = ({
 
         startPoints.forEach((point) => {
             // Create sphere
-            const { sphere, line } = createRGBPoint(point, scene, 0.01);
+            const { sphere, line } = createRGBPoint(point, scene, 0.025);
             spheresRef.current.push(sphere);
             linesRef.current.push(line);
         });
 
 
-        let direction = 1;
+        let direction = 0;
         let angle = Math.PI * (1 / 3);
         const SPEED = 0.001;
         const MAX_ANGLE = Math.PI * (2 / 3); // 180 degrees
-        // Animation loop
+        // // Animation loop
         const animate = () => {
-            angle += SPEED * direction;
+            // angle += SPEED * direction;
 
-            // Reverse direction when we hit the limits
-            if (angle >= MAX_ANGLE || angle <= 0) {
-                direction *= -1;
-            }
+            // // Reverse direction when we hit the limits
+            // if (angle >= MAX_ANGLE || angle <= 0) {
+            //     direction *= -1;
+            // }
 
-            camera.position.x = Math.cos(angle);
-            camera.position.z = Math.sin(angle);
-            camera.lookAt(0, 0, 0);
+            // // camera.position.x = Math.cos(angle);
+            // // camera.position.z = Math.sin(angle);
+            // camera.lookAt(0, 0, 0);
+            // labelRenderer.render(scene, camera);
             renderer.render(scene, camera);
             requestAnimationFrame(animate);
         };
+
+        renderer.render(scene, camera);
+        labelRenderer.render(scene, camera);
+
         animate();
 
         const startAnimation = () => {
-            if (isAnimating) return;
 
             const startTime = performance.now();
+
             const animatePoints = (currentTime: number) => {
                 const elapsed = currentTime - startTime;
                 const progress = Math.min(elapsed / animationDuration, 1);
 
                 startPoints.forEach((startPoint, index) => {
-
                     let endPoint = endPoints[index];
-
 
                     const [r1, g1, b1] = normalizeRGB(startPoint);
                     const [r2, g2, b2] = normalizeRGB(endPoint);
-                    console.log({ r1, g1, b1, r2, g2, b2 });
 
                     const r = THREE.MathUtils.lerp(r1, r2, progress);
                     const g = THREE.MathUtils.lerp(g1, g2, progress);
@@ -96,7 +99,6 @@ const AnimatedRGBSpace: React.FC<AnimatedRGBSceneProps> = ({
                     // Move the sphere
                     sphere.position.set(r, g, b);
 
-
                     sphere.position.set(r, g, b);
                     sphere.material.color.setRGB(r, g, b);
 
@@ -107,10 +109,7 @@ const AnimatedRGBSpace: React.FC<AnimatedRGBSceneProps> = ({
 
                 if (progress < 1) {
                     animationRef.current = requestAnimationFrame(animatePoints);
-                    setIsAnimating(true);
-                } else {
-                    setIsAnimating(false);
-                }
+                } 
             };
 
             animationRef.current = requestAnimationFrame(animatePoints);
@@ -119,29 +118,24 @@ const AnimatedRGBSpace: React.FC<AnimatedRGBSceneProps> = ({
         // Set up controls
         if (controlMode === 'click') {
             renderer.domElement.addEventListener('click', startAnimation);
+            labelRenderer.domElement.addEventListener('click', startAnimation);
         }
-
-        if (autoAnimate) {
-            startAnimation();
-        }
-
 
         // Cleanup
         return () => {
-            if (animationRef.current) {
-                cancelAnimationFrame(animationRef.current);
-            }
             if (canvasRef.current) {
                 canvasRef.current.removeChild(renderer.domElement);
+                canvasRef.current.removeChild(labelRenderer.domElement);
             }
             renderer.domElement.removeEventListener('click', startAnimation);
         };
-    }, [startPoints, endPoints, width, height, animationDuration]);
+    }, [startPoints, endPoints, width, height, animationDuration, elapsedTime, isRunning]);
+
 
     return (
         <div className={`${styles.canvasContainer}`}>
             <div ref={canvasRef} />
-            {controlMode === 'button' && (
+            {/* {controlMode === 'button' && (
                 <button
                     className="absolute top-4 right-4 px-4 py-2 bg-blue-500 text-white rounded-md disabled:bg-gray-400"
                     onClick={() => {
@@ -155,11 +149,10 @@ const AnimatedRGBSpace: React.FC<AnimatedRGBSceneProps> = ({
                             });
                         }
                     }}
-                    disabled={isAnimating}
                 >
                     {isAnimating ? 'Animating...' : 'Transform Points'}
                 </button>
-            )}
+            )} */}
         </div>
     );
 };

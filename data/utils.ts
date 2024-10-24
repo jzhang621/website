@@ -31,6 +31,29 @@ export function applyMatrixTransformation(pixels: Uint8Array, matrix: number[][]
 
 
 
+export function generateRGBGradient(startRGB: [number, number, number], endRGB: [number, number, number], steps = 3) {
+    const gradient = [];
+
+    // Linear interpolation helper function
+    function interpolate(start: number, end: number, factor: number) {
+        return Math.round(start + (end - start) * factor);
+    }
+
+    // Generate gradient
+    for (let i = 0; i <= steps; i++) {
+        const factor = i / steps; // factor for interpolation (from 0 to 1)
+        const r = interpolate(startRGB[0], endRGB[0], factor);
+        const g = interpolate(startRGB[1], endRGB[1], factor);
+        const b = interpolate(startRGB[2], endRGB[2], factor);
+
+        gradient.push([r, g, b]);
+    }
+
+    return gradient;
+}
+
+
+
 export function clampRGB(rgb: [number, number, number]): [number, number, number] {
     return rgb.map(value => Math.max(0, Math.min(255, value))) as [number, number, number];
 }
@@ -66,4 +89,27 @@ export function extractRGBPoints(
     }
 
     return result;
+}
+
+/**
+ * Interpolates between two RGB colors over a given animation duration.
+ * @param start - Starting RGB color [r, g, b]
+ * @param end - Ending RGB color [r, g, b]
+ * @param duration - Animation duration in milliseconds
+ * @param currentTime - Current time of the animation in milliseconds
+ * @returns Interpolated RGB color [r, g, b]
+ */
+export function interpolateRGB(
+    start: [number, number, number],
+    end: [number, number, number],
+    duration: number,
+    currentTime: number
+): [number, number, number] {
+    const progress = Math.min(currentTime / duration, 1);
+
+    const r = Math.round(start[0] + (end[0] - start[0]) * progress);
+    const g = Math.round(start[1] + (end[1] - start[1]) * progress);
+    const b = Math.round(start[2] + (end[2] - start[2]) * progress);
+
+    return clampRGB([r, g, b]);
 }

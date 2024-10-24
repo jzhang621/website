@@ -9,12 +9,12 @@ const ColorSwatch: React.FC<ColorSwatchProps> = ({ rgb }) => {
     const color = `rgb(${r}, ${g}, ${b})`;
 
     return (
-        <div>
+        <div className="flex flex-col items-center">
             <div
-                className={`rounded-sm w-36 h-36`}
+                className={`rounded-sm w-32 h-32`}
                 style={{ backgroundColor: color }}
             />
-            <div style={{ marginTop: '8px', fontSize: '15px' }}>{color}</div>
+            <div className="mt-2 text-sm font-semibold">{color}</div>
         </div>
     );
 };

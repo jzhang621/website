@@ -6,21 +6,61 @@ import SVGImage from '@/components/rgb/SVGImage';
 import { extractRGBPoints, applyMatrixTransformation } from '@/data/utils';
 import { redwood } from '@/data/redwood';
 import ColorSwatch from '@/components/rgb/ColorSwatch';
+import { generateRGBGradient } from '@/data/utils';
+import CustomImage from '@/components/Image';
 
 export const point = [66, 38, 92];
+export const bright = [182, 105, 254];
 
-## Colors as Vectors
+## Fun Colors, Images, Vectors, and Matrix Transformations
 
-I think colors are a lot of fun. Turns out, they're also an engaging way to learn about vectors and vector spaces.
+Recently, I've been learning about how Language Learning Models (LLMs) work, which involve a good amount of linear algebra. I found that thinking representing colors and images as vectors and transforming them with matrices was a helpful way to understand linear transformations. I wanted to share some of what I learned with some fun visuals and animations.
 
-Let's start with this color:
 
-<div className="my-8">
+Let's start with this color, which we describe using the RGB color model:
+
+<div className="flex justify-center my-8">
   <ColorSwatch rgb={point} />
 </div>
 
+The RGB color model represents colors as a combination of red, green, and blue light. To describe a color, we provide a `(r, g, b)` tuple, where each value is an integer between 0 and 255.
+
+We can think of this color as a point in a 3D space, where each axis represents the intensity of one of the RGB color channels. We can think of this color as a vector, which we represent as an arrow starting at the origin `(0, 0, 0)` and ending at the point `(r, g, b)`.
+
+<div className="w-[90%] mx-auto my-8">
+<CustomImage src="/images/rgb.png" width={800} height={512} />
+</div>
+
+## RGB Color Space
+
+If we take all the colors in the RGB color model, we get a cube. Each axis represents the intensity of one of the RGB color channels, and each point in the cube is a color.
+
+I want to show how a few of the properties of color can be visualized in the RGB color space.
+
+### Brightness
+
+If we want to make this color "brighter", we want to increase the magnitude of the vector while keeping the same direction. This corresponds to multiplying the vector by a scalar greater than 1.
+
 <div className="my-8">
-  <StaticRGBSpace points={[point]} width={800} height={500} />
+  <AnimatedRGBSpace startPoints={[point]} endPoints={[bright]} width={800} height={500} controlMode="click" />
+</div>
+
+### Gray Scale
+
+In the RGB color model, gray colors are those where the red, green, and blue intensities are equal. We can represent this as a line through the origin in the RGB color space - each point on the line is a gray color with a different brightness.
+
+### Gradients and Interpolation
+
+The RGB color model allows us to easily interpolate between colors. If we want to smoothly transition from one color to another, we can do so by linearly interpolating between the two colors. This is equivalent to drawing a line between the two points and finding all the points along the line.
+
+<div className="my-8">
+  <ColorSwatch rgb={bright} />
+</div>
+
+
+
+<div className="my-8">
+  <StaticRGBSpace points={generateRGBGradient([255, 207, 94], [56, 138, 92], 5)} width={800} height={500} />
 </div>
 
 

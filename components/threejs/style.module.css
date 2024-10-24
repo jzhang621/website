@@ -4,7 +4,7 @@
     min-height: 400px;
     overflow: hidden;
     border-radius: 10px;
-
+    position: relative;
 }
 
 .canvas-container canvas {
@@ -21,6 +21,6 @@
 }
 
 .canvasContainer canvas {
-    background-color: #001f3f;
+    background-color: rgb(201, 221, 191, .25);
     border-radius: 10px;
 }
