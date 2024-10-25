@@ -12,42 +12,66 @@ import CustomImage from '@/components/Image';
 export const point = [66, 38, 92];
 export const bright = [182, 105, 254];
 
+export const grays = generateRGBGradient([0, 0, 0], [255, 255, 255], 50);
+
 ## Fun Colors, Images, Vectors, and Matrix Transformations
 
-Recently, I've been learning about how Language Learning Models (LLMs) work, which involve a good amount of linear algebra. I found that thinking representing colors and images as vectors and transforming them with matrices was a helpful way to understand linear transformations. I wanted to share some of what I learned with some fun visuals and animations.
+I've been learning about Large Language Models (LLMs) recently, which made me realize I need to brush up on my linear algebra. Working with images was a fun and engaging way to do so, so here are some visuals and animations to share what I learned - maybe they'll help you too!
 
 
-Let's start with this color, which we describe using the RGB color model:
+### RGB Color Model
 
+The [RGB color model](https://en.wikipedia.org/wiki/RGB_color_model) represents colors as a combination of red, green, and blue light. We describe a particular color using a `(r, g, b)` tuple, where each value is an integer between 0 and 255, indicating the strength of red, green, and blue light, respectively.
+
+Here are some colors described using the RGB color model:
+
+<div className="flex gap-8 justify-center my-8 bg-slate-100 py-4 rounded-sm">
+ <ColorSwatch rgb={[0, 0, 0]} label="Black" />
+ <ColorSwatch rgb={[255, 0, 0]} label="Red" />
+ <ColorSwatch rgb={[0, 255, 0]} label="Green" />
+ <ColorSwatch rgb={[0, 0, 255]} label="Blue" />
+ <ColorSwatch rgb={[255, 255, 255]} label="White" />
+</div>
+
+### Colors as Vectors
+
+Let's start by focusing on a particular color:
 <div className="flex justify-center my-8">
-  <ColorSwatch rgb={point} />
+  <ColorSwatch rgb={point} label="Deep Violet" />
 </div>
 
-The RGB color model represents colors as a combination of red, green, and blue light. To describe a color, we provide a `(r, g, b)` tuple, where each value is an integer between 0 and 255.
+One way to think about this color is as a 3D **vector**: $\vec{\text{v}} = [66, 38, 92]$
 
-We can think of this color as a point in a 3D space, where each axis represents the intensity of one of the RGB color channels. We can think of this color as a vector, which we represent as an arrow starting at the origin `(0, 0, 0)` and ending at the point `(r, g, b)`.
 
-<div className="w-[90%] mx-auto my-8">
-<CustomImage src="/images/rgb.png" width={800} height={512} />
+<div className="w-4/5 mx-auto my-8">
+  <CustomImage src="/images/rgb.png" width={600} />
+  <figcaption className="text-center text-xs text-gray-400">
+  The vector $\vec{\text{v}} = [66, 38, 92]$ shown as a point in 3D space.
+  </figcaption>
 </div>
 
-## RGB Color Space
-
-If we take all the colors in the RGB color model, we get a cube. Each axis represents the intensity of one of the RGB color channels, and each point in the cube is a color.
-
-I want to show how a few of the properties of color can be visualized in the RGB color space.
+From now on, we'll manipulate this color by manipulating its vector representation.
 
 ### Brightness
 
-If we want to make this color "brighter", we want to increase the magnitude of the vector while keeping the same direction. This corresponds to multiplying the vector by a scalar greater than 1.
+We can control the "brightness" of our color by changing the magnitude of the vector, while keeping its direction. Increasing the magnitude makes it brighter, and decreasing it makes it darker.
 
 <div className="my-8">
-  <AnimatedRGBSpace startPoints={[point]} endPoints={[bright]} width={800} height={500} controlMode="click" />
+  <AnimatedRGBSpace startPoints={[point]} endPoints={[bright]} width={800} height={500} />
 </div>
 
 ### Gray Scale
 
 In the RGB color model, gray colors are those where the red, green, and blue intensities are equal. We can represent this as a line through the origin in the RGB color space - each point on the line is a gray color with a different brightness.
+
+<div className="w-[90%] mx-auto my-8">
+  <CustomImage src="/images/gray.jpg" width={800} height={512} />
+</div>
+
+{/* <div className="my-8">
+  <StaticRGBSpace points={grays} width={800} height={500} rotationAngle={15} />
+</div> */}
+
 
 ### Gradients and Interpolation
 
@@ -59,9 +83,7 @@ The RGB color model allows us to easily interpolate between colors. If we want t
 
 
 
-<div className="my-8">
-  <StaticRGBSpace points={generateRGBGradient([255, 207, 94], [56, 138, 92], 5)} width={800} height={500} />
-</div>
+
 
 
 export const redwoodPoints = extractRGBPoints(redwood);
@@ -70,7 +92,16 @@ export const transformMatrix = [[1.5, 0, 0], [0, 1, 0], [0, 0, 1]];
 
 export const blackAndWhite = [[.33, .33, .33], [.33, .33, .33], [.33, .33, .33]];
 
-export const endPoints = extractRGBPoints(applyMatrixTransformation(redwood, blackAndWhite));
+export const redTint = [[1.5, 0, 0], [0, 1, 0], [0, 0, 1]];
+
+
+export const noGreen = [[1, 0, 0], [0, 0, 0], [0, 0, 1]];
+export const noBlue = [[1, 0, 0], [0, 1, 0], [0, 0, 0]];
+export const noRed = [[0, 0, 0], [0, 1, 0], [0, 0, 1]];
+export const filter = noBlue;
+
+
+export const endPoints = extractRGBPoints(applyMatrixTransformation(redwood, filter));
 
 
 
@@ -82,10 +113,18 @@ export const endPoints = extractRGBPoints(applyMatrixTransformation(redwood, bla
 {/* <SVGImage width={512} /> */}
 
 
-<div className="my-8">
+{/* <div className="my-8">
   <AnimatedRGBSpace startPoints={redwoodPoints} transformMatrix={blackAndWhite} width={928} height={500} controlMode="click" />
-</div>
+</div> */}
+
+## Matrix Transformations
 
 <div className="my-8">
-  <AnimatedRGBSpace startPoints={redwoodPoints} endPoints={endPoints} width={928} height={500} controlMode="click" />
+  <AnimatedRGBSpace startPoints={redwoodPoints} endPoints={endPoints} width={928} height={500} rotationAngle={0} />
 </div>
+
+<div className="flex gap-4">
+  <CanvasImage matrix={[[1, 0, 0], [0, 1, 0], [0, 0, 1]]} />
+  <CanvasImage matrix={filter} />
+</div>
+

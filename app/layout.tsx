@@ -32,8 +32,8 @@ export default function RootLayout({
             </head>
 
             <body
-                className={`bg-[#fbf9f4] ${geistSans.variable} ${geistMono.variable} antialiased`}
-                // className={`bg-white ${geistSans.variable} ${geistMono.variable} antialiased`}
+                // className={`bg-[#fbf9f4] ${geistSans.variable} ${geistMono.variable} antialiased`}
+                className={`bg-white ${geistSans.variable} ${geistMono.variable} antialiased`}
             >
                 <div className="mt-8 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">{children}</div>
             </body>

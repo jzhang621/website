@@ -29,8 +29,6 @@ export function applyMatrixTransformation(pixels: Uint8Array, matrix: number[][]
 }
 
 
-
-
 export function generateRGBGradient(startRGB: [number, number, number], endRGB: [number, number, number], steps = 3) {
     const gradient = [];
 

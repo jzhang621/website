@@ -18,6 +18,7 @@ export interface BaseRGBSceneProps {
 
 export interface StaticRGBSceneProps extends BaseRGBSceneProps {
     points: Array<[number, number, number]>;
+    cameraPosition?: [number, number, number];
 }
 
 export interface AnimatedRGBSceneProps extends BaseRGBSceneProps {
@@ -25,6 +26,4 @@ export interface AnimatedRGBSceneProps extends BaseRGBSceneProps {
     endPoints: Array<[number, number, number]>;
     transformMatrix?: number[][];
     animationDuration?: number;
-    controlMode?: 'click' | 'button' | 'auto';
-    autoAnimate?: boolean;
 }

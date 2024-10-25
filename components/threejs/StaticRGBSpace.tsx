@@ -3,30 +3,61 @@
 
 import React, { useEffect, useRef } from 'react';
 import { StaticRGBSceneProps } from './types';
-import { createScene, createCustomAxes, createGrid, createRGBPoint } from './utils';
+import { createScene, createCustomAxes, createGrid, createRGBPoint, normalizeRGB } from './utils';
 import styles from './style.module.css';
 import { SVGRenderer } from 'three/examples/jsm/renderers/SVGRenderer';
-
+import * as THREE from 'three';
 
 const StaticRGBSpace: React.FC<StaticRGBSceneProps> = ({
     points = [],
     width = window.innerWidth,
-    height = window.innerHeight
+    height = window.innerHeight,
+    rotationAngle,
 }) => {
+    console.log({ rotationAngle });
+
     const canvasRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        const { labelRenderer, scene, camera, renderer } = createScene(width, height);
+        const { labelRenderer, scene, camera, renderer, light } = createScene(width, height);
 
         if (canvasRef.current) {
             canvasRef.current.appendChild(renderer.domElement);
-            // canvasRef.current.appendChild(labelRenderer.domElement);
+            canvasRef.current.appendChild(labelRenderer.domElement);
         }
 
         // Setup scene
         createCustomAxes(scene);
         ['xy', 'xz', 'yz'].forEach(dir => createGrid(dir as 'xy' | 'xz' | 'yz', scene));
-        points.forEach(point => createRGBPoint(point, scene, .025));
+        points.forEach(point => createRGBPoint(point, scene, .02));
+
+        // points.forEach((point, index) => {
+        //     const [r, g, b] = normalizeRGB(point);
+
+        //     const oneThirdIndex = Math.floor(points.length / 3);
+        //     const twoThirdsIndex = Math.floor(2 * points.length / 3);
+
+        //     if (index === oneThirdIndex || index === twoThirdsIndex) {
+
+        //         // Create line from [r, g, b] to [r, 0, b]
+        //         const lineGeometry = new THREE.BufferGeometry().setFromPoints([
+        //             new THREE.Vector3(r, g, b),
+        //             new THREE.Vector3(r, 0, b)
+        //         ]);
+        //         const lineMaterial = new THREE.LineBasicMaterial({ color: 0x000000 });
+        //         const lineMesh = new THREE.Line(lineGeometry, lineMaterial);
+        //         scene.add(lineMesh);
+        //     }
+        // });
+
+        if (rotationAngle !== undefined) {
+            // const angle = Math.PI / 180 * rotationAngle;
+            const rotationAngle = 0;
+            const angle = Math.PI / 180 * rotationAngle;
+            camera.position.set(Math.cos(angle), 2.05, Math.sin(angle));
+            light.position.set(Math.cos(angle), 5, Math.sin(angle));
+            camera.lookAt(0, 0, 0);
+        }
 
         // renderer.render(scene, camera);
 
@@ -78,6 +109,7 @@ const StaticRGBSpace: React.FC<StaticRGBSceneProps> = ({
         return () => {
             if (canvasRef.current) {
                 canvasRef.current.removeChild(renderer.domElement);
+                canvasRef.current.removeChild(labelRenderer.domElement);
             }
         };
     }, [points, width, height]);

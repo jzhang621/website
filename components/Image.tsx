@@ -4,22 +4,22 @@ import Image from 'next/image';
 interface ImageProps {
     src: string;
     width: number;
-    height: number;
     alt?: string;
 }
 
-const CustomImage: React.FC<ImageProps> = ({ src, width, height, alt = '' }) => {
+const CustomImage: React.FC<ImageProps> = ({ src, width, alt = '' }) => {
     return (
         <Image
             src={src}
             width={width}
-            height={height}
-            layout="responsive"
+            height={0}
+            style={{ width: '100%', height: 'auto' }}
             alt={alt}
         />
     );
 };
 
 export default CustomImage;
+
 
 

@@ -1,10 +1,11 @@
 // This file is required to use @next/mdx in the `app` directory.
 // import { MDXComponents } from "mdx/types";
-
+import Latex from "./components/Latex";
 
 export function useMDXComponents(components) {
     // Default components with custom styling
     const defaultComponents = {
+        Latex: ({ children }) => <Latex>{children}</Latex>,
         h1: ({ children }) => (
             <h1
                 style={{

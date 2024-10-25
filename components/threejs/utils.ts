@@ -29,7 +29,8 @@ export const createScene = (width: number, height: number) => {
     renderer.shadowMap.type = THREE.PCFSoftShadowMap; // Use soft shadow map
 
     const light = new THREE.DirectionalLight(0xffffff, 1);
-    light.position.set(5, 10, 5);
+
+    // light.position.set(5, 10, 5);
     light.castShadow = true; // Enable shadow casting
     scene.add(light);
 
@@ -54,7 +55,6 @@ export const createScene = (width: number, height: number) => {
     labelRenderer.domElement.style.top = '0';
 
 
-
     // Create labels
     const createLabel = (text: string, position: { x: number, y: number, z: number }, color = '#ffffff') => {
         const div = document.createElement('div');
@@ -64,6 +64,7 @@ export const createScene = (width: number, height: number) => {
         div.style.fontSize = '14px';
         div.style.fontFamily = 'sans-serif';
         div.style.fontWeight = '500';
+
 
         const label = new CSS2DObject(div);
         label.position.set(position.x, position.y, position.z);
@@ -80,40 +81,11 @@ export const createScene = (width: number, height: number) => {
     createLabel("[0, 0, 255]", { x: 0, y: 0, z: 1.1 }, '#0000ff');
 
 
-    return { labelRenderer, scene, camera, renderer };
+    return { labelRenderer, scene, camera, renderer, light }
 };
 
 
 export function createCustomAxes(scene: THREE.Scene) {
-    // Load font
-    // const loader = new FontLoader();
-    // loader.load('/fonts/helvetiker_regular.typeface.json', function (font: Font) {
-    //     console.log({ font });
-
-    //     // Create text labels for each axis
-    //     const createLabel = (text: string, position: { x: number, y: number, z: number }, color: number) => {
-    //         const textGeometry = new TextGeometry(text, {
-    //             font: font,
-    //             size: 0.05,
-    //             height: 0.01,
-    //         });
-
-    //         const textMaterial = new THREE.MeshBasicMaterial({ color: color });
-    //         const mesh = new THREE.Mesh(textGeometry, textMaterial);
-    //         mesh.position.set(position.x, position.y, position.z);
-    //         scene.add(mesh);
-    //     };
-
-    //     // X Axis Label
-    //     createLabel("[255, 0, 0]", { x: 0, y: 0, z: 0 }, 0xff0000); // Red
-
-    //     // Y Axis Label
-    //     createLabel("[0, 255, 0]", { x: 0, y: 3, z: 0 }, 0x00ff00); // Green
-
-    //     // Z Axis Label
-    //     createLabel("[0, 0, 255]", { x: 0, y: 0, z: 3 }, 0x0000ff); // Blue
-    // });
-
 
     const axisLength = 1;
     const axisRadius = 0.0085;  // Adjust this value to control thickness

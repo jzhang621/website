@@ -5,27 +5,63 @@ import * as THREE from 'three';
 import { AnimatedRGBSceneProps } from './types';
 import { createScene, createCustomAxes, createGrid, normalizeRGB, createRGBPoint } from './utils';
 import styles from './style.module.css';
-import useAnimationTime from '@/hooks/useAnimationTime';
+import { useAnimationProgress } from '@/hooks/useAnimationProgress';
+import ColorSwatch from '../rgb/ColorSwatch';
+import { interpolateRGB } from '@/data/utils';
+import { PlayArrow } from '@mui/icons-material';
 
 const AnimatedRGBSpace: React.FC<AnimatedRGBSceneProps> = ({
     startPoints = [],
     endPoints = [],
     width = window.innerWidth,
     height = window.innerHeight,
+    rotationAngle,
     animationDuration = 1000,
-    controlMode = 'click',
 }) => {
+    const delay = animationDuration * 0.5;
+    // const [delay, setDelay] = useState(animationDuration * 0.5);
+
     const canvasRef = useRef<HTMLDivElement>(null);
-    const animationRef = useRef<number>();
     const spheresRef = useRef<THREE.Mesh[]>([]);
     const linesRef = useRef<THREE.Line[]>([]);
 
-    const [isRunning, setIsRunning] = useState(false);
-    const elapsedTime = useAnimationTime(animationDuration, isRunning);
+    const { startAnimation, progress, isRunning } = useAnimationProgress({
+        duration: animationDuration,
+        delay,
+    });
 
+    // Update the points based on the progress
+    // Animation loop
     useEffect(() => {
-        // console.log({ elapsedTime });
+        if (isRunning && progress < 1) {
+            startPoints.forEach((startPoint, index) => {
+                let endPoint = endPoints[index];
+                const [r1, g1, b1] = normalizeRGB(startPoint);
+                const [r2, g2, b2] = normalizeRGB(endPoint);
+
+                const r = THREE.MathUtils.lerp(r1, r2, progress);
+                const g = THREE.MathUtils.lerp(g1, g2, progress);
+                const b = THREE.MathUtils.lerp(b1, b2, progress);
+
+                spheresRef.current[index].position.set(r, g, b);
+                spheresRef.current[index].material.color.setRGB(r, g, b);
+
+                const positions = new Float32Array([0, 0, 0, r, g, b]);
+                linesRef.current[index].geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                linesRef.current[index].material.color.setRGB(r, g, b);
+            });
+        }
+    }, [progress, isRunning]);
+
+    // Setup the scene
+    useEffect(() => {
         const { labelRenderer, scene, camera, renderer } = createScene(width, height);
+
+        if (rotationAngle !== undefined) {
+            const angle = Math.PI / 180 * rotationAngle;
+            camera.position.set(Math.cos(angle), 1.85, Math.sin(angle));
+            camera.lookAt(0, 0, 0);
+        }
 
         if (canvasRef.current) {
             canvasRef.current.appendChild(renderer.domElement);
@@ -33,7 +69,6 @@ const AnimatedRGBSpace: React.FC<AnimatedRGBSceneProps> = ({
         }
 
         // Setup scene
-        // createRGBCube(scene);
         createCustomAxes(scene);
         ['xy', 'xz', 'yz'].forEach(dir => createGrid(dir as 'xy' | 'xz' | 'yz', scene));
 
@@ -75,51 +110,6 @@ const AnimatedRGBSpace: React.FC<AnimatedRGBSceneProps> = ({
 
         animate();
 
-        const startAnimation = () => {
-
-            const startTime = performance.now();
-
-            const animatePoints = (currentTime: number) => {
-                const elapsed = currentTime - startTime;
-                const progress = Math.min(elapsed / animationDuration, 1);
-
-                startPoints.forEach((startPoint, index) => {
-                    let endPoint = endPoints[index];
-
-                    const [r1, g1, b1] = normalizeRGB(startPoint);
-                    const [r2, g2, b2] = normalizeRGB(endPoint);
-
-                    const r = THREE.MathUtils.lerp(r1, r2, progress);
-                    const g = THREE.MathUtils.lerp(g1, g2, progress);
-                    const b = THREE.MathUtils.lerp(b1, b2, progress);
-
-                    const sphere = spheresRef.current[index];
-                    const line = linesRef.current[index];
-
-                    // Move the sphere
-                    sphere.position.set(r, g, b);
-
-                    sphere.position.set(r, g, b);
-                    sphere.material.color.setRGB(r, g, b);
-
-                    const positions = new Float32Array([0, 0, 0, r, g, b]);
-                    line.geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-                    line.material.color.setRGB(r, g, b);
-                });
-
-                if (progress < 1) {
-                    animationRef.current = requestAnimationFrame(animatePoints);
-                } 
-            };
-
-            animationRef.current = requestAnimationFrame(animatePoints);
-        };
-
-        // Set up controls
-        if (controlMode === 'click') {
-            renderer.domElement.addEventListener('click', startAnimation);
-            labelRenderer.domElement.addEventListener('click', startAnimation);
-        }
 
         // Cleanup
         return () => {
@@ -127,32 +117,30 @@ const AnimatedRGBSpace: React.FC<AnimatedRGBSceneProps> = ({
                 canvasRef.current.removeChild(renderer.domElement);
                 canvasRef.current.removeChild(labelRenderer.domElement);
             }
-            renderer.domElement.removeEventListener('click', startAnimation);
         };
-    }, [startPoints, endPoints, width, height, animationDuration, elapsedTime, isRunning]);
-
+    }, []);
 
     return (
         <div className={`${styles.canvasContainer}`}>
-            <div ref={canvasRef} />
-            {/* {controlMode === 'button' && (
+
+            <div className={"relative mx-auto w-full"} style={{ width: `${width}px`, height: `${height}px` }}>
+                <div ref={canvasRef} />
+
                 <button
-                    className="absolute top-4 right-4 px-4 py-2 bg-blue-500 text-white rounded-md disabled:bg-gray-400"
-                    onClick={() => {
-                        if (!isAnimating) {
-                            setIsAnimating(true);
-                            const startTime = performance.now();
-                            requestAnimationFrame(() => {
-                                if (animationRef.current) {
-                                    animationRef.current(startTime);
-                                }
-                            });
-                        }
-                    }}
+                    className={`bg-[rgb(253,226,154,128)] hover:bg-[#FCD468] cursor-pointer
+                absolute w-8 h-8 flex items-center justify-center rounded-md top-4 left-4`}
+                    tabIndex={0}
+                    onClick={() => startAnimation()}
                 >
-                    {isAnimating ? 'Animating...' : 'Transform Points'}
+                    <PlayArrow className="text-amber-500 w-8 h-8 hover:text-amber-600" />
                 </button>
-            )} */}
+
+                <div className="absolute top-4 right-4">
+                    <ColorSwatch rgb={interpolateRGB(startPoints[0], endPoints[0], animationDuration, progress * animationDuration)} />
+                </div>
+
+            </div>
+            {/* <ColorSwatch rgb={interpolateRGB(startPoints[0], endPoints[0], animationDuration, progress * animationDuration)} /> */}
         </div>
     );
 };

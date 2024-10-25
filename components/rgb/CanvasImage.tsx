@@ -88,8 +88,7 @@ const ImageRenderer: React.FC<ImageRendererProps> = ({ data = redwood, width = 5
 
     return (
         <div>
-            <h1>Rendering Image Data</h1>
-            {!dataLoaded && <p>Loading image data...</p>}
+            {/* {!dataLoaded && <p>Loading image data...</p>} */}
             <canvas ref={canvasRef} width={width} height={height}></canvas>
         </div>
     );
