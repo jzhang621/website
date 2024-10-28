@@ -36,7 +36,7 @@ const AnimatedRGBSpace: React.FC<AnimatedRGBSceneProps> = ({
     useEffect(() => {
         if (isRunning && progress < 1) {
             startPoints.forEach((startPoint, index) => {
-                let endPoint = endPoints[index];
+                const endPoint = endPoints[index];
                 const [r1, g1, b1] = normalizeRGB(startPoint);
                 const [r2, g2, b2] = normalizeRGB(endPoint);
 
