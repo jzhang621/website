@@ -44,7 +44,7 @@ interface ImageRendererProps {
 
 
 const ImageRenderer: React.FC<ImageRendererProps> = ({ data = redwood, width = 512, height = 512, matrix }) => {
-    const [dataLoaded, setDataLoaded] = useState(false);
+
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
 
@@ -63,10 +63,16 @@ const ImageRenderer: React.FC<ImageRendererProps> = ({ data = redwood, width = 5
 
                 if (matrix) {
                     const [mr, mg, mb] = matrix;
-                    r = mr[0]! * r + mr[1]! * g + mr[2]! * b;
-                    g = mg[0]! * r + mg[1]! * g + mg[2]! * b;
-                    b = mb[0]! * r + mb[1]! * g + mb[2]! * b;
 
+                    const origR = r;
+                    const origG = g;
+                    const origB = b;
+
+                    r = Number(mr[0] ?? 0) * origR + Number(mr[1] ?? 0) * origG + Number(mr[2] ?? 0) * origB;
+                    g = Number(mg[0] ?? 0) * origR + Number(mg[1] ?? 0) * origG + Number(mg[2] ?? 0) * origB;
+                    b = Number(mb[0] ?? 0) * origR + Number(mb[1] ?? 0) * origG + Number(mb[2] ?? 0) * origB;
+
+                    // Clamp values to 0-255
                     r = Math.max(0, Math.min(255, r));
                     g = Math.max(0, Math.min(255, g));
                     b = Math.max(0, Math.min(255, b));
@@ -80,13 +86,11 @@ const ImageRenderer: React.FC<ImageRendererProps> = ({ data = redwood, width = 5
             }
 
             ctx.putImageData(imageData, 0, 0);
-            setDataLoaded(true);
         }
     }, [data, width, height, matrix]);
 
     return (
         <div>
-            {/* {!dataLoaded && <p>Loading image data...</p>} */}
             <canvas ref={canvasRef} width={width} height={height}></canvas>
         </div>
     );

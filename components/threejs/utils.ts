@@ -16,8 +16,7 @@ export const createScene = (width: number, height: number) => {
     const fov = 75;
     const camera = new THREE.PerspectiveCamera(fov, width / height, 0.1, 1000);
 
-    let angle = Math.PI / 5;
-
+    const angle = Math.PI / 5;
     camera.position.set(Math.cos(angle), 1.85, Math.sin(angle));
     camera.lookAt(0, 0, 0);
 

@@ -14,11 +14,12 @@ export interface RGBPoint {
 export interface BaseRGBSceneProps {
     width?: number;
     height?: number;
+    rotationAngle?: number;
+    cameraYPosition?: number;
 }
 
 export interface StaticRGBSceneProps extends BaseRGBSceneProps {
     points: Array<[number, number, number]>;
-    cameraPosition?: [number, number, number];
 }
 
 export interface AnimatedRGBSceneProps extends BaseRGBSceneProps {

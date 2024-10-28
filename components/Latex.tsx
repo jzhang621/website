@@ -1,7 +1,7 @@
 import React from 'react';
 import katex from 'katex';
 
-const Latex = ({ children }) => {
+const Latex = ({ children }: { children: string }) => {
     const html = katex.renderToString(children, {
         throwOnError: false,
     });

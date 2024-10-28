@@ -30,25 +30,6 @@ const StaticRGBSpace: React.FC<StaticRGBSceneProps> = ({
         ['xy', 'xz', 'yz'].forEach(dir => createGrid(dir as 'xy' | 'xz' | 'yz', scene));
         points.forEach(point => createRGBPoint(point, scene, .02));
 
-        // points.forEach((point, index) => {
-        //     const [r, g, b] = normalizeRGB(point);
-
-        //     const oneThirdIndex = Math.floor(points.length / 3);
-        //     const twoThirdsIndex = Math.floor(2 * points.length / 3);
-
-        //     if (index === oneThirdIndex || index === twoThirdsIndex) {
-
-        //         // Create line from [r, g, b] to [r, 0, b]
-        //         const lineGeometry = new THREE.BufferGeometry().setFromPoints([
-        //             new THREE.Vector3(r, g, b),
-        //             new THREE.Vector3(r, 0, b)
-        //         ]);
-        //         const lineMaterial = new THREE.LineBasicMaterial({ color: 0x000000 });
-        //         const lineMesh = new THREE.Line(lineGeometry, lineMaterial);
-        //         scene.add(lineMesh);
-        //     }
-        // });
-
         if (rotationAngle !== undefined) {
             // const angle = Math.PI / 180 * rotationAngle;
             // const rotationAngle = 0;

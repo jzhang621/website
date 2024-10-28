@@ -49,11 +49,11 @@ const AnimatedRGBSpace: React.FC<AnimatedRGBSceneProps> = ({
 
 
                 spheresRef.current[index].position.set(r, g, b);
-                spheresRef.current[index].material.color.set(newColor);
+                (spheresRef.current[index].material as THREE.MeshBasicMaterial).color.set(newColor);
 
                 const positions = new Float32Array([0, 0, 0, r, g, b]);
                 linesRef.current[index].geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-                linesRef.current[index].material.color.set(newColor);
+                (linesRef.current[index].material as THREE.LineBasicMaterial).color.set(newColor);
             });
         }
     }, [progress, isRunning]);
