@@ -58,31 +58,39 @@ export function clampRGB(rgb: [number, number, number]): [number, number, number
 
 
 /**
- * Converts a Uint8Array of RGB pixel values into a list of [r, g, b] points.
+ * Extracts a square of RGB points from a Uint8Array of pixel values.
  * @param pixels - Uint8Array representing pixel values (R, G, B, R, G, B, ...)
- * @param startIndex - Starting index in the Uint8Array (must be aligned to 3)
- * @param maxPoints - Maximum number of points to extract (default: 100)
+ * @param startRow - Starting row in the 2D grid
+ * @param startCol - Starting column in the 2D grid
+ * @param size - Number of rows and columns to extract
  * @returns An array of [r, g, b] points
  */
 export function extractRGBPoints(
-    pixels: Uint8Array, 
-    startIndex: number = 0, 
-    maxPoints: number = 100
+    pixels: Uint8Array,
+    startRow: number = 0,
+    startCol: number = 0,
+    size: number = 10
 ): Array<[number, number, number]> {
-    if (startIndex % 3 !== 0) {
-        throw new Error('Start index must be aligned to 3 (RGB triplets)');
+    const imageWidth = Math.sqrt(pixels.length / 3);
+    if (!Number.isInteger(imageWidth)) {
+        throw new Error('Pixels array length is not a perfect square when divided by 3');
     }
 
     const result: Array<[number, number, number]> = [];
-    const endIndex = Math.min(startIndex + maxPoints * 3, pixels.length);
 
-    for (let i = startIndex; i < endIndex; i += 3) {
-        if (i + 2 < pixels.length) {
-            result.push([
-                pixels[i],
-                pixels[i + 1],
-                pixels[i + 2]
-            ]);
+    for (let row = 0; row < size; row++) {
+        for (let col = 0; col < size; col++) {
+            const pixelRow = startRow + row;
+            const pixelCol = startCol + col;
+            const index = (pixelRow * imageWidth + pixelCol) * 3;
+
+            if (index + 2 < pixels.length && pixelCol < imageWidth) {
+                result.push([
+                    pixels[index],
+                    pixels[index + 1],
+                    pixels[index + 2]
+                ]);
+            }
         }
     }
 

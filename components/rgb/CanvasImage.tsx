@@ -24,8 +24,6 @@ function renderUint8ArrayToCanvas(canvas: HTMLCanvasElement, uint8Array: Uint8Ar
         const b = uint8Array[i + 2];
         const index = (i / 3) * 4; // Mapping 3 channels to 4 (RGB -> RGBA)
 
-        console.log(r, g, b);
-
         imageData.data[index] = r; // Red
         imageData.data[index + 1] = g; // Green
         imageData.data[index + 2] = b; // Blue

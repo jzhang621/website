@@ -14,7 +14,6 @@ const StaticRGBSpace: React.FC<StaticRGBSceneProps> = ({
     height = window.innerHeight,
     rotationAngle,
 }) => {
-    console.log({ rotationAngle });
 
     const canvasRef = useRef<HTMLDivElement>(null);
 
@@ -52,9 +51,9 @@ const StaticRGBSpace: React.FC<StaticRGBSceneProps> = ({
 
         if (rotationAngle !== undefined) {
             // const angle = Math.PI / 180 * rotationAngle;
-            const rotationAngle = 0;
+            // const rotationAngle = 0;
             const angle = Math.PI / 180 * rotationAngle;
-            camera.position.set(Math.cos(angle), 2.05, Math.sin(angle));
+            camera.position.set(Math.cos(angle), 1.5, Math.sin(angle));
             light.position.set(Math.cos(angle), 5, Math.sin(angle));
             camera.lookAt(0, 0, 0);
         }

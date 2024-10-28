@@ -35,24 +35,30 @@ export function useMDXComponents(components) {
                 style={{
                     fontSize: "24px",
                     color: "#3F5570",
-                    marginTop: "2rem",
+                    marginTop: "2.25rem",
                     fontWeight: 600,
                 }}
             >
                 {children}
             </h2>
         ),
-        p: ({ children, parentClassName }) => {
-            const isInNote = parentClassName === "note";
+        Latex: ({ children }) => (
+            <Latex style={{ marginTop: "1.25rem", marginBottom: "1.25rem" }}>
+                {children}
+            </Latex>
+        ),        
+        p: ({ children, ...props }) => {
+            const style = {
+                lineHeight: "1.8",
+                fontSize: "16px",
+                margin: "1.25rem 0",
+            };
+
+            // Check if the parent is a figcaption
+            const isInFigcaption = props.parentName === 'figcaption';
 
             return (
-                <p
-                    style={{
-                        lineHeight: "1.8",
-                        fontSize: "16px",
-                        margin: isInNote ? "0" : "1.25rem 0",
-                    }}
-                >
+                <p style={isInFigcaption ? {} : style}>
                     {children}
                 </p>
             );
@@ -79,6 +85,13 @@ export function useMDXComponents(components) {
         strong: ({ children }) => (
             <strong style={{ color: "#1a1a1a", fontWeight: 700 }}>{children}</strong>
         ),
+        blockquote: ({ children }) => (
+            <blockquote style={{ width: "75%", margin: "1.5rem auto", borderLeft: "4px solid #cbbd93", paddingLeft: "1rem"  }}>
+                {children}
+            </blockquote>
+        ),
+
+        
     };
 
     // Merge default components with any custom components passed in

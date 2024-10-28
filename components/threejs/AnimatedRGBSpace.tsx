@@ -17,8 +17,9 @@ const AnimatedRGBSpace: React.FC<AnimatedRGBSceneProps> = ({
     height = window.innerHeight,
     rotationAngle,
     animationDuration = 1000,
+    cameraYPosition = 2
 }) => {
-    const delay = animationDuration * 0.5;
+    const delay = animationDuration * .25;
     // const [delay, setDelay] = useState(animationDuration * 0.5);
 
     const canvasRef = useRef<HTMLDivElement>(null);
@@ -39,16 +40,20 @@ const AnimatedRGBSpace: React.FC<AnimatedRGBSceneProps> = ({
                 const [r1, g1, b1] = normalizeRGB(startPoint);
                 const [r2, g2, b2] = normalizeRGB(endPoint);
 
+                // Normalized positions
                 const r = THREE.MathUtils.lerp(r1, r2, progress);
                 const g = THREE.MathUtils.lerp(g1, g2, progress);
                 const b = THREE.MathUtils.lerp(b1, b2, progress);
 
+                const newColor = new THREE.Color(r, g, b).convertSRGBToLinear();
+
+
                 spheresRef.current[index].position.set(r, g, b);
-                spheresRef.current[index].material.color.setRGB(r, g, b);
+                spheresRef.current[index].material.color.set(newColor);
 
                 const positions = new Float32Array([0, 0, 0, r, g, b]);
                 linesRef.current[index].geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-                linesRef.current[index].material.color.setRGB(r, g, b);
+                linesRef.current[index].material.color.set(newColor);
             });
         }
     }, [progress, isRunning]);
@@ -59,13 +64,13 @@ const AnimatedRGBSpace: React.FC<AnimatedRGBSceneProps> = ({
 
         if (rotationAngle !== undefined) {
             const angle = Math.PI / 180 * rotationAngle;
-            camera.position.set(Math.cos(angle), 1.85, Math.sin(angle));
+            camera.position.set(Math.cos(angle), cameraYPosition, Math.sin(angle));
             camera.lookAt(0, 0, 0);
         }
 
         if (canvasRef.current) {
             canvasRef.current.appendChild(renderer.domElement);
-            canvasRef.current.appendChild(labelRenderer.domElement);
+            // canvasRef.current.appendChild(labelRenderer.domElement);
         }
 
         // Setup scene
@@ -84,29 +89,28 @@ const AnimatedRGBSpace: React.FC<AnimatedRGBSceneProps> = ({
         });
 
 
-        let direction = 0;
+        let direction = 1;
         let angle = Math.PI * (1 / 3);
         const SPEED = 0.001;
         const MAX_ANGLE = Math.PI * (2 / 3); // 180 degrees
         // // Animation loop
         const animate = () => {
-            // angle += SPEED * direction;
+            angle += SPEED * direction;
 
-            // // Reverse direction when we hit the limits
-            // if (angle >= MAX_ANGLE || angle <= 0) {
-            //     direction *= -1;
-            // }
+            // Reverse direction when we hit the limits
+            if (angle >= MAX_ANGLE || angle <= 0) {
+                direction *= -1;
+            }
 
-            // // camera.position.x = Math.cos(angle);
-            // // camera.position.z = Math.sin(angle);
-            // camera.lookAt(0, 0, 0);
-            // labelRenderer.render(scene, camera);
+            camera.position.x = Math.cos(angle);
+            camera.position.z = Math.sin(angle);
+            camera.lookAt(0, 0, 0);
+            labelRenderer.render(scene, camera);
             renderer.render(scene, camera);
             requestAnimationFrame(animate);
         };
 
-        renderer.render(scene, camera);
-        labelRenderer.render(scene, camera);
+
 
         animate();
 
@@ -115,7 +119,7 @@ const AnimatedRGBSpace: React.FC<AnimatedRGBSceneProps> = ({
         return () => {
             if (canvasRef.current) {
                 canvasRef.current.removeChild(renderer.domElement);
-                canvasRef.current.removeChild(labelRenderer.domElement);
+                // canvasRef.current.removeChild(labelRenderer.domElement);
             }
         };
     }, []);
@@ -135,9 +139,9 @@ const AnimatedRGBSpace: React.FC<AnimatedRGBSceneProps> = ({
                     <PlayArrow className="text-amber-500 w-8 h-8 hover:text-amber-600" />
                 </button>
 
-                <div className="absolute top-4 right-4">
+                {/* <div className="absolute top-4 right-4">
                     <ColorSwatch rgb={interpolateRGB(startPoints[0], endPoints[0], animationDuration, progress * animationDuration)} />
-                </div>
+                </div> */}
 
             </div>
             {/* <ColorSwatch rgb={interpolateRGB(startPoints[0], endPoints[0], animationDuration, progress * animationDuration)} /> */}

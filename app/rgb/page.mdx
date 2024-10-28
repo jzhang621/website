@@ -4,89 +4,16 @@ import AnimatedRGBSpace from '@/components/threejs/AnimatedRGBSpace';
 import CanvasImage from '@/components/rgb/CanvasImage';
 import SVGImage from '@/components/rgb/SVGImage';
 import { extractRGBPoints, applyMatrixTransformation } from '@/data/utils';
-import { redwood } from '@/data/redwood';
+import { gc } from '@/data/gc';
 import ColorSwatch from '@/components/rgb/ColorSwatch';
 import { generateRGBGradient } from '@/data/utils';
 import CustomImage from '@/components/Image';
-
-export const point = [66, 38, 92];
-export const bright = [182, 105, 254];
-
-export const grays = generateRGBGradient([0, 0, 0], [255, 255, 255], 50);
-
-## Fun Colors, Images, Vectors, and Matrix Transformations
-
-I've been learning about Large Language Models (LLMs) recently, which made me realize I need to brush up on my linear algebra. Working with images was a fun and engaging way to do so, so here are some visuals and animations to share what I learned - maybe they'll help you too!
+import { Slider } from "@/components/ui/slider"
+import { SliderProvider } from "@/contexts/SliderContext"
+import DualSVGImage from '@/components/rgb/DualSVGImage';
 
 
-### RGB Color Model
-
-The [RGB color model](https://en.wikipedia.org/wiki/RGB_color_model) represents colors as a combination of red, green, and blue light. We describe a particular color using a `(r, g, b)` tuple, where each value is an integer between 0 and 255, indicating the strength of red, green, and blue light, respectively.
-
-Here are some colors described using the RGB color model:
-
-<div className="flex gap-8 justify-center my-8 bg-slate-100 py-4 rounded-sm">
- <ColorSwatch rgb={[0, 0, 0]} label="Black" />
- <ColorSwatch rgb={[255, 0, 0]} label="Red" />
- <ColorSwatch rgb={[0, 255, 0]} label="Green" />
- <ColorSwatch rgb={[0, 0, 255]} label="Blue" />
- <ColorSwatch rgb={[255, 255, 255]} label="White" />
-</div>
-
-### Colors as Vectors
-
-Let's start by focusing on a particular color:
-<div className="flex justify-center my-8">
-  <ColorSwatch rgb={point} label="Deep Violet" />
-</div>
-
-One way to think about this color is as a 3D **vector**: $\vec{\text{v}} = [66, 38, 92]$
-
-
-<div className="w-4/5 mx-auto my-8">
-  <CustomImage src="/images/rgb.png" width={600} />
-  <figcaption className="text-center text-xs text-gray-400">
-  The vector $\vec{\text{v}} = [66, 38, 92]$ shown as a point in 3D space.
-  </figcaption>
-</div>
-
-From now on, we'll manipulate this color by manipulating its vector representation.
-
-### Brightness
-
-We can control the "brightness" of our color by changing the magnitude of the vector, while keeping its direction. Increasing the magnitude makes it brighter, and decreasing it makes it darker.
-
-<div className="my-8">
-  <AnimatedRGBSpace startPoints={[point]} endPoints={[bright]} width={800} height={500} />
-</div>
-
-### Gray Scale
-
-In the RGB color model, gray colors are those where the red, green, and blue intensities are equal. We can represent this as a line through the origin in the RGB color space - each point on the line is a gray color with a different brightness.
-
-<div className="w-[90%] mx-auto my-8">
-  <CustomImage src="/images/gray.jpg" width={800} height={512} />
-</div>
-
-{/* <div className="my-8">
-  <StaticRGBSpace points={grays} width={800} height={500} rotationAngle={15} />
-</div> */}
-
-
-### Gradients and Interpolation
-
-The RGB color model allows us to easily interpolate between colors. If we want to smoothly transition from one color to another, we can do so by linearly interpolating between the two colors. This is equivalent to drawing a line between the two points and finding all the points along the line.
-
-<div className="my-8">
-  <ColorSwatch rgb={bright} />
-</div>
-
-
-
-
-
-
-export const redwoodPoints = extractRGBPoints(redwood);
+export const imagePoints = extractRGBPoints(gc, 150, 200, 12);
 
 export const transformMatrix = [[1.5, 0, 0], [0, 1, 0], [0, 0, 1]];
 
@@ -94,37 +21,356 @@ export const blackAndWhite = [[.33, .33, .33], [.33, .33, .33], [.33, .33, .33]]
 
 export const redTint = [[1.5, 0, 0], [0, 1, 0], [0, 0, 1]];
 
+export const greenTint = [[1, 0, 0], [0, 1.5, 0], [0, 0, 1]];
+
+export const blueTint = [[1, 0, 0], [0, 1, 0], [0, 0, 1.5]];
+
+export const darken = [[.5, 0, 0], [0, .5, 0], [0, 0, .5]];
 
 export const noGreen = [[1, 0, 0], [0, 0, 0], [0, 0, 1]];
 export const noBlue = [[1, 0, 0], [0, 1, 0], [0, 0, 0]];
 export const noRed = [[0, 0, 0], [0, 1, 0], [0, 0, 1]];
 export const filter = noBlue;
 
-
-export const endPoints = extractRGBPoints(applyMatrixTransformation(redwood, filter));
-
+export const redToGreen = [[0, 1, 0], [0, 1, 0], [0, 0, 1]];
 
 
-{/* <CanvasImage matrix={[[.33, .33, .33], [.33, .33, .33], [.33, .33, .33]]} /> */}
+export const endPoints = extractRGBPoints(applyMatrixTransformation(gc, blueTint), 150, 200, 12)
+
+export const endPointsBlackAndWhite = extractRGBPoints(applyMatrixTransformation(gc, blackAndWhite), 150, 200, 12)
+
+export const endPointsDarken = extractRGBPoints(applyMatrixTransformation(gc, darken), 150, 200, 12)
+
+export const point = [66, 38, 92];
+export const bright = [182, 105, 254];
+
+export const grays = generateRGBGradient([0, 0, 0], [255, 255, 255], 6);
+
+## Image and Matrix Fun
+
+I was recently looking to hone my intuition of linear algebra (matrix multiplication, in particular), which led me to ask ChatGPT:
+
+> "can i picture color filtering operations as a matrix multiplication? im imaginging r g b values can be treated as a 3 x 1 vector."
+
+I found the answer really helpful, so I wanted to create some visuals and animations to explain what I learned.
+
+## Pixel Art
+
+When I'm not using ChatGPT to learn, I sometimes ask it to generate pixel art of my favorite National Parks. Here's one of the Grand Canyon:
+
+<div className="mx-auto my-8 w-96">
+  <CustomImage src="/images/grand-canyon.png" className="rounded-sm my-12" width={1024} height={1024}/>
+</div>
+
+And here are a few "filters" that I applied to the image:
+
+<div className="flex gap-4 w-full h-auto md:px-8 px-4 my-12">
+  
+  <div className="flex-1 flex flex-col items-center">
+    <CustomImage src="/images/blue.png" className="rounded-sm" width={928} height={928}/>
+    <figcaption className="text-center text-sm text-gray-500 mt-2">
+      {`Blue Tint`}
+    </figcaption>
+  </div>
+  <div className="flex-1 flex flex-col items-center ">
+    <CustomImage src="/images/black_and_white.png" className="rounded-sm" width={928} height={928}/>
+    <figcaption className="text-center text-sm text-gray-500 mt-2">
+      {`Black and White`}
+    </figcaption>
+  </div>
+  <div className="flex-1 flex flex-col items-center">
+    <CustomImage src="/images/darken.png" className="rounded-sm" width={928} height={928}/>
+    <figcaption className="text-center text-sm text-gray-500 mt-2">
+      {`Darken`}
+    </figcaption>
+  </div> 
+</div>
+
+What's cool is that **each of these filters can be described as a matrix!** Let's see how that works.
+
+## Pixels
+
+We can think of our image as being divided into a bunch of smaller squares, called **pixels**. Each of these pixels has a color, which we provide as a (r, g, b) tuple using the [RGB color model](https://en.wikipedia.org/wiki/RGB_color_model). Each value in the tuple specifies the intensity of red, green, and blue light as a number between 0 and 255, and are also known as *color channels*.
+
+I've taken our original Grand Canyon image, zoomed into a small section, and drawn light blue lines around each pixel. You can hover each individual pixel to see its RGB value.
+
+<div className="mx-auto mb-8 mt-4 relative flex flex-col items-center">
+   <div className="absolute left-0 top-1/2 transform -translate-y-1/2 mb-4">
+    <CustomImage src="/images/zoom.png" width={420} height={420} className="w-24" />
+  </div>
+
+  <div className="flex justify-center">
+    <SVGImage width={420} startRow={150} startCol={200} factor={0.125} />
+  </div>
+</div>
 
 
-{/* <CanvasImage matrix={[[1.5, 0, 0], [0, 1, 0], [0, 0, 1]]} /> */}
+### Pixels as Vectors
 
-{/* <SVGImage width={512} /> */}
+Another way to think about pixels is as vectors in a 3D space, where the x, y, and z axes represent the red, green, and blue channels, respectively. The coordinates of the vector are the RGB value of the pixel.
+
+Viewed this way, the pixel below:
+
+<CustomImage src="/images/pixel.png" width={600} height={600} className="mx-auto my-12 w-[450px]" />
+
+Becomes this vector:
 
 
-{/* <div className="my-8">
-  <AnimatedRGBSpace startPoints={redwoodPoints} transformMatrix={blackAndWhite} width={928} height={500} controlMode="click" />
-</div> */}
+<CustomImage src="/images/point.png" width={1600} height={1000} className="mx-auto my-12 w-3/4" />
 
-## Matrix Transformations
+## Filters
+
+Once we start thinking of pixels as vectors, we can also start to think of image filters as matrices.
+
+Let's look at the "Blue Tint" filter as an example. This filter increases the blue channel of a pixel, while leaving the red and green channels unchanged. Notice how everything looks a bit more blue.
+
+<div className="flex gap-8 w-4/5 mx-auto h-auto md:px-8 px-4 my-12">
+  <div className="flex-1 flex flex-col items-center">
+    <CustomImage src="/images/grand-canyon.png" className="rounded-sm" width={928} height={928}/>
+    <figcaption className="text-center text-sm text-gray-500 mt-2">
+      {`Original`}
+    </figcaption>
+  </div>
+  <div className="flex-1 flex flex-col items-center">
+    <CustomImage src="/images/blue.png" className="rounded-sm" width={928} height={928}/>
+    <figcaption className="text-center text-sm text-gray-500 mt-2">
+      {`Blue Tint`}
+    </figcaption>
+  </div>
+</div>
+
+We can see the effect of this filter on individual pixels below. Hover of any pixel to see both the original and its corresponding value after applying the filter. Specifically, the blue channel of each pixel increases by a factor of 1.5, while the red and green channels remain unchanged.
+
+<DualSVGImage
+  width={400}
+  factor={0.125}
+  startRow={150}
+  filterName="Blue Tint"
+  startCol={200}
+  matrixTransformation={[[1, 0, 0], [0, 1, 0], [0, 0, 1.5]]}
+/>
+
+### Filters as Matrix Multiplication
+
+Here's the "Blue Tint" filter represented as a matrix:
 
 <div className="my-8">
-  <AnimatedRGBSpace startPoints={redwoodPoints} endPoints={endPoints} width={928} height={500} rotationAngle={0} />
+$\begin{bmatrix} 
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+0 & 0 & 1.5
+\end{bmatrix}$
 </div>
 
-<div className="flex gap-4">
-  <CanvasImage matrix={[[1, 0, 0], [0, 1, 0], [0, 0, 1]]} />
-  <CanvasImage matrix={filter} />
+To apply this filter to an image, we multiply this matrix with each pixel's vector. For a pixel with RGB values $(r, g, b)$, this becomes:
+
+<div className="my-12">
+$\begin{bmatrix} 
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+0 & 0 & 1.5
+\end{bmatrix}
+\begin{bmatrix} 
+r \\
+g \\
+b
+\end{bmatrix} = 
+\begin{bmatrix} 
+(1 \times r) + (0 \times g) + (0 \times b) \\
+(0 \times r) + (1 \times g) + (0 \times b) \\
+(0 \times r) + (0 \times g) + (1.5 \times b)
+\end{bmatrix} =
+\begin{bmatrix} 
+r \\
+g \\
+1.5b
+\end{bmatrix}$
 </div>
+The effect of this matrix multiplication can also be expressed as a function:
+
+```
+function blueTint(pixel) {
+  const [r, g, b] = pixel;
+  return [r, g, b * 1.5]
+}
+```
+
+The animation below takes 144 pixels from our original image and plots their corresponding vectors. Press play to see the effect of the "Blue Tint" filter on these vectors. You can see how each vector grows in the direction of the blue axis to make everything look a bit more blue.
+
+<div className="my-8">
+  <AnimatedRGBSpace startPoints={imagePoints} endPoints={endPoints} rotationAngle={(45 + 90) / 2} width={750} height={500} />
+</div>
+
+## The Black and White Filter
+
+Let's now look at my favorite filter, the "Black and White" filter.
+
+<div className="flex gap-8 w-4/5 mx-auto h-auto md:px-8 px-4 my-12">
+  <div className="flex-1 flex flex-col items-center">
+    <CustomImage src="/images/grand-canyon.png" className="rounded-sm" width={928} height={928}/>
+    <figcaption className="text-center text-sm text-gray-500 mt-2">
+      {`Original`}
+    </figcaption>
+  </div>
+  <div className="flex-1 flex flex-col items-center">
+    <CustomImage src="/images/black_and_white.png" className="rounded-sm" width={928} height={928}/>
+    <figcaption className="text-center text-sm text-gray-500 mt-2">
+      {`Black and White`}
+    </figcaption>
+  </div>
+</div>
+
+In the RGB color model, "gray" colors are those with equal values for each color channel. The higher the value of each channel, the lighter the gray:
+
+<div className="flex gap-8 justify-center my-8 bg-slate-100 py-4 rounded-sm">
+ <ColorSwatch rgb={grays[0]} />
+ <ColorSwatch rgb={grays[1]} />
+ <ColorSwatch rgb={grays[2]} />
+ <ColorSwatch rgb={grays[3]} />
+ <ColorSwatch rgb={grays[4]} />
+ <ColorSwatch rgb={grays[5]} />
+</div>
+
+The "Black and White" filter takes in a pixel's RGB value and returns a "grayed out" version of the pixel, where each color channel is the average of the original three values.
+
+Hover over any pixel to see both the original and its corresponding value after applying the "Black and White" filter. Notice how each pixel on the right has the same values for each color channel, but the overall brightness is retained.
+
+<DualSVGImage
+  width={400}
+  factor={0.125}
+  startRow={150}
+  filterName="Black and White"
+  startCol={200}
+  matrixTransformation={[[.33, .33, .33], [.33, .33, .33], [.33, .33, .33]]}
+/>
+
+
+Here's the "Black and White" filter expressed as a matrix:
+
+<div className="my-12">
+$\begin{bmatrix} 
+0.33 & 0.33 & 0.33 \\
+0.33 & 0.33 & 0.33 \\
+0.33 & 0.33 & 0.33
+\end{bmatrix}$
+</div>
+
+To apply this filter to a pixel, we multiply this matrix with the pixel's vector. For a pixel with RGB values $(r, g, b)$, this becomes:
+
+<div className="my-12">
+$\begin{bmatrix} 
+.33 & .33 & .33 \\
+.33 & .33 & .33 \\
+.33 & .33 & .33
+\end{bmatrix}
+\begin{bmatrix} 
+r \\
+g \\
+b
+\end{bmatrix} = 
+\begin{bmatrix} 
+(0.33 \times r) + (0.33 \times g) + (0.33 \times b) \\
+(0.33 \times r) + (0.33 \times g) + (0.33 \times b) \\
+(0.33 \times r) + (0.33 \times g) + (0.33 \times b)
+\end{bmatrix} =
+\begin{bmatrix} 
+.33r + .33g + .33b \\
+.33r + .33g + .33b \\
+.33r + .33g + .33b
+\end{bmatrix}$
+</div>
+Expressing this as a function:
+
+```
+function blackAndWhite(pixel) {
+  const [r, g, b] = pixel;
+  const avg = (r + g + b) / 3;
+  return [avg, avg, avg];
+}
+```
+
+In the animation below, watch how all the pixels collapse onto a single line, where each pixel's RGB values are equal.
+
+<div className="my-8">
+  <AnimatedRGBSpace startPoints={imagePoints} endPoints={endPointsBlackAndWhite} rotationAngle={(45 + 90) / 2} width={750} height={500} />
+</div>
+
+## Darken
+
+In the RGB color model, we can roughly increase or decrease the "brightness" of a color by changing the magnitude of the vector, while keeping its direction.
+
+This is the idea behind the "Darken" filter, which takes in a pixel's RGB value and returns a "darker" version of the pixel by decreasing each channel by a factor of 0.5.
+
+<div className="flex gap-8 w-4/5 mx-auto h-auto md:px-8 px-4 my-12">
+  <div className="flex-1 flex flex-col items-center">
+    <CustomImage src="/images/grand-canyon.png" className="rounded-sm" width={928} height={928}/>
+    <figcaption className="text-center text-sm text-gray-500 mt-2">
+      {`Original`}
+    </figcaption>
+  </div>
+  <div className="flex-1 flex flex-col items-center">
+    <CustomImage src="/images/darken.png" className="rounded-sm" width={928} height={928}/>
+    <figcaption className="text-center text-sm text-gray-500 mt-2">
+      {`Darken`}
+    </figcaption>
+  </div>
+</div>
+
+Here's the "Darken" filter expressed as a matrix:
+
+<div className="my-8">
+$\begin{bmatrix} 
+0.5 & 0 & 0 \\
+0 & 0.5 & 0 \\
+0 & 0 & 0.5
+\end{bmatrix}$
+</div>
+
+To apply this filter to a pixel, we multiply this matrix with the pixel's vector. For a pixel with RGB values $(r, g, b)$, this becomes:
+
+<div className="my-12">
+$\begin{bmatrix} 
+0.5 & 0 & 0 \\
+0 & 0.5 & 0 \\
+0 & 0 & 0.5
+\end{bmatrix}
+\begin{bmatrix} 
+r \\
+g \\
+b
+\end{bmatrix} = 
+\begin{bmatrix} 
+(0.5 \times r) + (0 \times g) + (0 \times b) \\
+(0 \times r) + (0.5 \times g) + (0 \times b) \\
+(0 \times r) + (0 \times g) + (0.5 \times b)
+\end{bmatrix} =
+\begin{bmatrix} 
+0.5r \\
+0.5g \\
+0.5b
+\end{bmatrix}$
+</div>
+
+In the animation below, watch how the magnitude of each vector decreases, while the direction remains the same.
+
+<div className="flex gap-8 w-4/5 mx-auto h-auto md:px-8 px-4 my-12">
+  <AnimatedRGBSpace startPoints={imagePoints} endPoints={endPointsDarken} rotationAngle={(45 + 90) / 2} width={750} height={500} />
+</div>
+
+
+## Conclusion
+
+The main goal of this post is to take make matrix multiplication more "real" by providing a tangible way to visualize and understand its effects. We did that by working with the RGB color model, which represents colors as vectors in a 3D space that contains meaningful directions such as "blueness", "grayness", and "darkeness". The matrix multiplications we saw are just linear transformations of colors in these directions.
+
+However, there are some broader implications as well. Just as we can represent colors as vectors in a 3D space, we can also represent other sorts of data as vectors in higher dimensional spaces. And if these vectors are laid out in a way that captures meaningful relationships between them, then we can also use linear transformations to manipulate these vectors in meaningful ways.
+
+This is the idea behind [embeddings](https://en.wikipedia.org/wiki/Embedding), which are a foundational concept in modern machine learning. Next, we'll explore embeddings in more detail by diving into Word Embeddings.
+
+
+
+
+
+
+
+
 

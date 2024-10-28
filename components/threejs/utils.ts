@@ -167,6 +167,7 @@ export const createRGBPoint = (rgb: [number, number, number], scene: THREE.Scene
     ];
     const lineGeometry = new THREE.BufferGeometry().setFromPoints(linePoints);
     const line = new THREE.Line(lineGeometry, lineMaterial);
+
     line.castShadow = true; // Enable shadow casting
     scene.add(line);
 

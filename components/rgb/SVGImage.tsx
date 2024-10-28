@@ -1,24 +1,28 @@
 "use client";
 import React, { useState } from 'react';
-import { redwood } from '@/data/redwood';
-import { applyMatrixTransformation } from '@/data/utils';
+import { gc } from '@/data/gc';
+
 
 interface SVGImageProps {
     pixelData: Uint8Array;
     width: number;
     factor?: number;
+    startRow?: number;
+    startCol?: number;
+    initialHover?: {
+        row: number;
+        col: number;
+    };
 }
 
-const SVGImage: React.FC<SVGImageProps> = ({ pixelData = redwood, width, factor = .125 }) => {
-    const [hoverState, setHoverState] = useState({
-        isHovering: false,
-        color: '',
-        x: 0,
-        y: 0,
-        row: 0,
-        col: 0
-    });
-
+const SVGImage: React.FC<SVGImageProps> = ({
+    pixelData = gc,
+    width,
+    factor = .125,
+    startRow = 0,
+    startCol = 0,
+    initialHover
+}) => {
     const height = width;
     const rows = Math.sqrt(pixelData.length / 3);
     const cols = rows;
@@ -27,29 +31,47 @@ const SVGImage: React.FC<SVGImageProps> = ({ pixelData = redwood, width, factor 
     const rectWidth = width / colsToRender;
     const rectHeight = height / rowsToRender;
 
-    // const transformedPixelData = applyMatrixTransformation(pixelData, [[.33, .33, .33], [.33, .33, .33], [.33, .33, .33]]);
-
-    function showHighlightRect(rectWidth: number, col: number, row: number, color: string) {
-        const rectHeight = rectWidth;
-        const offset = rectHeight;
+    const getHoverState = (row: number, col: number) => {
+        const index = ((row + startRow) * cols + (col + startCol)) * 3;
+        const r = pixelData[index];
+        const g = pixelData[index + 1];
+        const b = pixelData[index + 2];
+        const color = `rgb(${r}, ${g}, ${b})`;
         const centerX = col * rectWidth + rectWidth / 2;
         const centerY = row * rectHeight + rectHeight / 2;
 
-        setHoverState({
+        return {
             isHovering: true,
             color,
             x: centerX,
             y: centerY,
             row,
             col
-        });
+        };
+    };
+
+    const [hoverState, setHoverState] = useState(
+        initialHover ? getHoverState(initialHover.row, initialHover.col) : {
+            isHovering: false,
+            color: '',
+            x: 0,
+            y: 0,
+            row: 0,
+            col: 0
+        }
+    );
+
+    // const transformedPixelData = applyMatrixTransformation(pixelData, [[.33, .33, .33], [.33, .33, .33], [.33, .33, .33]]);
+
+    function showHighlightRect(col: number, row: number) {
+        setHoverState(getHoverState(row, col));
     }
 
     const renderRects = () => {
         const rects = [];
         for (let row = 0; row < rowsToRender; row++) {
             for (let col = 0; col < colsToRender; col++) {
-                const index = (row * cols + col) * 3;
+                const index = ((row + startRow) * cols + (col + startCol)) * 3;
                 const r = pixelData[index];
                 const g = pixelData[index + 1];
                 const b = pixelData[index + 2];
@@ -65,8 +87,12 @@ const SVGImage: React.FC<SVGImageProps> = ({ pixelData = redwood, width, factor 
                         fill={color}
                         stroke="#a8b3c5"
                         strokeWidth=".25"
-                        onMouseEnter={() => showHighlightRect(rectWidth, col, row, color)}
+                        onMouseEnter={() => {
+                            if (initialHover) return;
+                            showHighlightRect(col, row)
+                        }}
                         onMouseLeave={() => {
+                            if (initialHover) return;
                             setHoverState({
                                 isHovering: false,
                                 color: '',
@@ -83,16 +109,14 @@ const SVGImage: React.FC<SVGImageProps> = ({ pixelData = redwood, width, factor 
         return rects;
     };
 
-    const targetRow = 9;
-    const targetCol = 12;
-    const targetIndex = (targetRow * cols + targetCol) * 3;
-    const targetR = pixelData[targetIndex];
-    const targetG = pixelData[targetIndex + 1];
-    const targetB = pixelData[targetIndex + 2];
-    const targetColor = `rgb(${targetR}, ${targetG}, ${targetB})`;
+
+
+    const buffer = rectWidth * 10;
+
+    const hoverRatio = 6;
 
     return (
-        <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
+        <svg width={width} height={height} viewBox={`${-buffer} ${-buffer} ${width + (2 * buffer)} ${height + (2 * buffer)}`}>
             {renderRects()}
             {hoverState.isHovering && (
                 <g pointerEvents="none">
@@ -102,22 +126,23 @@ const SVGImage: React.FC<SVGImageProps> = ({ pixelData = redwood, width, factor 
                         width={rectWidth}
                         height={rectHeight}
                         stroke="white"
-                        strokeWidth="1"
+                        strokeWidth="1.5"
                         fill={hoverState.color}
                     />
                     <rect
-                        x={hoverState.x - rectWidth * 1.5}
+                        x={hoverState.x - rectWidth * hoverRatio / 2}
                         y={hoverState.y + rectHeight}
-                        width={rectWidth * 3}
-                        height={rectWidth * 3}
+                        width={rectWidth * hoverRatio}
+                        height={rectWidth * hoverRatio}
                         rx="4"
                         ry="4"
                         fill={hoverState.color}
                     />
                     <text
                         x={hoverState.x}
-                        y={hoverState.y - rectHeight}
-                        fill="white"
+                        y={hoverState.y - rectHeight * 3}
+                        fill="black"
+                        fontFamily="monospace"
                         fontSize="14px"
                         textAnchor="middle"
                         dominantBaseline="hanging"
@@ -126,36 +151,7 @@ const SVGImage: React.FC<SVGImageProps> = ({ pixelData = redwood, width, factor 
                     </text>
                 </g>
             )}
-            <g pointerEvents="none">
-                <rect
-                    x={targetCol * rectWidth}
-                    y={targetRow * rectHeight}
-                    width={rectWidth}
-                    height={rectWidth}
-                    stroke="white"
-                    strokeWidth="1"
-                    fill={targetColor}
-                />
-                <rect
-                    x={(targetCol * rectWidth + rectWidth / 2) - (rectWidth * 3)}
-                    y={(targetRow * rectHeight) + (rectHeight * 2)}
-                    width={rectWidth * 6}
-                    height={rectWidth * 6}
-                    rx="4"
-                    ry="4"
-                    fill={targetColor}
-                />
-                <text
-                    x={targetCol * rectWidth + rectWidth / 2}
-                    y={(targetRow * rectHeight) - (rectHeight * 2)}
-                    fill="white"
-                    fontSize="14px"
-                    textAnchor="middle"
-                    dominantBaseline="hanging"
-                >
-                    {targetColor}
-                </text>
-            </g>
+
         </svg>
     );
 };
