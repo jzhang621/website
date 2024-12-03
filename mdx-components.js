@@ -98,5 +98,34 @@ export function useMDXComponents(components) {
     return {
         ...defaultComponents,
         ...components,
+        pre: ({ children, ...props }) => (
+            <pre
+                style={{
+                    backgroundColor: "#1a1a1a",
+                    padding: "1rem",
+                    borderRadius: "0.5rem",
+                    overflow: "auto",
+                    marginBottom: "1.5rem",
+                    fontSize: "0.875rem",
+                    lineHeight: "1.5",
+                }}
+                {...props}
+            >
+                {children}
+            </pre>
+        ),
+        code: ({ children, ...props }) => (
+            <code
+                style={{
+                    fontFamily: "monospace",
+                    padding: "0.2rem 0.4rem",
+                    borderRadius: "0.25rem",
+                    fontSize: "0.875em",
+                }}
+                {...props}
+            >
+                {children}
+            </code>
+        ),
     };
 }

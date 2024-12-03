@@ -1,6 +1,12 @@
 import RemoveWord from '@/components/embeddings/RemoveWord';
 import CustomImage from '@/components/Image';
+import Image from 'next/image';
 import { pg_remove_words_results } from '@/data/words/pg_remove_words_results';
+
+import Wattenberger from '../../public/images/wattenberger.png';
+import ChatGPT from '../../public/images/chat-gpt-transform.png';
+import Brighten from '../../public/images/brighten.png';
+import Gray from '../../public/images/gray.png';
 
 export const metadata = {
     published: true,
@@ -53,8 +59,8 @@ function brighten(color: [number, number, number], amount: number) {
 
 We can more easily understand the effects of this transformation when it is applied to all pixels of an image. 
 
-<div className="mx-auto my-8 w-96">
-  <CustomImage src="/images/brighten.png" className="rounded-sm my-12" width={1574 * 1.5} height={512 * 1.5}/>
+<div className="flex justify-center my-12 px-12">
+  <Image src={Brighten} alt="Brightening an image" />
 </div>
 
 ### Grayness
@@ -73,8 +79,8 @@ function gray(color: [number, number, number]) {
 }
 ```
 
-<div className="mx-auto my-8 w-96">
-  <CustomImage src="/images/gray.png" className="rounded-sm my-12" width={1574 * 1.5} height={512 * 1.5}/>
+<div className="flex justify-center my-12 px-12">
+  <Image src={Gray} alt="Graying an image" />
 </div>
 
 These functions should already be familiar to you - they’re the basis for Instagram Filters.
@@ -133,15 +139,28 @@ But its not the virtues of any particular technique that excite me the most - it
 
 I use the fact that embeddings can measure “meaning” to demonstrate their usefulness, but they unlock much broader capabilities. 
 
-Amelia Wattenberger [uses embeddings](https://wattenberger.com/thoughts/yay-embeddings-math) to measure sentences on a scale of “concrete” to “abstract”. (I *especially love* the view on the right-hand side which plots the entire essay along that scale).
+Below, [Amelia Wattenberger](https://wattenberger.com/thoughts/yay-embeddings-math) demonstrates how embeddings can be used to measure sentences on a scale of “concrete” to “abstract”. (I *especially love* the view on the right-hand side which plots the entire essay along that scale).
+
+<div className="flex justify-center my-24">
+  <Image 
+    src={Wattenberger} 
+    alt="Description" 
+    />
+</div>
 
 
-
-But just as the RGB color model facilitates meaningful transforms of color, embeddings facilitate meaningful transformations of text. 
+But just as **the** RGB color model facilitates meaningful transforms of color, embeddings facilitate meaningful transformations of text. 
 
 
 
 We can already do this with ChatGPT: 
+
+<div className="flex justify-center my-24">
+<Image 
+    src={ChatGPT} 
+    alt="Transforming text with ChatGPT" 
+    />
+</div>
 
 
 And this is because under the hood, the Large Language Models (LLMs) that power ChatGPT are just manipulating embeddings!
