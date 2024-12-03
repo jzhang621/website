@@ -11,16 +11,19 @@ interface WordData {
 
 interface SentenceRendererProps {
     words: WordData[];
-    randomColor?: boolean; // New prop to enable random coloring
+    randomColor?: boolean;
+    maxParagraphs?: number;
 }
 
-
-
-const SentenceRenderer: React.FC<SentenceRendererProps> = ({ words, randomColor = false }) => {
+const SentenceRenderer: React.FC<SentenceRendererProps> = ({
+    words,
+    randomColor = false,
+    maxParagraphs = 4,
+}) => {
     // Group words by paragraph index first, then by sentence index
     const paragraphs: { [key: number]: { [key: number]: WordData[] } } = {};
 
-    words.forEach(word => {
+    words.forEach((word) => {
         const paragraphIndex = word.paragraph_index ?? -1; // Use -1 for words without paragraph
         const sentenceIndex = word.sentence_index;
 
@@ -35,7 +38,7 @@ const SentenceRenderer: React.FC<SentenceRendererProps> = ({ words, randomColor 
     });
 
     // Calculate min and max similarity
-    const similarities = words.map(word => word.similarity);
+    const similarities = words.map((word) => word.similarity);
     const minSimilarity = Math.min(...similarities);
     const maxSimilarity = Math.max(...similarities);
 
@@ -48,46 +51,51 @@ const SentenceRenderer: React.FC<SentenceRendererProps> = ({ words, randomColor 
     let count = 0;
     return (
         <div>
-            {Object.entries(paragraphs).map(([paragraphIndex, sentences]) => {
-                const hasParagraph = paragraphIndex !== '-1';
+            {Object.entries(paragraphs)
+                .slice(0, maxParagraphs)
+                .map(([paragraphIndex, sentences]) => {
+                    const hasParagraph = paragraphIndex !== "-1";
 
-                const content = Object.keys(sentences).map(sentenceIndex => {
-                    const sentenceWords = sentences[Number(sentenceIndex)];
-                    return sentenceWords.map((word, index) => {
-                        let similarityToUse = word;
-                        // if randomColor is true, use a random word's similarity.
-                        // this is done to show the difference between "semantic highlighting" and "random highlighting"
-                        if (randomColor) {
-                            similarityToUse = words[randomIndices[count]];
-                        }
-                        const scaledOpacity = (similarityToUse.similarity - minSimilarity) / (maxSimilarity - minSimilarity);
-                        // const scaledOpacity = similarityToUse.similarity;
-                        const backgroundColor = `rgba(0, 255, 0, ${1 - scaledOpacity})`;
-                        count++;
-                        return (
-                            <>
-                                <span
-                                    style={{
-                                        backgroundColor,
-                                        // opacity: 1,
-                                        display: 'inline'  // Add this to ensure inline rendering
-                                    }}
-                                    title={(1 - scaledOpacity).toFixed(2)}
-                                >
-                                    {word.removed_word}
-                                </span>
-                                {' '}
-                            </>
-                        );
+                    const content = Object.keys(sentences).map((sentenceIndex) => {
+                        const sentenceWords = sentences[Number(sentenceIndex)];
+                        return sentenceWords.map((word, index) => {
+                            let similarityToUse = word;
+                            // if randomColor is true, use a random word's similarity.
+                            // this is done to show the difference between "semantic highlighting" and "random highlighting"
+                            if (randomColor) {
+                                similarityToUse = words[randomIndices[count]];
+                            }
+                            const scaledOpacity =
+                                (similarityToUse.similarity - minSimilarity) /
+                                (maxSimilarity - minSimilarity);
+                            // const scaledOpacity = similarityToUse.similarity;
+                            const backgroundColor = `rgba(0, 255, 0, ${1 - scaledOpacity})`;
+                            count++;
+                            return (
+                                <>
+                                    <span
+                                        style={{
+                                            backgroundColor,
+                                            // opacity: 1,
+                                            display: "inline", // Add this to ensure inline rendering
+                                        }}
+                                        title={(1 - scaledOpacity).toFixed(2)}
+                                    >
+                                        {word.removed_word}
+                                    </span>{" "}
+                                </>
+                            );
+                        });
                     });
-                });
 
-                return hasParagraph ? (
-                    <p key={paragraphIndex} className="p-2">
-                        {content}
-                    </p>
-                ) : content;
-            })}
+                    return hasParagraph ? (
+                        <p key={paragraphIndex} className="p-2">
+                            {content}
+                        </p>
+                    ) : (
+                        content
+                    );
+                })}
         </div>
     );
 };

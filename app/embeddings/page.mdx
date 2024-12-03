@@ -1,220 +1,150 @@
 import RemoveWord from '@/components/embeddings/RemoveWord';
-import { linus_remove_words_results } from '@/data/words/linus_remove_words_results';
+import CustomImage from '@/components/Image';
 import { pg_remove_words_results } from '@/data/words/pg_remove_words_results';
-import { forbes } from '@/data/words/forbes_remove_words_results';
-import { ai } from '@/data/words/ai_remove_words_results';
-import { ai_pg } from '@/data/words/ai_pg_remove_words_results';
-import { pg_putting_ideas_into_words } from '@/data/words/pg_putting_ideas_into_words';
 
 export const metadata = {
     published: true,
-    title: "Embeddings",
-    description: "A guide to understanding embeddings",
+    title: "Embeddings Unlock New Functionality",
+    description: "We can now write functions that allow us to work with text in new ways.",
     date: "2024-12-03",
 };
 
-## Why I'm Excited About Embeddings
+# Embeddings Unlock New Functionality
 
-{/*## AI
+In 2018, I tried to visualize what good writing looked like. This meant defining good writing computationally: could I write functions that took in a piece of writing as input, and returned some dimension of “good” writing as output? 
 
-<RemoveWord words={ai} />
+Back then, the functions I was capable of writing weren’t very interesting. They dealt mostly with counts - given a sentence, return the number of words in that sentence. I didn’t find them to be particularly useful, and so I stopped my attempt. 
 
-## AI (in the style of Paul Graham)
+In hindsight, I needed a better way to represent text. I was working with strings - which are great for displaying text, but limited when it comes to extracting insights. 
 
-<RemoveWord words={ai_pg} />
+**Embeddings** are that better representation. But before going into what embeddings are and what makes them better, let’s first establish what makes a representation “good” by looking at how computers represent colors.
 
-### Linus
+## RGB Color Model
 
-<RemoveWord words={linus_remove_words_results} />*/}
+We intuitively understand colors when we see them, but how do we get a computer to represent them? Enter the RGB model.
 
-### PG
+Computers use 24-bit integers to describe colors, which means it is capable of displaying ~16.7 million unique colors. The RGB color model breaks those 24 bits into three separate 8-bit dimensions. Each dimension corresponds to an intensity of red (R), green (G), and blue (B) light known as **channels**, ranging from 0 to 255. 
 
-<RemoveWord words={pg_remove_words_results} />
 
-### PG (Random)
+Under the RGB color model, if we have a color, and we want to make it more red, we have an easy way of doing so in terms of its underlying representation - we increase the red channel while keeping the other channels constant. 
 
-<RemoveWord words={pg_remove_words_results} randomColor />
+```javascript
+function moreRed(color: [number, number, number], amount: number) {
+	const [r, g, b] = color;
+	return [r + amount, g, b];
+}
+```
+**Note**: this function should clamp all values between 0 and 255, but I’m excluding that for clarity of concept. 
 
-### PG Putting Ideas Into Words
 
-<RemoveWord words={pg_putting_ideas_into_words} />
+The ease with which we can express this transformation is what makes the RGB color model a “good” representation of color. Here are a couple of other transformations available to us:
 
+### Brightness
 
-### Forbes
+To brighten* a color, we can increase the value of each channel by the same relative amount. 
 
-<RemoveWord words={forbes} />
+```javascript
+// brightens the color by % `amount` (i.e. 10%)
+function brighten(color: [number, number, number], amount: number) {
+	const [r, g, b] = color;
+	return [r * amount, g * amount, b * amount];
+}
+```
 
-###
+We can more easily understand the effects of this transformation when it is applied to all pixels of an image. 
 
-Goal: Communicate why embeddings are exciting to those who are not already familiar with the concept.
+### Grayness
 
- A few years ago, I had the idea of trying to visualize what good writing looked like. I took some of my favorite passages, and tried plotting the length of sentences (x-axis sentence number, y-axis sentence length). I remember being underwhelmed, and I gave up pretty quickly thereafter.
+In the RGB color model, colors that have equal intensity across all three channels (i.e. `r = g = b`) are perceived as gray. 
 
- Looking back, there were two issues with my approach. The first is that I was too concerned with producing something that could impress other people. The second is that I lacked a good way of working with words and sentences. Reducing a sentence to a count is a crime - you lose all of its meaning, discard its rhythm, silence its musicality.
+This means we can turn an input color "gray" by calculating the average of its three channels, and returning a new color where all channels have that average. 
 
- My only way of representing words and sentences was by reducing them to a count.
+```javascript
+function gray(color: [number, number, number]) {
+	const [r, g, b] = color;
+    const avg = (r + g + b) / 3;
+	return [avg, avg, avg];
+}
+```
 
- I have more to say about the first issue. But if I had known about **embeddings** a few years ago, I would have been more persistent.
+<div className="mx-auto my-8 w-96">
+  {/* <CustomImage src="/images/gray.png" className="rounded-sm my-12" width={1574} height={512}/> */}
+  <CustomImage src="/images/gray.png" className="rounded-sm my-12" width={1574 * 1.5} height={512 * 1.5}/>
+</div>
 
--
+These functions should already be familiar to you - they’re the basis for Instagram Filters.
 
-- Color is a good representation for computers. By good representation, i
+## Text Embeddings
 
-- We know how to move colors around in their representation space in order to accomplish meaningful things. Show visuals and animations.
+So this is what we’re after: a good representation for text. One that makes it possible to define functions that take in text and achieve specific outcomes. One that makes it easier to work with text computationally. This brings us back to embeddings.
 
-- If we have a good spatial representation for something, that means **we can move it around in its space in order to achieve meaningful things**. 
+An **embedding** is a way of describing a piece of text (we’ll stick to sentences in this post) as a list of numbers. To create an embedding, you take a sentence and pass it through an embedding model. 
 
-- Color is something we have a good representation for. [Show visuals and animations here.]
+```python
+model.encode(”This is a sentence I will generate an embedding for.”) → [1234, …, …, …]
+```
 
-**Words**
+You can take any sentence and run it through the embedding model - the output is always a list of length `N`. We refer to `N` as the **dimension** of the embedding. 
 
-Key Idea: ChatGPT represents words as points in a space. When you interact with ChatGPT, it's just moving points in space to come up with its answers. The space that the words exist in and the movements are incredibly complex, but we can still think of them the same way.
 
-- We actually have a good representation for words. Computers have learned to organize words in some extremely high-dimensional space. GPT3 uses 12,288 dimensions to represent its words. In fact when we're interacting with something like ChatGPT, ChatGPT is just moving around words in the high-dimensional space.
+```python
+model.encode(”My cat is being a trouble maker today.”) → [1234, …, …, …]
+```
 
-- Color is simple, we can easily visualize how individual points move around in space. Only computers really understand how they are moving around the words in its space. We can't visualize more than 3 dimensions, and the types of operations that the computers are doing are much more complex than simple transformations 
+We can think of a single embedding as occupying a point in an N-dimensional space (an embedding is a *vector*). An embedding model thus maps all possible sentences to points in the same N-dimensional space. Here’s the most important part: they are mapped in such a way that **sentences with “similar meanings” sit closer together in that space** than sentences with different meanings.
 
-- But even so, the core idea remains the same, we're just moving things around in some space in a way that lets us to do things.
+```python
+[need spatial visual here]
 
-**Word2Vec**
+model.encode(”I want to generate an embedding for this sentence.”) → [1234, …, …, …]
 
-The way that computers represent words as points in space is that where each word should sit.
+model.encode(”I want to get an embedding for this sentence.”) → [1234, …, …, …]
 
-A machine learning model organizes these points in space by itself by identifying patterns in the way that humans use language.
+model.encode(”My cat is being a trouble maker today.”) → [1234, …, …, …]
+```
 
-Recognized the "gender" direction (King - Man + Woman = Queen). Recognized "gender" as a consistent pattern. There are a bunch more!
+Once we have the embeddings of two sentences, we can measure the distance between them using cosine similarity. The embeddings of two sentences with similar meanings have cosine similarities closer to 1. Two sentences with dissimilar meanings [unrelated] have cosine similarities closer to 0. [I feel most comfortable using related / unrelated here, but then that doesn’t track well with meaning that I introduced above…]
 
-Key Ideas:
+Cosine similarity is just a function - which takes us back to our primary goal of working with text computationally. Thanks to embeddings, we can write functions that measure how similar in meaning two sentences are.
 
-1. If we can understand how a computer organizes its points in space, than we can uncover truths about the world that we might not have known previously. These include biases in our datasets.
-2. If we can figure out ways to more reliabily move around in space, then we can unlock some new powers. We need an interface to do this - ChatGPT is one. But there are more expressive and precise interfaces that exist. [Linus Lee, Amelia Wattenberger writings on interfaces.]
+### Computing With Embeddings
 
+Here’s the start of a Paul Graham essay, [When to Do What You Love](https://www.paulgraham.com/when.html), with certain words highlighted with the help of embeddings:
 
-Generative AI - works by moving along a direction in the latent space.
+<div className="m-8">
+    <RemoveWord words={pg_remove_words_results} />
+</div>
 
+To create these highlights, I first generate embeddings for each sentence in the essay `(e1)` . I then looped through every word in each sentence, removed that word from the sentence, and generated an embedding for that shortened sentence `(e2)`.
 
-Key Ideas: How are embeddings made?
+I then calculate the cosine similarity between `e1` and `e2`, and use that value to drive the highlighting. Words, that when removed, produce larger differences in cosine similarity are highlighted darker. The result is a rough measure of how “important” a word is to the meaning of the sentence in which that word appears. 
 
-- Our definition of a good representation is one that allows the computer to perform operations that are meaningful to humans on whatever the piece of data is being represented.
-- Color is an example of a good representation. We can define **simple computations** to turn a color more bright, more gray, more saturated. You're familiar with these - Instagram Filters. More specifically, these functions are rooted in linear algebra, which computers can execute fast - matrix multiplications.
-- Turns out representing colors is pretty simple - you only need three dimensions - one each for the intensities of red, green and blue lights. How do you represent something as vast as the English language (not to mention all other languages)?
-- Meaningful operations exist as directions in this representation space. For colors, these meanginful directions are things such as "brightness", "saturation".
+This technique has its shortcomings. For one, long sentences tend to dilute the importance of any single word. Even so, I find it’s a helpful indicator of where to direct my attention. I like the idea of turning these highlights on after reading something for the first time, to see if there was anything I missed. 
 
-**Word Embeddings**
+But its not the virtues of any particular technique that excite me the most - it’s the fact that such techniques are even possible.
 
-- Similar idea as to color - you represent a word using many dimensions. This forms an "embedding space". Every word has a representation in the same embedding space.
 
-- Computers have good representations for words, they are called **word embeddings*. Word embeddings are what make LLM's like ChatGPT so effective. 
-- **Word embeddings** are good representations for computers. The linear algebra that LLM's do is too complex for humans to really understand.
+### Beyond Measurement
 
- ---
- ### Why are good representations important?
+I use the fact that embeddings can measure “meaning” to demonstrate their usefulness, but they unlock much broader capabilities. 
 
- The RGB color model is a way of representing color as a combination of red, green, and blue. Each color is a combination of these three colors. Because we have this way of representing color, we can do linear algebra on colors to produce new colors. We can describe meaningful transformations of colors in terms of computations, or instructions that a computer can execute. I wrote about this [here](/rgb).
+Amelia Wattenberger [uses embeddings](https://wattenberger.com/thoughts/yay-embeddings-math) to measure sentences on a scale of “concrete” to “abstract”. (I *especially love* the view on the right-hand side which plots the entire essay along that scale).
 
-We can basically instruct computers to do things like: turn these images more "red" or into "grey". You're familiar with this - Instagram filters. Instagram filters exist because we have a way of representing colors to computers that allows us to describe meaningful transformations of colors in terms of computations, or instructions that a computer can execute.
 
 
+But just as the RGB color model facilitates meaningful transforms of color, embeddings facilitate meaningful transformations of text. 
 
-Define a good representation:
-    - allows us to perform useful transformations on the represented data as computations (a sequence of instructions that a computer can execute)
 
- ### What is an embedding, briefly (we want to have the same situation for words)
 
-Ok, so good representations for words do exist, and they are called **embeddings**. An embedding is a way of representing a word or a sentence as a vector. You give it a word, and outputs a vector of length `n`. You give it another word, and it outputs a vector of length `n`. You give it a sentence, and it outputs a vector of length `n`. 
+We can already do this with ChatGPT: 
 
-The way that embeddings are **organized** in the embedding space contains a few useful properties: 
 
-1. Words with similar meanings are close to each other in the embedding space.
-2. There are meaningful "directions" in the embedding space.
-    - King - Man + Woman = Queen
+And this is because under the hood, the Large Language Models (LLMs) that power ChatGPT are just manipulating embeddings!
 
-Essentially, what this means is that we can take a word, and "transform" it by moving along another vector in the embedding space. And this is something that we can easily instruct a computer to do.
+Right now, natural language (e.g. our prompts) is our interface to that manipulation. But more natural interfaces - ones that manipulate embeddings more precisely - like the text editing interface Linus Lee [imagines below](https://thesephist.com/posts/prism/) are possible:
 
-### Ok so what?
 
-We don't need a computer to tell us that the female version of a King is a Queen. But it's important to understand how the embedding space is organized. We never told a computer to learn about a gender. It simply picked up on a pattern in the data that it was trained on. So if the gender "direction" is there, there are other directions in the embedding space that are meaningful. And because machine learning algorithms have seen a lot of data, and they have a lot of dimensions (parameters), they can learn all sorts of things, as long as they show up statistically in the data.
+But to really hone our sense of what’s possible, we have to understand how embedding models are created - which we’ll cover in the next post.
 
-And if we can identify meaningful directions in the embedding space, we can use them to transform our data in meaningful ways.
 
-
-### Embeddings can be anything
-
-You can create embeddings for images, or sound, someone's move preferences, or any other data. 
-
-Transforming something by moving along a vector in the embedding space is the core idea behind many generative AI models. Image from Augmented Intelligence.
-
-### High-dimensional spaces are difficult to understand
-
-High-dimensional spaces are difficult to understand. We can't visualize more than 3 dimensions. This makes the practicality of moving around the embedding space difficult to do - in the sense that it's hard to make it do precisely what we want.
-
-I wish there some of the interfaces that Linus Lee talks about in his writing. There aren't any yet. As of now, I want to **explore** how we can use embeddings to better make sense of the world. Let's get back to this idea of visualizing what good writing looks like.
-
-
-One tenent of good writing: delete unnecessary words. Ok, let's see if we can measure this. 
-
-
-But how do you tell a sentence to be more concrete? Or for an image to be more "medieval"? All of this is theoretically possible in the embedding space.
-
- Ok, so we want to have a similar situation for words. We want to have a way of representing words that allows us to do linear algebra on words to produce new words. We want to be able to describe meaningful transformations of words in terms of computations, or instructions that a computer can execute. We want 
-
-
-Key idea: embeddings are a "better" representation of words.
-
-With an embedding: you have a way of quantifying how similar two words are to each other. 
-
-Embeddings also allow you to do linear algebra on words.
-
-
-
-An embedding is a way of representing a word or a sentence as a vector. You give it a word, and outputs a vector of length `n`. You give it another word, and it outputs a vector of length `n`. You give it a sentence, and it outputs a vector of length `n`. This allows us to use the techniques of linear algebra to reason about words and sentences. So words are 
-
-The way that embeddings are **organized** in the embedding space contains a lot of useful information.
-
-1. Words with similar meanings are close to each other in the embedding space.
-2. There are useful "directions" in the embedding space.
-
-There are two important things to understand about embeddings:
-
-1. Words with similar meanings are close to each other in the embedding space.
-2. There are useful "directions" in the embedding space.
-
-I recently discovered **embeddings**, and I am very excited about them. Here's what I believe about embeddings:
-
-- Embeddings contain a lot of useful information about what they represent.
-- There is potentially A LOT of information that we can harness from embeddings.
-- Working with embeddings will lead to even **more expressive** ways to work with digitial technology. We are already seeing that with Generative AI.
-
-
-More expressive - meaning: when working with words and sentences, we can modulate them on a more conceptual level. Make this sentence more abstract, or concrete. 
-
-For me: instead of trying to produce something that impresses people, I'm trying to incrementaly understand how to use them better.
-
-
-Word embeddings give us a reasonable way to measure meaning of words.
-
-Multi-modal embeddings are SICK! We can have reasonable ways of measuring the meanings of images, and sound.
-
-Embeddings 
-
-
-
-My intituion: I can feel the "weight" of a paper, each word densly packed with meaning. The tone is authorative, confident.
-
-Abstraction and Invariance
-More abstract concepts are generally invariant to most local changes of the input. What a nice concrete way to think about abstract!
-
-We don't need a computer to tell us that the female version of a King is a Queen. But how do you tell a sentence to be more concrete? Or for an image to be more "medieval"? All of this is theoretically possible in the embedding space. 
-
-A much more abstract concept - meaning that it matches different "types" of things. 
-
-
-That makes the representations that capture these concepts generally highly non-linear functions of the raw input. Abstraction can also appear in high-level continuous-valued attributes that are only sensitive to some very specific types of changes in the input. 
-
-
-Representation Learning: A Review and New Perspectives I could tell right away that the author of the paper deeply understood the space he was writing about. Turns out the author was Yoshua Bengio, one of the "Godfathers of Deep Learning".  
-
-
-
-
-- Prediction: all creative tools like Photoshop, Video Editing, will be working with Embeddings in the future. Cursor is an example of a transformative application that uses embeddings.
+Stay tuned!
