@@ -53,9 +53,15 @@ function brighten(color: [number, number, number], amount: number) {
 
 We can more easily understand the effects of this transformation when it is applied to all pixels of an image. 
 
+<div className="mx-auto my-8 w-96">
+  <CustomImage src="/images/brighten.png" className="rounded-sm my-12" width={1574 * 1.5} height={512 * 1.5}/>
+</div>
+
 ### Grayness
 
 In the RGB color model, colors that have equal intensity across all three channels (i.e. `r = g = b`) are perceived as gray. 
+
+
 
 This means we can turn an input color "gray" by calculating the average of its three channels, and returning a new color where all channels have that average. 
 
@@ -68,7 +74,6 @@ function gray(color: [number, number, number]) {
 ```
 
 <div className="mx-auto my-8 w-96">
-  {/* <CustomImage src="/images/gray.png" className="rounded-sm my-12" width={1574} height={512}/> */}
   <CustomImage src="/images/gray.png" className="rounded-sm my-12" width={1574 * 1.5} height={512 * 1.5}/>
 </div>
 
