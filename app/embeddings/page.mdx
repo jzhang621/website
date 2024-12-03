@@ -7,6 +7,13 @@ import Wattenberger from '../../public/images/wattenberger.png';
 import ChatGPT from '../../public/images/chat-gpt-transform.png';
 import Brighten from '../../public/images/brighten.png';
 import Gray from '../../public/images/gray.png';
+import GrayScale from '../../public/images/gray-scale.png';
+import BrightenSingle from '../../public/images/brighten-single.png';
+import GraySingle from '../../public/images/gray-single.png';
+import Red from '../../public/images/red.png';
+
+import ColorSwatch from '@/components/rgb/ColorSwatch';
+import { generateRGBGradient } from '@/data/utils';
 
 export const metadata = {
     published: true,
@@ -14,6 +21,8 @@ export const metadata = {
     description: "We can now write functions that allow us to work with text in new ways.",
     date: "2024-12-03",
 };
+
+export const grays = generateRGBGradient([ 90, 90, 90], [180, 180, 180], 3);
 
 # Embeddings Unlock New Functionality
 
@@ -57,6 +66,10 @@ function brighten(color: [number, number, number], amount: number) {
 }
 ```
 
+<div className="flex justify-center my-12 px-12 w-4/5 mx-auto">
+  <Image src={BrightenSingle} alt="Brightening a single color" />
+</div>
+
 We can more easily understand the effects of this transformation when it is applied to all pixels of an image. 
 
 <div className="flex justify-center my-12 px-12">
@@ -67,7 +80,11 @@ We can more easily understand the effects of this transformation when it is appl
 
 In the RGB color model, colors that have equal intensity across all three channels (i.e. `r = g = b`) are perceived as gray. 
 
-
+<div className="flex gap-8 justify-center my-8 py-4 rounded-sm">
+{grays.map((color, index) => (
+ <ColorSwatch rgb={color} key={index} />
+))}
+</div>
 
 This means we can turn an input color "gray" by calculating the average of its three channels, and returning a new color where all channels have that average. 
 
@@ -78,6 +95,12 @@ function gray(color: [number, number, number]) {
 	return [avg, avg, avg];
 }
 ```
+
+<div className="my-12 px-12 w-4/5 mx-auto">
+  <Image src={GraySingle} alt="Graying a single color" />
+</div>
+
+When applied to each pixel of an image:
 
 <div className="flex justify-center my-12 px-12">
   <Image src={Gray} alt="Graying an image" />
