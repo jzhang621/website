@@ -1,16 +1,17 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/react";
 
 const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
+    src: "./fonts/GeistVF.woff",
+    variable: "--font-geist-sans",
+    weight: "100 900",
 });
 const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
+    src: "./fonts/GeistMonoVF.woff",
+    variable: "--font-geist-mono",
+    weight: "100 900",
 });
 
 export const metadata: Metadata = {
@@ -31,11 +32,9 @@ export default function RootLayout({
                 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
             </head>
 
-            <body
-                // className={`bg-[#fbf9f4] ${geistSans.variable} ${geistMono.variable} antialiased`}
-                className={`bg-white ${geistSans.variable} ${geistMono.variable} antialiased`}
-            >
+            <body className={`bg-white ${geistSans.variable} ${geistMono.variable} antialiased`}>
                 <div className="mt-8 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">{children}</div>
+                <Analytics />
             </body>
         </html>
     );

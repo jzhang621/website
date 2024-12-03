@@ -17,6 +17,7 @@
     "@mui/material": "^6.1.2",
     "@next/mdx": "^14.2.13",
     "@radix-ui/react-slider": "^1.2.1",
+    "@vercel/analytics": "^1.4.1",
     "chart.js": "^4.4.4",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
