@@ -42,7 +42,6 @@ const SentenceRenderer: React.FC<SentenceRendererProps> = ({
     const minSimilarity = Math.min(...similarities);
     const maxSimilarity = Math.max(...similarities);
 
-    console.log({ minSimilarity, maxSimilarity });
 
     const indices = words.map((word, index) => index);
     // generate a random permutation of the indices

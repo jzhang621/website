@@ -1,11 +1,17 @@
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
-import createMDX from '@next/mdx';
+import rehypePrettyCode from "rehype-pretty-code";
+import createMDX from "@next/mdx";
+
+const prettyCodeOptions = {
+    theme: "github-light",
+    keepBackground: true,
+};
 
 const withMDX = createMDX({
     options: {
         remarkPlugins: [remarkMath],
-        rehypePlugins: [rehypeKatex],
+        rehypePlugins: [rehypeKatex, [rehypePrettyCode, prettyCodeOptions]],
     },
 });
 
@@ -15,5 +21,4 @@ const nextConfig = {
     reactStrictMode: true,
 };
 
-// Merge MDX config with Next.js config
 export default withMDX(nextConfig);
