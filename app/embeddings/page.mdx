@@ -74,13 +74,13 @@ function brighten(color: [number, number, number], amount: number) {
 
 We can see the effects of this transformation when it is applied to a single color.
 
-<div className="flex justify-center my-12 px-12 mx-auto">
+<div className="flex justify-center w-5/6 my-12 px-12 mx-auto">
   <Image src={BrightenSingle} alt="Brightening a single color"  />
 </div>
 
 We can more easily understand the effects of this transformation when it is applied to all pixels of an image. 
 
-<div className="flex justify-center my-12 px-12 mx-auto">
+<div className="flex justify-center w-5/6 my-12 px-12 mx-auto">
   <Image src={Brighten} alt="Brightening an image"  />
 </div>
 
@@ -106,14 +106,14 @@ function gray(color: [number, number, number]) {
 ```
 </div>
 
-<div className="my-12 px-12 w-4/5 mx-auto">
-  <Image src={GraySingle} alt="Graying a single color" />
+<div className="my-12 px-12 w-5/6 mx-auto">
+  <Image src={GraySingle} alt="Graying a single color"  />
 </div>
 
 When applied to each pixel of an image:
 
-<div className="flex justify-center my-12 px-12">
-  <Image src={Gray} alt="Graying an image" />
+<div className="flex justify-center w-5/6 my-12 px-12 mx-auto">
+  <Image src={Gray} alt="Graying an image"  />
 </div>
 
 These functions should already be familiar to you - they’re the basis for Instagram Filters.
