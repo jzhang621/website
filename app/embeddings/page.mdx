@@ -10,6 +10,7 @@ import Gray from '../../public/images/gray.png';
 import GrayScale from '../../public/images/gray-scale.png';
 import BrightenSingle from '../../public/images/brighten-single.png';
 import GraySingle from '../../public/images/gray-single.png';
+import Prism from '../../public/images/prism-toolbar.png';
 import Red from '../../public/images/red.png';
 
 import ColorSwatch from '@/components/rgb/ColorSwatch';
@@ -43,14 +44,17 @@ Computers use 24-bit integers to describe colors, which means it is capable of d
 
 Under the RGB color model, if we have a color, and we want to make it more red, we have an easy way of doing so in terms of its underlying representation - we increase the red channel while keeping the other channels constant. 
 
+<div className="my-12">
+<div className="flex justify-center">
 ```javascript
 function moreRed(color: [number, number, number], amount: number) {
 	const [r, g, b] = color;
 	return [r + amount, g, b];
 }
 ```
-**Note**: this function should clamp all values between 0 and 255, but I’m excluding that for clarity of concept. 
-
+</div>
+<figcaption className="mt-8 text-center text-sm text-gray-500">Note: this function should clamp all values between 0 and 255, but I’m excluding that for clarity of concept.</figcaption>
+</div>
 
 The ease with which we can express this transformation is what makes the RGB color model a “good” representation of color. Here are a couple of other transformations available to us:
 
@@ -58,6 +62,7 @@ The ease with which we can express this transformation is what makes the RGB col
 
 To brighten* a color, we can increase the value of each channel by the same relative amount. 
 
+<div className="flex justify-center my-12">
 ```javascript
 // brightens the color by % `amount` (i.e. 10%)
 function brighten(color: [number, number, number], amount: number) {
@@ -65,6 +70,7 @@ function brighten(color: [number, number, number], amount: number) {
 	return [r * amount, g * amount, b * amount];
 }
 ```
+</div>
 
 <div className="flex justify-center my-12 px-12 w-4/5 mx-auto">
   <Image src={BrightenSingle} alt="Brightening a single color" />
@@ -88,6 +94,7 @@ In the RGB color model, colors that have equal intensity across all three channe
 
 This means we can turn an input color "gray" by calculating the average of its three channels, and returning a new color where all channels have that average. 
 
+<div className="flex justify-center my-12">
 ```javascript
 function gray(color: [number, number, number]) {
 	const [r, g, b] = color;
@@ -95,6 +102,7 @@ function gray(color: [number, number, number]) {
 	return [avg, avg, avg];
 }
 ```
+</div>
 
 <div className="my-12 px-12 w-4/5 mx-auto">
   <Image src={GraySingle} alt="Graying a single color" />
@@ -164,19 +172,21 @@ I use the fact that embeddings can measure “meaning” to demonstrate their us
 
 Below, [Amelia Wattenberger](https://wattenberger.com/thoughts/yay-embeddings-math) demonstrates how embeddings can be used to measure sentences on a scale of “concrete” to “abstract”. (I *especially love* the view on the right-hand side which plots the entire essay along that scale).
 
-<div className="flex justify-center my-24">
+<div className="my-24">
+<div className="flex justify-center">
   <Image 
     src={Wattenberger} 
     alt="Description" 
     />
 </div>
+<figcaption className="mt-4 text-center text-sm text-gray-500">Credit: Amelia Wattenberger (https://wattenberger.com/thoughts/yay-embeddings-math)</figcaption>
+</div>
+
+But just as the RGB color model facilitates meaningful transforms of color, embeddings facilitate meaningful transformations of text. 
 
 
-But just as **the** RGB color model facilitates meaningful transforms of color, embeddings facilitate meaningful transformations of text. 
 
-
-
-We can already do this with ChatGPT: 
+We can already do this with ChatGPT when we ask it to make a sentence more "concrete":
 
 <div className="flex justify-center my-24">
 <Image 
@@ -189,6 +199,17 @@ We can already do this with ChatGPT:
 And this is because under the hood, the Large Language Models (LLMs) that power ChatGPT are just manipulating embeddings!
 
 Right now, natural language (e.g. our prompts) is our interface to that manipulation. But more natural interfaces - ones that manipulate embeddings more precisely - like the text editing interface Linus Lee [imagines below](https://thesephist.com/posts/prism/) are possible:
+
+<div className="my-24">
+<div className="flex justify-center">
+  <Image 
+    src={Prism} 
+    alt="Description" 
+    height={500}
+    />
+</div>
+<figcaption className="mt-4 text-center text-sm text-gray-500">Credit: Linus Lee (https://thesephist.com/posts/prism/)</figcaption>
+</div>
 
 
 But to really hone our sense of what’s possible, we have to understand how embedding models are created - which we’ll cover in the next post.

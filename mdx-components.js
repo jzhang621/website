@@ -105,6 +105,8 @@ export function useMDXComponents(components) {
                     padding: "1rem",
                     borderRadius: "0.5rem",
                     overflow: "auto",
+                    marginLeft: "2rem",
+                    marginRight: "2rem",
                     marginBottom: "1.5rem",
                     fontSize: "0.875rem",
                     lineHeight: "1.5",
@@ -114,18 +116,38 @@ export function useMDXComponents(components) {
                 {children}
             </pre>
         ),
-        code: ({ children, ...props }) => (
-            <code
-                style={{
-                    fontFamily: "monospace",
-                    padding: "0.2rem 0.4rem",
-                    borderRadius: "0.25rem",
-                    fontSize: "0.875em",
-                }}
-                {...props}
-            >
-                {children}
-            </code>
-        ),
+        code: ({ children, className, ...props }) => {
+            // For inline code
+            if (!className) {
+                return (
+                    <code
+                        style={{
+                            backgroundColor: "#f3f4f6",
+                            padding: "0.2rem 0.4rem",
+                            borderRadius: "0.25rem",
+                            fontSize: "0.875em",
+                            fontFamily: "monospace",
+                        }}
+                        {...props}
+                    >
+                        {children}
+                    </code>
+                );
+            }
+
+            // For code blocks
+            return (
+                <code
+                    className={className}
+                    style={{
+                        fontFamily: "monospace",
+                        color: "#e5e7eb", // Light text for dark background
+                    }}
+                    {...props}
+                >
+                    {children}
+                </code>
+            );
+        },
     };
 }
