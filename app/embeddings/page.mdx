@@ -35,7 +35,7 @@ In hindsight, I needed a better way to represent text. I was working with string
 
 *Embeddings* are that better representation. But before going into what embeddings are and what makes them better, let’s first establish what makes a representation “good” by looking at how computers represent colors.
 
-## RGB Color Model
+### RGB Color Model
 
 We intuitively understand colors when we see them, but how do we get a computer to represent them? Enter the RGB model.
 
@@ -72,14 +72,16 @@ function brighten(color: [number, number, number], amount: number) {
 ```
 </div>
 
-<div className="flex justify-center my-12 px-12 w-4/5 mx-auto">
-  <Image src={BrightenSingle} alt="Brightening a single color" />
+We can see the effects of this transformation when it is applied to a single color.
+
+<div className="flex justify-center my-12 px-12 mx-auto">
+  <Image src={BrightenSingle} alt="Brightening a single color"  />
 </div>
 
 We can more easily understand the effects of this transformation when it is applied to all pixels of an image. 
 
-<div className="flex justify-center my-12 px-12">
-  <Image src={Brighten} alt="Brightening an image" />
+<div className="flex justify-center my-12 px-12 mx-auto">
+  <Image src={Brighten} alt="Brightening an image"  />
 </div>
 
 ### Grayness
@@ -116,7 +118,7 @@ When applied to each pixel of an image:
 
 These functions should already be familiar to you - they’re the basis for Instagram Filters.
 
-## Text Embeddings
+### Text Embeddings
 
 So this is what we’re after: a good representation for text. One that makes it possible to define functions that take in text and achieve specific outcomes. One that makes it easier to work with text computationally. This brings us back to embeddings.
 
