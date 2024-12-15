@@ -33,13 +33,13 @@ Back then, the functions I was capable of writing weren’t very interesting. Th
 
 In hindsight, I needed a better way to represent text. I was working with strings - which are great for displaying text, but limited when it comes to extracting insights. 
 
-**Embeddings** are that better representation. But before going into what embeddings are and what makes them better, let’s first establish what makes a representation “good” by looking at how computers represent colors.
+*Embeddings* are that better representation. But before going into what embeddings are and what makes them better, let’s first establish what makes a representation “good” by looking at how computers represent colors.
 
 ## RGB Color Model
 
 We intuitively understand colors when we see them, but how do we get a computer to represent them? Enter the RGB model.
 
-Computers use 24-bit integers to describe colors, which means it is capable of displaying ~16.7 million unique colors. The RGB color model breaks those 24 bits into three separate 8-bit dimensions. Each dimension corresponds to an intensity of red (R), green (G), and blue (B) light known as **channels**, ranging from 0 to 255. 
+Computers use 24-bit integers to describe colors, which means it is capable of displaying ~16.7 million unique colors. The RGB color model breaks those 24 bits into three separate 8-bit dimensions. Each dimension corresponds to an intensity of red (R), green (G), and blue (B) light known as *channels*, ranging from 0 to 255. 
 
 
 Under the RGB color model, if we have a color, and we want to make it more red, we have an easy way of doing so in terms of its underlying representation - we increase the red channel while keeping the other channels constant. 
@@ -120,13 +120,13 @@ These functions should already be familiar to you - they’re the basis for Inst
 
 So this is what we’re after: a good representation for text. One that makes it possible to define functions that take in text and achieve specific outcomes. One that makes it easier to work with text computationally. This brings us back to embeddings.
 
-An **embedding** is a way of describing a piece of text (we’ll stick to sentences in this post) as a list of numbers. To create an embedding, you take a sentence and pass it through an embedding model. 
+An *embedding* is a way of describing a piece of text (we’ll stick to sentences in this post) as a list of numbers. To create an embedding, you take a sentence and pass it through an embedding model. 
 
 ```python
 model.encode(”This is a sentence I will generate an embedding for.”) → [1234, …, …, …]
 ```
 
-You can take any sentence and run it through the embedding model - the output is always a list of length `N`. We refer to `N` as the **dimension** of the embedding. 
+You can take any sentence and run it through the embedding model - the output is always a list of length `N`. We refer to `N` as the *dimension* of the embedding. 
 
 
 ```python
@@ -145,7 +145,7 @@ model.encode(”I want to get an embedding for this sentence.”) → [1234, …
 model.encode(”My cat is being a trouble maker today.”) → [1234, …, …, …]
 ```
 
-Once we have the embeddings of two sentences, we can measure the distance between them using cosine similarity. The embeddings of two sentences with similar meanings have cosine similarities closer to 1. Two sentences with dissimilar meanings [unrelated] have cosine similarities closer to 0. [I feel most comfortable using related / unrelated here, but then that doesn’t track well with meaning that I introduced above…]
+Once we have the embeddings of two sentences, we can measure the distance between them using *cosine similarity*. The embeddings of two sentences with similar meanings have cosine similarities closer to 1. Two sentences with dissimilar meanings [unrelated] have cosine similarities closer to 0. 
 
 Cosine similarity is just a function - which takes us back to our primary goal of working with text computationally. Thanks to embeddings, we can write functions that measure how similar in meaning two sentences are.
 
@@ -170,7 +170,7 @@ But its not the virtues of any particular technique that excite me the most - it
 
 I use the fact that embeddings can measure “meaning” to demonstrate their usefulness, but they unlock much broader capabilities. 
 
-Below, [Amelia Wattenberger](https://wattenberger.com/thoughts/yay-embeddings-math) demonstrates how embeddings can be used to measure sentences on a scale of “concrete” to “abstract”. (I *especially love* the view on the right-hand side which plots the entire essay along that scale).
+Below, [Amelia Wattenberger](https://wattenberger.com/thoughts/yay-embeddings-math) demonstrates how embeddings can be used to measure sentences on a scale of “concrete” to “abstract”. (I <span className="italic">especially love</span> the view on the right-hand side which plots the entire essay along that scale).
 
 <div className="my-24">
 <div className="flex justify-center">

@@ -43,10 +43,8 @@ export function useMDXComponents(components) {
             </h2>
         ),
         Latex: ({ children }) => (
-            <Latex style={{ marginTop: "1.25rem", marginBottom: "1.25rem" }}>
-                {children}
-            </Latex>
-        ),        
+            <Latex style={{ marginTop: "1.25rem", marginBottom: "1.25rem" }}>{children}</Latex>
+        ),
         p: ({ children, ...props }) => {
             const style = {
                 lineHeight: "1.8",
@@ -55,13 +53,9 @@ export function useMDXComponents(components) {
             };
 
             // Check if the parent is a figcaption
-            const isInFigcaption = props.parentName === 'figcaption';
+            const isInFigcaption = props.parentName === "figcaption";
 
-            return (
-                <p style={isInFigcaption ? {} : style}>
-                    {children}
-                </p>
-            );
+            return <p style={isInFigcaption ? {} : style}>{children}</p>;
         },
         ul: ({ children }) => (
             <ul style={{ paddingLeft: "1.5rem", listStyle: "disc", marginBottom: "1rem" }}>
@@ -86,12 +80,17 @@ export function useMDXComponents(components) {
             <strong style={{ color: "#1a1a1a", fontWeight: 700 }}>{children}</strong>
         ),
         blockquote: ({ children }) => (
-            <blockquote style={{ width: "75%", margin: "1.5rem auto", borderLeft: "4px solid #cbbd93", paddingLeft: "1rem"  }}>
+            <blockquote
+                style={{
+                    width: "75%",
+                    margin: "1.5rem auto",
+                    borderLeft: "4px solid #cbbd93",
+                    paddingLeft: "1rem",
+                }}
+            >
                 {children}
             </blockquote>
         ),
-
-        
     };
 
     // Merge default components with any custom components passed in
@@ -105,8 +104,6 @@ export function useMDXComponents(components) {
                     padding: "1rem",
                     borderRadius: "0.5rem",
                     overflow: "auto",
-                    marginLeft: "2rem",
-                    marginRight: "2rem",
                     marginBottom: "1.5rem",
                     fontSize: "0.875rem",
                     lineHeight: "1.5",
@@ -116,38 +113,18 @@ export function useMDXComponents(components) {
                 {children}
             </pre>
         ),
-        code: ({ children, className, ...props }) => {
-            // For inline code
-            if (!className) {
-                return (
-                    <code
-                        style={{
-                            backgroundColor: "#f3f4f6",
-                            padding: "0.2rem 0.4rem",
-                            borderRadius: "0.25rem",
-                            fontSize: "0.875em",
-                            fontFamily: "monospace",
-                        }}
-                        {...props}
-                    >
-                        {children}
-                    </code>
-                );
-            }
-
-            // For code blocks
-            return (
-                <code
-                    className={className}
-                    style={{
-                        fontFamily: "monospace",
-                        color: "#e5e7eb", // Light text for dark background
-                    }}
-                    {...props}
-                >
-                    {children}
-                </code>
-            );
-        },
+        code: ({ children, ...props }) => (
+            <code
+                style={{
+                    fontFamily: "monospace",
+                    padding: "0.2rem 0.4rem",
+                    borderRadius: "0.25rem",
+                    fontSize: "0.875em",
+                }}
+                {...props}
+            >
+                {children}
+            </code>
+        ),
     };
 }
