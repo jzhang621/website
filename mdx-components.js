@@ -42,6 +42,18 @@ export function useMDXComponents(components) {
                 {children}
             </h2>
         ),
+        h4: ({ children }) => (
+            <h2
+                style={{
+                    fontSize: "20px",
+                    color: "#3F5570",
+                    marginTop: "1.5rem",
+                    fontWeight: 500,
+                }}
+            >
+                {children}
+            </h2>
+        ),
         Latex: ({ children }) => (
             <Latex style={{ marginTop: "1.25rem", marginBottom: "1.25rem" }}>{children}</Latex>
         ),

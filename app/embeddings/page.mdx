@@ -18,53 +18,65 @@ import { generateRGBGradient } from '@/data/utils';
 
 export const metadata = {
     published: true,
-    title: "Embeddings Unlock New Functionality",
+    title: "Why I'm Excited About Embeddings",
     description: "We can now write functions that allow us to work with text in new ways.",
     date: "2024-12-03",
 };
 
 export const grays = generateRGBGradient([ 90, 90, 90], [180, 180, 180], 3);
 
-# Embeddings Unlock New Functionality
+<h1 className="text-4xl font-bold">Embeddings Unlock New Functionality</h1>
+<div className="mt-2 text-lg text-gray-500">{metadata.description}</div>
 
-In 2018, I tried to visualize what good writing looked like. This meant defining good writing computationally: could I write functions that took in a piece of writing as input, and returned some dimension of “good” writing as output? 
+In 2018, I tried to programatically visualize what good writing looks like. The goal was to write a program that could take in a piece of writing, and return some dimensions of that writing that could be used to discern its quality.
 
-Back then, the functions I was capable of writing weren’t very interesting. They dealt mostly with counts - given a sentence, return the number of words in that sentence. I didn’t find them to be particularly useful, and so I stopped my attempt. 
 
-In hindsight, I needed a better way to represent text. I was working with strings - which are great for displaying text, but limited when it comes to extracting insights. 
+My first attempts were really basic. I was dealing mainly with lengths: lengths of sentences, lengths of words, etc, which I plotted as bar charts and histograms. I didn't find these plots to be particularly interesting, and I lost interest in the project. 
 
-*Embeddings* are that better representation. But before going into what embeddings are and what makes them better, let’s first establish what makes a representation “good” by looking at how computers represent colors.
+But *embeddings* have me excited about this idea again!
+
+Instead of representing text as a sequence of characters (strings), embeddings represent text as a sequence of numbers. But before we get deeper into embeddings, I want to briefly demonstrate why representations matter by looking at how computers represent color.
+
 
 ### RGB Color Model
 
-We intuitively understand colors when we see them, but how do we get a computer to represent them? Enter the RGB model.
+The [RGB color model](https://www.britannica.com/science/RGB-color-model) is a way of describing colors as 24-bit numbers (for a total of 2^24 or ~16.7 million unique colors). That 24-bit number is broken down into 3 separate 8-bit dimensions. Each dimension corresponds to an intensity of red (R), green (G), and blue (B) light known as *channels* that range from 0 to 255.
 
-Computers use 24-bit integers to describe colors, which means it is capable of displaying ~16.7 million unique colors. The RGB color model breaks those 24 bits into three separate 8-bit dimensions. Each dimension corresponds to an intensity of red (R), green (G), and blue (B) light known as *channels*, ranging from 0 to 255. 
-
-
-Under the RGB color model, if we have a color, and we want to make it more red, we have an easy way of doing so in terms of its underlying representation - we increase the red channel while keeping the other channels constant. 
+If we have a RGB color and want to make it "more red", we have an easy way of doing so in terms of its underlying representation - we increase the red channel while keeping the other channels constant. 
 
 <div className="my-12">
 <div className="flex justify-center">
-```javascript
+```typescript
 function moreRed(color: [number, number, number], amount: number) {
 	const [r, g, b] = color;
 	return [r + amount, g, b];
 }
 ```
 </div>
-<figcaption className="mt-8 text-center text-sm text-gray-500">Note: this function should clamp all values between 0 and 255, but I’m excluding that for clarity of concept.</figcaption>
+<figcaption className="mt-8 text-center text-sm text-gray-500">Note: this function should clamp all values between 0 and 255, but I'm excluding that for the sake of clarity.</figcaption>
 </div>
 
-The ease with which we can express this transformation is what makes the RGB color model a “good” representation of color. Here are a couple of other transformations available to us:
+<div className="flex justify-center w-full h-auto mx-auto w-1/2 my-8">
+  <Image src={Red} 
+    alt="Brightening a single color"
+    width={0}
+    height={0}
+    sizes="100vw"
+    className="w-full h-auto"
+  />
+</div>
 
-### Brightness
+We can express more complex transformations just as easily. For example:
 
-To brighten* a color, we can increase the value of each channel by the same relative amount. 
+
+{/* **The ease with which we can express this transformation computationally is what makes the RGB color model a “good” representation of color**. Here are a couple of other transformations available to us: */}
+
+#### Brightness
+
+To brighten<sup>1</sup> a color, we can increase the value of each channel by the same relative amount. 
 
 <div className="flex justify-center my-12">
 ```javascript
-// brightens the color by % `amount` (i.e. 10%)
 function brighten(color: [number, number, number], amount: number) {
 	const [r, g, b] = color;
 	return [r * amount, g * amount, b * amount];
@@ -74,19 +86,33 @@ function brighten(color: [number, number, number], amount: number) {
 
 We can see the effects of this transformation when it is applied to a single color.
 
-<div className="flex justify-center w-5/6 my-12 px-12 mx-auto">
-  <Image src={BrightenSingle} alt="Brightening a single color"  />
+<div className="flex justify-center w-full h-auto mx-auto w-1/2 my-8">
+  <Image src={BrightenSingle}
+    alt="Brightening a single color"
+    width={0}
+    height={0}
+    sizes="100vw"
+    className="w-full h-auto"
+  />
 </div>
 
-We can more easily understand the effects of this transformation when it is applied to all pixels of an image. 
 
-<div className="flex justify-center w-5/6 my-12 px-12 mx-auto">
-  <Image src={Brighten} alt="Brightening an image"  />
+But the effects are even more apparent when we apply the transformation to an entire image:
+
+<div className="flex justify-center h-auto mx-auto w-3/5 my-8">
+  <Image src={Brighten} 
+    alt="Brightening a single color"
+    width={0}
+    height={0}
+    sizes="100vw"
+    className="w-full h-auto"
+  />
 </div>
 
-### Grayness
 
-In the RGB color model, colors that have equal intensity across all three channels (i.e. `r = g = b`) are perceived as gray. 
+#### Grayness
+
+In the RGB color model, colors with an equal intensity across all three channels (i.e. `r = g = b`) are all different shades of gray:
 
 <div className="flex gap-8 justify-center my-8 py-4 rounded-sm">
 {grays.map((color, index) => (
@@ -106,23 +132,35 @@ function gray(color: [number, number, number]) {
 ```
 </div>
 
-<div className="my-12 px-12 w-5/6 mx-auto">
-  <Image src={GraySingle} alt="Graying a single color"  />
+<div className="flex justify-center w-full h-auto mx-auto w-1/2 my-8">
+  <Image src={GraySingle} 
+    alt="Turning a single color gray"
+    width={0}
+    height={0}
+    sizes="100vw"
+    className="w-full h-auto"
+  />
 </div>
 
 When applied to each pixel of an image:
 
-<div className="flex justify-center w-5/6 my-12 px-12 mx-auto">
-  <Image src={Gray} alt="Graying an image"  />
+<div className="flex justify-center w-full h-auto mx-auto w-3/5 my-8">
+  <Image src={Gray} 
+    alt="Graying an entire image"
+    width={0}
+    height={0}
+    sizes="100vw"
+    className="w-full h-auto"
+  />
 </div>
 
-These functions should already be familiar to you - they’re the basis for Instagram Filters.
+These functions should already be familiar to you - they're the basis for Instagram Filters.
 
 ### Text Embeddings
 
-So this is what we’re after: a good representation for text. One that makes it possible to define functions that take in text and achieve specific outcomes. One that makes it easier to work with text computationally. This brings us back to embeddings.
+So this is what we're after: a good representation for text. One that makes it possible to define functions that take in text and achieve specific outcomes. One that makes it easier to work with text computationally. This brings us back to embeddings.
 
-An *embedding* is a way of describing a piece of text (we’ll stick to sentences in this post) as a list of numbers. To create an embedding, you take a sentence and pass it through an embedding model. 
+An *embedding* is a way of describing a piece of text (we'll stick to sentences in this post) as a list of numbers. To create an embedding, you take a sentence and pass it through an *embedding model*. 
 
 ```python
 model.encode(”This is a sentence I will generate an embedding for.”) → [1234, …, …, …]
@@ -135,7 +173,8 @@ You can take any sentence and run it through the embedding model - the output is
 model.encode(”My cat is being a trouble maker today.”) → [1234, …, …, …]
 ```
 
-We can think of a single embedding as occupying a point in an N-dimensional space (an embedding is a *vector*). An embedding model thus maps all possible sentences to points in the same N-dimensional space. Here’s the most important part: they are mapped in such a way that **sentences with “similar meanings” sit closer together in that space** than sentences with different meanings.
+
+We can think of a single embedding as occupying a point in an N-dimensional space (an embedding is a *vector*). An embedding model thus maps all possible sentences to points in the same N-dimensional space. Here's the most important part: they are mapped in such a way that **sentences with “similar meanings” sit closer together in that space** than sentences with different meanings.
 
 ```python
 [need spatial visual here]
@@ -153,7 +192,7 @@ Cosine similarity is just a function - which takes us back to our primary goal o
 
 ### Computing With Embeddings
 
-Here’s the start of a Paul Graham essay, [When to Do What You Love](https://www.paulgraham.com/when.html), with certain words highlighted with the help of embeddings:
+Here's the start of a Paul Graham essay, [When to Do What You Love](https://www.paulgraham.com/when.html), with certain words highlighted with the help of embeddings:
 
 <div className="m-8">
     <RemoveWord words={pg_remove_words_results} />
@@ -163,9 +202,9 @@ To create these highlights, I first generate embeddings for each sentence in the
 
 I then calculate the cosine similarity between `e1` and `e2`, and use that value to drive the highlighting. Words, that when removed, produce larger differences in cosine similarity are highlighted darker. The result is a rough measure of how “important” a word is to the meaning of the sentence in which that word appears. 
 
-This technique has its shortcomings. For one, long sentences tend to dilute the importance of any single word. Even so, I find it’s a helpful indicator of where to direct my attention. I like the idea of turning these highlights on after reading something for the first time, to see if there was anything I missed. 
+This technique has its shortcomings. For one, long sentences tend to dilute the importance of any single word. Even so, I find it's a helpful indicator of where to direct my attention. I like the idea of turning these highlights on after reading something for the first time, to see if there was anything I missed. 
 
-But its not the virtues of any particular technique that excite me the most - it’s the fact that such techniques are even possible.
+But its not the virtues of any particular technique that excite me the most - it's the fact that such techniques are even possible.
 
 
 ### Beyond Measurement
