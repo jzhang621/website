@@ -28,18 +28,20 @@ export const grays = generateRGBGradient([ 90, 90, 90], [180, 180, 180], 3);
 <h1 className="text-4xl font-bold">Embeddings Unlock New Functionality</h1>
 <div className="mt-2 text-lg text-gray-500">{metadata.description}</div>
 
-In 2018, I tried to programatically visualize what good writing looks like. The goal was to write a program that could take in a piece of writing, and return some dimensions of that writing that could be used to discern its quality.
+In 2018, I tried to visualize what good writing looks like. My goal was to write a program that could take in a piece of writing, and return some dimensions of that writing that could be used to discern its quality.
 
 
 My first attempts were really basic. I was dealing with a lot of lengths: lengths of sentences, lengths of words, etc, which I plotted as bar charts and histograms. I didn't find these plots to be particularly interesting, and I lost interest in the project. 
 
 But *embeddings* have me excited about this idea again!
 
-An embedding is a <span className="italic">numerical representation</span> of text. Instead of representing text as a sequence of characters (a string), embeddings represent text as a sequence of numbers. These numbers encode a lot of information, but before we get into what that information is, I want to first demonstrate the importance of numerical representations by looking at how computers represent color.
+An embedding is a <span className="italic">numerical representation</span> of text. Instead of representing text as a sequence of characters (a string), embeddings represent text as a sequence of numbers. These numbers encode a lot of information, but before we get into what that information is, I want to first show why numerical representations are important by looking at how computers represent color.
 
 
 
-### RGB Color Model
+## RGB Color Model
+
+tl,dr: Having an accurate numerical representation of color enables us to create tools such as Instagram Filters.
 
 The [RGB color model](https://www.britannica.com/science/RGB-color-model) is a way of describing colors as 24-bit numbers (for a total of 2^24 or ~16.7 million unique colors). That 24-bit number is broken down into 3 separate 8-bit dimensions. Each dimension corresponds to an intensity of red (R), green (G), and blue (B) light known as *channels* that range from 0 to 255.
 
@@ -57,7 +59,7 @@ function moreRed(color: [number, number, number], amount: number) {
 <figcaption className="mt-8 text-center text-sm text-gray-500">Note: this function should clamp all values between 0 and 255, but I'm excluding that for the sake of clarity.</figcaption>
 </div>
 
-<div className="flex justify-center w-full h-auto mx-auto w-1/2 my-8">
+<div className="flex justify-center h-auto mx-auto w-3/5 my-8">
   <Image src={Red} 
     alt="Brightening a single color"
     width={0}
@@ -69,8 +71,6 @@ function moreRed(color: [number, number, number], amount: number) {
 
 We can express more complex transformations just as easily. For example:
 
-
-{/* **The ease with which we can express this transformation computationally is what makes the RGB color model a “good” representation of color**. Here are a couple of other transformations available to us: */}
 
 #### Brightness
 
@@ -87,7 +87,7 @@ function brighten(color: [number, number, number], amount: number) {
 
 We can see the effects of this transformation when it is applied to a single color.
 
-<div className="flex justify-center w-full h-auto mx-auto w-1/2 my-8">
+<div className="flex justify-center h-auto mx-auto w-3/5 my-8">
   <Image src={BrightenSingle}
     alt="Brightening a single color"
     width={0}
@@ -98,7 +98,7 @@ We can see the effects of this transformation when it is applied to a single col
 </div>
 
 
-But the effects are even more apparent when we apply the transformation to an entire image:
+These effects are even more apparent when we apply the transformation to an entire image:
 
 <div className="flex justify-center h-auto mx-auto w-3/5 my-8">
   <Image src={Brighten} 
@@ -133,7 +133,7 @@ function gray(color: [number, number, number]) {
 ```
 </div>
 
-<div className="flex justify-center w-full h-auto mx-auto w-1/2 my-8">
+<div className="flex justify-center  h-auto mx-auto w-3/5 my-8">
   <Image src={GraySingle} 
     alt="Turning a single color gray"
     width={0}
@@ -145,7 +145,7 @@ function gray(color: [number, number, number]) {
 
 When applied to each pixel of an image:
 
-<div className="flex justify-center w-full h-auto mx-auto w-3/5 my-8">
+<div className="flex justify-center  h-auto mx-auto w-3/5 my-8">
   <Image src={Gray} 
     alt="Graying an entire image"
     width={0}
@@ -155,24 +155,19 @@ When applied to each pixel of an image:
   />
 </div>
 
-These functions should already be familiar to you - they're the basis for Instagram Filters.
 
-The RGB color model is derived from the [Trichromatic Theory of Color Vision](https://www.simplypsychology.org/what-is-the-trichromatic-theory-of-color-vision.html)
-", which states that "every combination of color perceived by the brain is a combination of blue, green, and red."<sup>2</sup>. In other words, the RGB color model is rooted in reality - it's a "mathematical understanding" of "how humans perceive color".
+The RGB color model works because it is rooted in reality: it's based on the [Trichromatic Theory of Color Vision](https://www.simplypsychology.org/what-is-the-trichromatic-theory-of-color-vision.html). In other words, it's a numerical representation that reflects how humans actually perceive color (to some degree of accuracy). **This makes the RGB color model an enabler** - it enhances what we can do with colors by enabling us to define functions that transform color like the ones shown above.
 
 
-a "mathematical model of how we perceive color"
-The synthesizer is just one example of a pattern in the history of media: with breakthroughs in mathematical understanding of a medium, come new tools that exploit that mathematical understanding to enable new creative forms and human interfaces.
+And you're familiar with these color transformation functions already - they're the basis of Instagram filters.
 
-Optics, the mathematics of light and color, underpins so much of how humans interact with visual media today. Behind every image you see on screen is a color space like RGB or CMYK, a mathematical model of how we perceive color. We edit photos on our devices not by applying chemicals in a dark room but by passing our photographs through mathematical functions we call filters. This mathematical model of color and light also gave us new vocabulary (saturation, hue, contrast) and new interfaces (color curves, scopes, histograms) for working with the visual medium.
+Note: This idea of "representations as enablers" comes from [Synthesizers for Thought](https://thesephist.com/posts/synth/) by Linus Lee.
 
-These transformations are why representations are important.
+## Embeddings
 
-### Text Embeddings
+The RGB Color Model is a useful frame for understanding embeddings. Just like the RGB color model is a numerical representation of color based on how humans actually perceive color, an embedding is a numerical representation of text based on humans actually use text in writing. Similarly, this numerical representation of text enhances what we can do with text.
 
-So this is what we're after: a good representation for text. One that makes it possible to define functions that take in text and achieve specific outcomes. One that makes it easier to work with text computationally. This brings us back to embeddings.
-
-An *embedding* is a way of describing a piece of text (we'll stick to sentences in this post) as a list of numbers. To create an embedding, you take a sentence and pass it through an *embedding model*. 
+Like we've said, an *embedding* is a way of representing text as a list of numbers. To create an embedding, you take a piece of text and pass it through an *embedding model*. You can create embeddings of any type of text - but we'll stick to sentences for this post.
 
 ```python
 model.encode(”This is a sentence I will generate an embedding for.”) → [1234, …, …, …]
