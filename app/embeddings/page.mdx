@@ -31,11 +31,12 @@ export const grays = generateRGBGradient([ 90, 90, 90], [180, 180, 180], 3);
 In 2018, I tried to programatically visualize what good writing looks like. The goal was to write a program that could take in a piece of writing, and return some dimensions of that writing that could be used to discern its quality.
 
 
-My first attempts were really basic. I was dealing mainly with lengths: lengths of sentences, lengths of words, etc, which I plotted as bar charts and histograms. I didn't find these plots to be particularly interesting, and I lost interest in the project. 
+My first attempts were really basic. I was dealing with a lot of lengths: lengths of sentences, lengths of words, etc, which I plotted as bar charts and histograms. I didn't find these plots to be particularly interesting, and I lost interest in the project. 
 
 But *embeddings* have me excited about this idea again!
 
-Instead of representing text as a sequence of characters (strings), embeddings represent text as a sequence of numbers. But before we get deeper into embeddings, I want to briefly demonstrate why representations matter by looking at how computers represent color.
+An embedding is a <span className="italic">numerical representation</span> of text. Instead of representing text as a sequence of characters (a string), embeddings represent text as a sequence of numbers. These numbers encode a lot of information, but before we get into what that information is, I want to first demonstrate the importance of numerical representations by looking at how computers represent color.
+
 
 
 ### RGB Color Model
@@ -155,6 +156,17 @@ When applied to each pixel of an image:
 </div>
 
 These functions should already be familiar to you - they're the basis for Instagram Filters.
+
+The RGB color model is derived from the [Trichromatic Theory of Color Vision](https://www.simplypsychology.org/what-is-the-trichromatic-theory-of-color-vision.html)
+", which states that "every combination of color perceived by the brain is a combination of blue, green, and red."<sup>2</sup>. In other words, the RGB color model is rooted in reality - it's a "mathematical understanding" of "how humans perceive color".
+
+
+a "mathematical model of how we perceive color"
+The synthesizer is just one example of a pattern in the history of media: with breakthroughs in mathematical understanding of a medium, come new tools that exploit that mathematical understanding to enable new creative forms and human interfaces.
+
+Optics, the mathematics of light and color, underpins so much of how humans interact with visual media today. Behind every image you see on screen is a color space like RGB or CMYK, a mathematical model of how we perceive color. We edit photos on our devices not by applying chemicals in a dark room but by passing our photographs through mathematical functions we call filters. This mathematical model of color and light also gave us new vocabulary (saturation, hue, contrast) and new interfaces (color curves, scopes, histograms) for working with the visual medium.
+
+These transformations are why representations are important.
 
 ### Text Embeddings
 
