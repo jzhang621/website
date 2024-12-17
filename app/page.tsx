@@ -55,7 +55,7 @@ export default async function Home() {
             </h1>
 
             <div className="text-lg text-gray-500">
-                Hey there! I'm Jimmy, and I like using visuals to help explain concepts I find
+                Hey there! I&apos;m Jimmy, and I like using visuals to help explain concepts I find
                 interesting.
             </div>
 
