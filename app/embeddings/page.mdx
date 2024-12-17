@@ -12,6 +12,7 @@ import BrightenSingle from '../../public/images/brighten-single.png';
 import GraySingle from '../../public/images/gray-single.png';
 import Prism from '../../public/images/prism-toolbar.png';
 import Red from '../../public/images/red.png';
+import Apple from '../../public/images/apple.png';
 
 import ColorSwatch from '@/components/rgb/ColorSwatch';
 import { generateRGBGradient } from '@/data/utils';
@@ -25,7 +26,7 @@ export const metadata = {
 
 export const grays = generateRGBGradient([ 90, 90, 90], [180, 180, 180], 3);
 
-<h1 className="text-4xl font-bold">Embeddings Unlock New Functionality</h1>
+<h1 className="text-4xl font-bold">{metadata.title}</h1>
 <div className="mt-2 text-lg text-gray-500">{metadata.description}</div>
 
 In 2018, I tried to visualize what good writing looks like. My goal was to write a program that could take in a piece of writing, and return some dimensions of that writing that could be used to discern its quality.
@@ -41,7 +42,7 @@ An embedding is a <span className="italic">numerical representation</span> of te
 
 ## RGB Color Model
 
-tl,dr: Having an accurate numerical representation of color enables us to create tools such as Instagram Filters.
+tl,dr: Having an accurate numerical representation of color facilitates us to create powerful facilitate such as Instagram Filters.
 
 The [RGB color model](https://www.britannica.com/science/RGB-color-model) is a way of describing colors as 24-bit numbers (for a total of 2^24 or ~16.7 million unique colors). That 24-bit number is broken down into 3 separate 8-bit dimensions. Each dimension corresponds to an intensity of red (R), green (G), and blue (B) light known as *channels* that range from 0 to 255.
 
@@ -165,15 +166,15 @@ Note: This idea of "representations as enablers" comes from [Synthesizers for Th
 
 ## Embeddings
 
-The RGB Color Model is a useful frame for understanding embeddings. Just like the RGB color model is a numerical representation of color based on how humans actually perceive color, an embedding is a numerical representation of text based on humans actually use text in writing. Similarly, this numerical representation of text enhances what we can do with text.
+The RGB Color Model is a useful frame for understanding embeddings. Just like the RGB color model is a numerical representation of color based on how humans actually perceive color, an embedding is a numerical representation of text based on humans actually use text in writing. Similarly, embeddings enhance what we can do with text.
 
-Like we've said, an *embedding* is a way of representing text as a list of numbers. To create an embedding, you take a piece of text and pass it through an *embedding model*. You can create embeddings of any type of text - but we'll stick to sentences for this post.
+To create an embedding, you take a piece of text and pass it through an *embedding model*. You can create embeddings of all types of text - individual words, phrases, paragraphs, even entire documents - but we'll stick to sentences in this post.
 
 ```python
 model.encode(”This is a sentence I will generate an embedding for.”) → [1234, …, …, …]
 ```
 
-You can take any sentence and run it through the embedding model - the output is always a list of length `N`. We refer to `N` as the *dimension* of the embedding. 
+You can take any sentence you can think of and run it through the embedding model - the output is always a list of numbers with length `N`. We refer to `N` as the *dimension* of the embedding. 
 
 
 ```python
@@ -181,7 +182,7 @@ model.encode(”My cat is being a trouble maker today.”) → [1234, …, …, 
 ```
 
 
-We can think of a single embedding as occupying a point in an N-dimensional space (an embedding is a *vector*). An embedding model thus maps all possible sentences to points in the same N-dimensional space. Here's the most important part: they are mapped in such a way that **sentences with “similar meanings” sit closer together in that space** than sentences with different meanings.
+We can think of a single embedding as occupying a point in an N-dimensional space (an embedding is a *vector*). An embedding model thus maps all possible sentences onto points in the same N-dimensional space. Here's the most important part: they are mapped in such a way that **sentences with “similar meanings” sit closer together in this space** than sentences with different meanings.
 
 ```python
 [need spatial visual here]
@@ -193,62 +194,59 @@ model.encode(”I want to get an embedding for this sentence.”) → [1234, …
 model.encode(”My cat is being a trouble maker today.”) → [1234, …, …, …]
 ```
 
-Once we have the embeddings of two sentences, we can measure the distance between them using *cosine similarity*. The embeddings of two sentences with similar meanings have cosine similarities closer to 1. Two sentences with dissimilar meanings [unrelated] have cosine similarities closer to 0. 
+Since embeddings are just points in the same N-dimensional space, we can use *cosine similarity* to measure the distance between any two embeddings. Cosine similarity is a function that measures how similar two vectors are to each other by measuring the angle between them. When used in the context of embeddings, cosine similarity can be thought of as a way of "measuring meaning": if two sentences are related in meaning, their cosine similarity will be closer to 1. If they are unrelated, their cosine similarity will be closer to 0.
 
-Cosine similarity is just a function - which takes us back to our primary goal of working with text computationally. Thanks to embeddings, we can write functions that measure how similar in meaning two sentences are.
 
-### Computing With Embeddings
+### Computing with Embeddings
 
-Here's the start of a Paul Graham essay, [When to Do What You Love](https://www.paulgraham.com/when.html), with certain words highlighted with the help of embeddings:
+Cosine similarity brings us back to the main idea of this post: that embeddings enhance what we can do with text.
+
+For example, here's the start of a Paul Graham essay, [When to Do What You Love](https://www.paulgraham.com/when.html), with certain words highlighted with the help of embeddings and cosine similarity:
 
 <div className="m-8">
     <RemoveWord words={pg_remove_words_results} />
 </div>
 
-To create these highlights, I first generate embeddings for each sentence in the essay `(e1)` . I then looped through every word in each sentence, removed that word from the sentence, and generated an embedding for that shortened sentence `(e2)`.
+To create these highlights, I first generate embeddings for each sentence in the essay `(e1)`. I then loop through every word in each sentence, remove that word from the sentence, and generate an embedding for that shortened sentence `(e2)`.
 
-I then calculate the cosine similarity between `e1` and `e2`, and use that value to drive the highlighting. Words, that when removed, produce larger differences in cosine similarity are highlighted darker. The result is a rough measure of how “important” a word is to the meaning of the sentence in which that word appears. 
+I then calculate the cosine similarity between `e1` and `e2`, and use that value to drive the highlighting. Words, that when removed, result in larger differences in cosine similarity, are highlighted darker. The result is a rough measure of how “important” a word is to the meaning of the sentence in which that word appears. 
 
-This technique has its shortcomings. For one, long sentences tend to dilute the importance of any single word. Even so, I find it's a helpful indicator of where to direct my attention. I like the idea of turning these highlights on after reading something for the first time, to see if there was anything I missed. 
+This technique has its shortcomings. For one, long sentences tend to dilute the importance of any single word. And it'd probably be more informative to remove entire phrases such as "follow your passion" in some places rather than individual words. Even so, I find it's a helpful indicator of where to direct my attention. I like the idea of turning these highlights on after reading something for the first time, as I find it prompts me to read each sentence more closely.
 
-But its not the virtues of any particular technique that excite me the most - it's the fact that such techniques are even possible.
+But its not the virtues of any particular technique that excite me the most - it's the fact that such techniques are even possible. Here are two other embeddings-based techinques for working with text that others have imagined, which go beyond using embeddings to measure meaning.
 
-
-### Beyond Measurement
-
-I use the fact that embeddings can measure “meaning” to demonstrate their usefulness, but they unlock much broader capabilities. 
+#### Measuring Different Scales
 
 Below, [Amelia Wattenberger](https://wattenberger.com/thoughts/yay-embeddings-math) demonstrates how embeddings can be used to measure sentences on a scale of “concrete” to “abstract”. (I <span className="italic">especially love</span> the view on the right-hand side which plots the entire essay along that scale).
 
-<div className="my-24">
+<div className="my-12">
 <div className="flex justify-center">
   <Image 
     src={Wattenberger} 
     alt="Description" 
     />
 </div>
-<figcaption className="mt-4 text-center text-sm text-gray-500">Credit: Amelia Wattenberger (https://wattenberger.com/thoughts/yay-embeddings-math)</figcaption>
+<figcaption className="mt-8 text-center text-sm text-gray-500">Credit: Amelia Wattenberger (https://wattenberger.com/thoughts/yay-embeddings-math)</figcaption>
 </div>
 
-But just as the RGB color model facilitates meaningful transforms of color, embeddings facilitate meaningful transformations of text. 
-
+#### Instagram Filters, but for Text?
+Just as the RGB color model facilitates meaningful transforms of color, embeddings also facilitate meaningful transformations of text. 
 
 
 We can already do this with ChatGPT when we ask it to make a sentence more "concrete":
 
-<div className="flex justify-center my-24">
+<div className="flex justify-center my-12">
 <Image 
     src={ChatGPT} 
     alt="Transforming text with ChatGPT" 
     />
 </div>
 
-
 And this is because under the hood, the Large Language Models (LLMs) that power ChatGPT are just manipulating embeddings!
 
-Right now, natural language (e.g. our prompts) is our interface to that manipulation. But more natural interfaces - ones that manipulate embeddings more precisely - like the text editing interface Linus Lee [imagines below](https://thesephist.com/posts/prism/) are possible:
+Right now, we use natural language to interface with the LLM, which manipulate the embeddings in response to our prompts. But more natural interfaces - ones that manipulate embeddings more precisely - like the text editing interface Linus Lee [imagines below](https://thesephist.com/posts/prism/) are possible:
 
-<div className="my-24">
+<div className="my-12">
 <div className="flex justify-center">
   <Image 
     src={Prism} 
@@ -260,7 +258,21 @@ Right now, natural language (e.g. our prompts) is our interface to that manipula
 </div>
 
 
-But to really hone our sense of what’s possible, we have to understand how embedding models are created - which we’ll cover in the next post.
+And what's even more exciting is that embeddings can be generalized to all different types of data. We can create embeddings for images, songs, videos, and even abstract concepts like one's movie taste (these different types of data are called *modalities*). All embeddings, regardless of the modality, follow the same principle: similar data sit close together in the embedding space. This means that images with similar content, songs with similar sounds, or movies with similar themes will occupy nearby points in their respective spaces.
 
+We can even create *multi-modal embeddings*, where different modalities, such as images and text, are mapped (or aligned) to the same embedding space. This is the underlying idea behind Generative AI applications, which enable us to generate images based on a text descriptions ("a red apple on a wooden table"), or the reverse, in which we provide an image, and generate a text caption based on its contents.
+
+<div className="my-12">
+<div className="flex justify-center">
+  <Image 
+    src={Apple} 
+    alt="Description" 
+    height={300}
+    />
+</div>
+</div>
+
+
+So while I'm personally most excited about text embeddings, embeddings are truly at the heart of the recent advancements in machine learning. And in order to get a more complete understanding of how embeddings work and the transforms they enable, we have to take a closer look at embedding models, which we'll do in the next post.
 
 Stay tuned!

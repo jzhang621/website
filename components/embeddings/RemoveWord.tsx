@@ -36,7 +36,7 @@ const SimilarityScale: React.FC<ScaleProps> = ({ minOpacity, maxOpacity }) => {
                 <div className="absolute -bottom-6 left-0 text-sm">{minOpacity.toFixed(2)}</div>
                 <div className="absolute -bottom-6 right-0 text-sm">{maxOpacity.toFixed(2)}</div>
             </div>
-            <div className="text-sm text-gray-500 mt-12">Difference in cosine similarity</div>
+            <div className="text-sm text-gray-500 mt-8">Difference in cosine similarity</div>
         </div>
     );
 };
