@@ -43,7 +43,9 @@ export default function RootLayout({
 
             <body className={`bg-white antialiased`}>
                 <Nav />
-                <div className="mt-4 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">{children}</div>
+                <div className="mt-4 w-full md:max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                    {children}
+                </div>
                 <Analytics />
             </body>
         </html>
