@@ -49,7 +49,7 @@ export default async function Home() {
     posts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
     return (
-        <main className="min-h-screen p-8 max-w-4xl mx-auto">
+        <main className="min-h-screen p-4 sm:p-8 max-w-4xl mx-auto">
             <h1 className="text-4xl font-bold mb-8 text-[#3F5570] text-center">
                 Jimmy Meets World
             </h1>
