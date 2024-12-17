@@ -65,7 +65,7 @@ const Array: React.FC<ArrayVisualizationProps> = ({
     const variableRect = {
         fill: "none",
         // stroke: "#fdfbd4",
-        stroke: "#68934C",
+        stroke: "#a7de83",
         strokeWidth: 2,
         rx: 1,
         // rx: 2,

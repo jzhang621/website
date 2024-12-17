@@ -44,7 +44,7 @@ const ArrayWithAnimation: React.FC = () => {
             />
             <Array data={dataEvents} variables={interpolatedEvents} boxSize={40} margin={10} />
 
-            <div className="absolute bottom-2 right-4 text-xs text-gray-400">
+            <div className="absolute bottom-2 right-4 text-xs text-[#A9778Daa]">
                 {progressText(currentStep - 1, data.length - 1)}
             </div>
         </div>

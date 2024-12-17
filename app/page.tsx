@@ -50,7 +50,9 @@ export default async function Home() {
 
     return (
         <main className="min-h-screen p-8 max-w-4xl mx-auto">
-            <h1 className="text-4xl font-bold mb-8">Jimmy Meets World!</h1>
+            <h1 className="text-4xl font-bold mb-8 text-[#3F5570] text-center">
+                Jimmy Meets World
+            </h1>
 
             <div className="text-lg text-gray-500">
                 Hey there! I'm Jimmy, and I like using visuals to help explain concepts I find
@@ -61,7 +63,7 @@ export default async function Home() {
                 <div className="my-4 mx-auto lg:w-[90%]">
                     <AnimatedArray />
                     <div className="text-center mx-auto text-sm text-gray-400 my-4">
-                        An animation of bubble sort I made for fun
+                        An animation of bubble sort I made
                     </div>
                 </div>
             </div>
