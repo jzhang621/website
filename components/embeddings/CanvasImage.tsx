@@ -18,9 +18,9 @@ interface HoverState {
 const CanvasImage: React.FC<CanvasImageProps> = ({
     imageUrl,
     otherImageUrl,
-    width,
     functionLabel = "Function",
 }) => {
+    const width = 512;
     const height = width;
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const transformedCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -173,22 +173,27 @@ const CanvasImage: React.FC<CanvasImageProps> = ({
     };
 
     return (
-        <div className="flex items-center space-x-4">
-            <div onMouseLeave={handleMouseLeave} className="relative">
+        <div className="flex items-center space-x-4 w-full h-full">
+            <div
+                onMouseLeave={handleMouseLeave}
+                className="relative flex-1"
+                style={{ overflow: "visible" }}
+            >
                 <canvas
                     ref={canvasRef}
                     width={width}
                     height={height}
                     onMouseMove={(e) => handleMouseMove(e, false)}
-                    className="cursor-none"
+                    className="cursor-none w-full h-auto"
+                    style={{ aspectRatio: `${width} / ${height}` }}
                 />
                 {(hoverStateOriginal.isHovering || hoverStateTransformed.isHovering) && (
                     <div
-                        className="absolute pointer-events-none bg-white p-1 rounded shadow-lg"
+                        className="absolute pointer-events-none bg-white p-1 rounded shadow-lg whitespace-nowrap"
                         style={{
-                            left:
-                                hoverStateOriginal.x - hoverStateOriginal.rgb.join(", ").length * 7,
-                            top: hoverStateOriginal.y + 5,
+                            left: hoverStateOriginal.x + 10,
+                            top: hoverStateOriginal.y + 10,
+                            zIndex: 50,
                         }}
                     >
                         <div className="flex items-center gap-2">
@@ -198,7 +203,7 @@ const CanvasImage: React.FC<CanvasImageProps> = ({
                                     backgroundColor: `rgb(${hoverStateOriginal.rgb.join(",")})`,
                                 }}
                             />
-                            <code className="text-xs">
+                            <code style={{ fontSize: "10px" }}>
                                 rgb({hoverStateOriginal.rgb.join(", ")})
                             </code>
                         </div>
@@ -206,7 +211,11 @@ const CanvasImage: React.FC<CanvasImageProps> = ({
                 )}
             </div>
 
-            <svg width="100" height="50" className="flex-none">
+            <svg
+                className="flex-none w-1/5 h-auto"
+                viewBox="0 0 100 50"
+                preserveAspectRatio="xMidYMid meet"
+            >
                 <defs>
                     <marker
                         id="arrow"
@@ -232,7 +241,7 @@ const CanvasImage: React.FC<CanvasImageProps> = ({
                 />
                 <text
                     x="50"
-                    y="45"
+                    y="40"
                     textAnchor="middle"
                     className="font-mono"
                     fontSize="8px"
@@ -243,22 +252,22 @@ const CanvasImage: React.FC<CanvasImageProps> = ({
                 </text>
             </svg>
 
-            <div onMouseLeave={handleMouseLeave} className="relative">
+            <div onMouseLeave={handleMouseLeave} className="relative flex-1">
                 <canvas
                     ref={transformedCanvasRef}
                     width={width}
                     height={height}
                     onMouseMove={(e) => handleMouseMove(e, true)}
-                    className="cursor-none"
+                    className="cursor-none w-full h-auto"
+                    style={{ aspectRatio: `${width} / ${height}` }}
                 />
                 {(hoverStateTransformed.isHovering || hoverStateOriginal.isHovering) && (
                     <div
-                        className="absolute pointer-events-none bg-white p-1 rounded shadow-lg"
+                        className="absolute pointer-events-none bg-white p-1 rounded shadow-lg whitespace-nowrap"
                         style={{
-                            left:
-                                hoverStateTransformed.x -
-                                hoverStateTransformed.rgb.join(", ").length * 7,
-                            top: hoverStateTransformed.y + 5,
+                            left: hoverStateTransformed.x + 10,
+                            top: hoverStateTransformed.y + 10,
+                            zIndex: 50,
                         }}
                     >
                         <div className="flex items-center gap-2">
@@ -268,7 +277,7 @@ const CanvasImage: React.FC<CanvasImageProps> = ({
                                     backgroundColor: `rgb(${hoverStateTransformed.rgb.join(",")})`,
                                 }}
                             />
-                            <code className="text-xs">
+                            <code style={{ fontSize: "10px" }}>
                                 rgb({hoverStateTransformed.rgb.join(", ")})
                             </code>
                         </div>

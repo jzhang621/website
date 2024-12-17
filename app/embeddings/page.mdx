@@ -104,11 +104,13 @@ We can see the effects of this transformation when it is applied to a single col
 
 These effects are even more apparent when we apply the transformation to an entire image:
 
+<div className="flex justify-center my-12 w-4/5 mx-auto">
 <CanvasImage 
     imageUrl="/images/redwood.png"
     otherImageUrl="/images/brighteness.png"
-    width={300}
+    functionLabel="brighten(..., 1.5)"
 />
+</div>
 
 
 
@@ -145,12 +147,13 @@ function gray(color: [number, number, number]) {
 
 When applied to each pixel of an image:
 
+<div className="flex justify-center my-12 w-4/5 mx-auto">
 <CanvasImage 
     imageUrl="/images/redwood.png"
     otherImageUrl="/images/black-and-white.png"
-    width={400}
-    height={400}
+    functionLabel="gray(...)"
 />
+</div>
 
 
 The RGB color model works because it is rooted in reality: it's based on the [Trichromatic Theory of Color Vision](https://www.simplypsychology.org/what-is-the-trichromatic-theory-of-color-vision.html). In other words, it's a numerical representation that reflects (to some degree of accuracy) how humans actually perceive color. **This makes the RGB color model an enabler** - it enhances what we can do with colors by enabling us to define functions that transform color like the ones shown above.
