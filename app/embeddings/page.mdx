@@ -54,8 +54,8 @@ If we have a RGB color and want to make it "more red", we have an easy way of do
 
 <div className="my-12">
 <div className="flex justify-center">
-```typescript
-function moreRed(color: [number, number, number], amount: number) {
+```javascript
+function moreRed(color, amount) {
 	const [r, g, b] = color;
 	return [r + amount, g, b];
 }
@@ -65,7 +65,7 @@ function moreRed(color: [number, number, number], amount: number) {
 </div>
 
 
-<div className="flex justify-center w-3/5 mx-auto">
+<div className="flex justify-center md:w-3/5 w-4/5mx-auto">
 <ColorTransform
   startColor={[150, 0, 0]}
   endColor={[250, 0, 0]}
@@ -82,7 +82,7 @@ To brighten<sup>1</sup> a color, we can increase the value of each channel by th
 
 <div className="flex justify-center my-12">
 ```javascript
-function brighten(color: [number, number, number], amount: number) {
+function brighten(color, amount) {
 	const [r, g, b] = color;
 	return [r * amount, g * amount, b * amount];
 }
@@ -91,7 +91,7 @@ function brighten(color: [number, number, number], amount: number) {
 
 We can see the effects of this transformation when it is applied to a single color.
 
-<div className="flex justify-center w-3/5 mx-auto">
+<div className="flex justify-center md:w-3/5 w-4/5 mx-auto">
 <ColorTransform
   startColor={[140, 60, 90]}
   endColor={[210, 90, 150]}
@@ -101,7 +101,7 @@ We can see the effects of this transformation when it is applied to a single col
 
 These effects are even more apparent when we apply the transformation to an entire image <span className="text-gray-500 text-sm">(hover over the image to see how the transformation affects individual pixels)</span>:
 
-<div className="flex justify-center my-12 w-4/5 mx-auto">
+<div className="flex justify-center my-12 md:w-4/5 w-5/6 mx-auto">
 <CanvasImage 
     imageUrl="/images/redwood.png"
     otherImageUrl="/images/brighteness.png"
@@ -125,7 +125,7 @@ This means we can turn an input color "gray" by calculating the average of its t
 
 <div className="flex justify-center my-12">
 ```javascript
-function gray(color: [number, number, number]) {
+function gray(color) {
 	const [r, g, b] = color;
     const avg = (r + g + b) / 3;
 	return [avg, avg, avg];
@@ -133,7 +133,7 @@ function gray(color: [number, number, number]) {
 ```
 </div>
 
-<div className="flex justify-center w-3/5 mx-auto">
+<div className="flex justify-center md:w-3/5 w-4/5 mx-auto">
 <ColorTransform
   startColor={[140, 60, 90]}
   endColor={[96, 96, 96]}
@@ -144,7 +144,7 @@ function gray(color: [number, number, number]) {
 
 When applied to each pixel of an image:
 
-<div className="flex justify-center my-12 w-4/5 mx-auto">
+<div className="flex justify-center my-12 md:w-4/5 w-5/6 mx-auto">
 <CanvasImage 
     imageUrl="/images/redwood.png"
     otherImageUrl="/images/black-and-white.png"
