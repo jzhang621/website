@@ -101,7 +101,7 @@ We can see the effects of this transformation when it is applied to a single col
 
 These effects are even more apparent when we apply the transformation to an entire image <span className="text-gray-500 text-sm">(hover over the image to see how the transformation affects individual pixels)</span>:
 
-<div className="flex justify-center my-12 md:w-4/5 w-5/6 mx-auto">
+<div className="flex justify-center my-12 md:w-4/5 w-full mx-auto">
 <CanvasImage 
     imageUrl="/images/redwood.png"
     otherImageUrl="/images/brighteness.png"
@@ -144,7 +144,7 @@ function gray(color) {
 
 When applied to each pixel of an image:
 
-<div className="flex justify-center my-12 md:w-4/5 w-5/6 mx-auto">
+<div className="flex justify-center my-12 md:w-4/5 w-full mx-auto">
 <CanvasImage 
     imageUrl="/images/redwood.png"
     otherImageUrl="/images/black-and-white.png"
