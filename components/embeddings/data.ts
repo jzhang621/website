@@ -299,7 +299,7 @@ export function diffArrays(arr1: number[], arr2: number[]): number[] {
     if (arr1.length !== arr2.length) {
         throw new Error("Arrays must be of equal length");
     }
-    return arr1.map((val, idx) => Math.abs(val - arr2[idx]));
+    return arr1.map((val, idx) => val - arr2[idx]);
 }
 
 export function findGlobalMinMax(arrays: number[][]) {

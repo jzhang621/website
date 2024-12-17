@@ -9,7 +9,7 @@ export function useMDXComponents(components) {
         h1: ({ children }) => (
             <h1
                 style={{
-                    color: "#1a1a1a",
+                    color: "#3F5570",
                     fontSize: "30px",
                     fontWeight: "bold",
                     marginBottom: "1rem",
@@ -81,7 +81,10 @@ export function useMDXComponents(components) {
         ),
         li: ({ children }) => <li style={{ marginBottom: "0.5rem" }}>{children}</li>,
         a: ({ children, href }) => (
-            <a href={href} style={{ color: "blue", textDecoration: "underline" }}>
+            <a
+                href={href}
+                style={{ color: "#77A993", textDecoration: "underline", fontWeight: 500 }}
+            >
                 {children}
             </a>
         ),

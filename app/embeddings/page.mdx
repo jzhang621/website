@@ -5,14 +5,11 @@ import { pg_remove_words_results } from '@/data/words/pg_remove_words_results';
 
 import Wattenberger from '../../public/images/wattenberger.png';
 import ChatGPT from '../../public/images/chat-gpt-transform.png';
-import Brighten from '../../public/images/brighten.png';
-import Gray from '../../public/images/gray.png';
-import GrayScale from '../../public/images/gray-scale.png';
-import BrightenSingle from '../../public/images/brighten-single.png';
-import GraySingle from '../../public/images/gray-single.png';
+import Embedding from '../../public/images/embedding-model.png';
 import Prism from '../../public/images/prism-toolbar.png';
 import Red from '../../public/images/red.png';
 import Apple from '../../public/images/apple.png';
+import NDimension from '../../public/images/n-dimension.png';
 
 import ColorTransform from '@/components/embeddings/ColorTransform';
 import { EmbeddingVisualizer } from '@/components/embeddings/Visualizer';
@@ -25,7 +22,7 @@ import CanvasImage from '@/components/embeddings/CanvasImage';
 export const metadata = {
     published: true,
     title: "Why I'm Excited About Embeddings",
-    description: "We can now write functions that allow us to work with text in new ways.",
+    description: "We can now do some pretty creative things with text!",
     date: "2024-12-03",
 };
 
@@ -35,7 +32,7 @@ export const [min2, max2] = findGlobalMinMax([diffArrays(e1, e2), diffArrays(e1,
 
 export const grays = generateRGBGradient([ 90, 90, 90], [180, 180, 180], 3);
 
-<h1 className="text-4xl font-bold">{metadata.title}</h1>
+<h1 className="text-5xl font-bold text-[#3F5570]">{metadata.title}</h1>
 <div className="mt-2 text-lg text-gray-500">{metadata.description}</div>
 
 In 2018, I tried to visualize what good writing looks like. My goal was to write a program that could take in a piece of writing, and return some dimensions of that writing that could be used to discern its quality.
@@ -102,7 +99,7 @@ We can see the effects of this transformation when it is applied to a single col
 />
 </div>
 
-These effects are even more apparent when we apply the transformation to an entire image:
+These effects are even more apparent when we apply the transformation to an entire image <span className="text-gray-500 text-sm">(hover over the image to see how the transformation affects individual pixels)</span>:
 
 <div className="flex justify-center my-12 w-4/5 mx-auto">
 <CanvasImage 
@@ -160,100 +157,88 @@ The RGB color model works because it is rooted in reality: it's based on the [Tr
 
 You're familiar with these color transformation functions already - they're the basis of Instagram filters.
 
-Note: This idea of "representations as enablers" comes from [Synthesizers for Thought](https://thesephist.com/posts/synth/) by Linus Lee.
+<div className="mx-12 my-12 bg-gray-50 rounded-sm px-4 py-1">
+<span className="text-lg font-bold">Note</span>: This idea of "representations as enablers" comes from [Synthesizers for Thought](https://thesephist.com/posts/synth/) by Linus Lee, which heavily influenced this post.
+</div>
 
 ## Embeddings
 
-The RGB Color Model is a useful frame for understanding embeddings. Just like the RGB color model is a numerical representation of color based on how humans actually perceive color, an embedding is a numerical representation of text based on humans actually use text in writing. Similarly, embeddings enhance what we can do with text.
+The RGB Color Model is a useful frame for understanding embeddings. Just like how the RGB color model is a numerical representation of color based on how humans actually perceive color, an embedding is a numerical representation of text based on how humans actually use text in writing. Similarly, embeddings enhance what we can do with text.
 
-To create an embedding, you take a piece of text and pass it through an *embedding model*. You can create embeddings of all types of text - individual words, phrases, paragraphs, even entire documents - but we'll stick to sentences in this post. The embedding model takes in the sentence as input, and returns a list of numbers (the numeric representation of the sentence).
+To create an embedding, you take a piece of text and pass it through an *embedding model*. You can create embeddings of all types of text - individual words, phrases, paragraphs, even entire documents - but we'll stick to sentences in this post. The embedding model takes in the sentence as input, and returns a list of numbers, which is the embedding of that sentence.
 
-```python
-model.encode("I will generate an embedding for this sentence.")
+<div className="my-12">
+<div className="flex justify-center w-4/5 mx-auto">
+  <Image 
+    src={Embedding} 
+    alt="Creating an embedding from a sentence" 
+    />
+</div>
+</div>
 
-# array([-4.16772217e-02,  2.16492657e-02,  4.84335013e-02,  7.46034831e-02,
-#        4.97868052e-03,  8.82944185e-03,  1.26351800e-03, -1.59129705e-02,
-#        1.37419058e-02, -6.40833601e-02,  4.88254726e-02, -6.41501993e-02,
-#        6.66038692e-02, -2.81214025e-02, -1.42913852e-02,  4.82733026e-02,
-#        5.97095154e-02,  1.00764818e-02, -6.96659312e-02, -1.83627214e-02,
-#       -1.26159436e-03,  6.00421168e-02,  9.91466492e-02, -6.49396032e-02,
-#       -1.34562636e-02, -3.08830962e-02,  2.45258817e-03,  8.54900777e-02,
-#        9.22604650e-02, -1.16281090e-02,  9.16429088e-02, -3.64247337e-02,
-#        7.14990078e-03,  6.29822165e-03,  5.78497946e-02,  3.67692038e-02,
-#       -1.34286843e-02,  4.29249555e-02,  6.40979037e-02, -2.83057783e-02,
-#        2.58675008e-03, -5.78473322e-02,  2.40517855e-02,  9.08062086e-02,
-#        3.68111506e-02, -5.10181710e-02, -2.69073006e-02,  9.82946344e-03,
-#       -5.20526953e-02,  2.62302700e-02, -5.46806790e-02, -6.50678799e-02,
-#       -2.51216199e-02, -1.17777273e-01, -4.37260568e-02, -1.46411443e-02,
-#       -1.99552290e-02, -2.39421465e-02,  3.25184390e-02, -6.62487596e-02,
-#        1.39292600e-02, -7.73431733e-03, -8.75708275e-03,  4.29031216e-02,
-#        6.35881573e-02,  1.17423162e-02,  4.17440236e-02,  7.28243962e-02,
-#       -5.78757413e-02,  8.25852975e-02, -5.29911667e-02,  1.30494814e-02,
-#       -8.36730674e-02,  6.50826283e-03, -1.24487393e-01, -1.97989456e-02,
-#       -5.77960443e-03, -7.39938989e-02,  1.47626966e-01, -4.51644184e-03,
-#       -1.03832679e-02, -4.86191660e-02, -4.79090251e-02,  3.16649079e-02,
-#        1.17653385e-02, -1.07086520e-03,  1.21311896e-01, -8.90002549e-02,
-#       -6.87703714e-02,  1.90233707e-03, -7.72426277e-02, -6.88459128e-02,
-#        2.96560396e-02, -5.68634272e-03, -8.66875723e-02,  4.81836163e-02,
-#       -9.27904323e-02, -3.61349322e-02,  1.70177519e-02,  7.73033127e-02,
-# ...
-#        1.46252392e-02,  4.24624458e-02,  1.64152845e-03, -5.83416894e-02,
-#        8.33863243e-02, -1.46255363e-02,  3.98303606e-02,  8.90543498e-03,
-#       -9.75205656e-03, -1.94375291e-02,  7.32998131e-03,  5.72182946e-02,
-#        3.28265540e-02,  6.62673712e-02,  4.29528579e-02, -5.50971180e-02],
-# dtype=float32)
-```
 
-<div className="my-8 mx-8 mx-auto">
+You can take any sentence you can think of and run it through the embedding model - the output is always a list of numbers with length `N`. We refer to `N` as the *dimension* of the embedding model. The embedding model we use in this post <a href="https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2" className="text-gray-500 text-xs" target="_blank">(sentence-transformers/all-MiniLM-L6-v2)</a> has a dimension of 384.
+
+
+<div className="my-12">
+<div className="flex justify-center w-4/5 mx-auto">
+  <Image 
+    src={NDimension} 
+    alt="The dimension of the embedding model" 
+    />
+</div>
+</div>
+
+### Embeddings Can Measure "Meaning"
+
+
+The fact that our embedding model maps any sentence to a list of numbers of length 384 means we can compare two arbitrary sentences by comparing their embeddings. A bit of intuition from RGB color models helps here. If two colors look similar, their underlying RGB representation will be similar. The same is true for embeddings: if two sentences have similar meanings, their embeddings will be similar.
+
+We can get a sense of this by comparing the embeddings of 3 different sentences. Since making sense of 384 numbers is impossible, let's instead visualize an embedding by coloring each number in the embedding according to its value <span className="text-gray-500 text-sm">(hover over each rectangle to see the value)</span>.
+
+
+<div className="w-4/5 mx-auto my-8">
+<div className="my-4  mx-auto">
+<figcaption className="mb-2 text-lg">1. Let's generate an embedding of this sentence.</figcaption>
 <EmbeddingVisualizer embedding={e1} min={min} max={max} id="e1" />
 </div>
 
-You can take any sentence you can think of and run it through the embedding model - the output is always a list of numbers with length `N`. We refer to `N` as the *dimension* of the embedding model. The dimension of our embedding model is 384.
-
-
-```python
-model.encode("My cat is being a trouble maker today.")
-```
-
-{/* <div className="my-8 mx-8 mx-auto">
+<div className="my-4  mx-auto">
+<figcaption className="mb-2 text-lg">2. I have a black cat.</figcaption>
 <EmbeddingVisualizer embedding={e2} min={min} max={max} id="e2" />
-</div> */}
+</div>
 
-Below: embedding visualizer for the sentence "I will get an embedding for this sentence."
-
-{/* <div className="my-8 mx-8 mx-auto">
+<div className="my-4  mx-auto">
+<figcaption className="mb-2 text-lg">3. Let's get an embedding of this sentence.</figcaption>
 <EmbeddingVisualizer embedding={e3} min={min} max={max} id="e3" />
-</div> */}
-
-Below: embedding visualizer for the difference between the cat sentence and the sentence "I will get an embedding for this sentence."
-
-<div className="my-8 mx-8 mx-auto">
-<EmbeddingVisualizer embedding={diffArrays(e1, e2)} min={min2} max={max2} abs={true} id="diff-e1-e2" />
+</div>
 </div>
 
-Below: embedding visualizer for the difference between "I will generate an embedding for this sentence." and "I will get an embedding for this sentence." (less difference)
+We can compare the embeddings of "Let's generate an embedding of this sentence." `(e1)` and "I have a black cat." `(e2)` by pointwise subtracting each value in `e2` from the corresponding value in `e1`:
 
-<div className="my-8 mx-8 mx-auto">
-<EmbeddingVisualizer embedding={diffArrays(e1, e3)} min={min2} max={max2} abs={true} id="diff-e1-e3" />
+<div className="w-4/5 mx-auto my-8">
+<div className="my-8 mx-auto">
+<EmbeddingVisualizer embedding={diffArrays(e1, e2)} min={min2} max={max2} id="diff-e1-e2" />
+<figcaption className="mt-2 text-sm text-gray-500 text-center">Let's generate an embedding of this sentence. vs I have a black cat.</figcaption>
+</div>
+</div>
+
+Not surprisingly, these differences are much more pronounced than the differences between the embeddings of "Let's generate an embedding of this sentence." and "Let's get an embedding for this sentence."
+
+<div className="w-4/5 mx-auto my-8">
+<div className="my-8 mx-auto">
+<EmbeddingVisualizer embedding={diffArrays(e1, e3)} min={min2} max={max2} id="diff-e1-e3" />
+<figcaption className="mt-2 text-sm text-gray-500 text-center">Let's generate an embedding of this sentence. vs Let's get an embedding for this sentence."</figcaption>
+</div>
 </div>
 
 
+It's useful to think of embeddings as vectors, which means each embedding occupies a point in an N-dimensional space. An embedding model thus maps all possible sentences onto points in the same N-dimensional space. And as we just saw: **they are mapped in such a way that sentences with similar meanings sit closer together in this space** than sentences with different meanings.
+
+And because embeddings are vectors, we can use [*cosine similarity*](https://en.wikipedia.org/wiki/Cosine_similarity) to measure the distance between any two embeddings. Cosine similarity is a function that measures how similar two vectors are to each other by measuring the angle between them. When used in the context of embeddings, cosine similarity can be thought of as a way of "measuring meaning": if two sentences are related in meaning, their cosine similarity will be closer to 1. If they are unrelated, their cosine similarity will be closer to 0.
 
 
-An embedding is a *vector*, meaning we can think of it as occupying a point in an N-dimensional space. An embedding model thus maps all possible sentences onto points in the same N-dimensional space. Here's the most important part: they are mapped in such a way that **sentences with “similar meanings” sit closer together in this space** than sentences with different meanings.
-
-```python
-model.encode("I want to generate an embedding for this sentence.") → [1234, …, …, …]
-
-model.encode("I want to get an embedding for this sentence.") → [1234, …, …, …]
-
-model.encode("My cat is being a trouble maker today.") → [1234, …, …, …]
-```
-
-Since embeddings are just points in the same N-dimensional space, we can use *cosine similarity* to measure the distance between any two embeddings. Cosine similarity is a function that measures how similar two vectors are to each other by measuring the angle between them. When used in the context of embeddings, cosine similarity can be thought of as a way of "measuring meaning": if two sentences are related in meaning, their cosine similarity will be closer to 1. If they are unrelated, their cosine similarity will be closer to 0.
-
-
-### Computing with Embeddings
+### Some Applications
 
 Cosine similarity brings us back to the main idea of this post: that embeddings enhance what we can do with text.
 
@@ -269,7 +254,7 @@ I then calculate the cosine similarity between `e1` and `e2`, and use that value
 
 This technique has its shortcomings. For one, long sentences tend to dilute the importance of any single word. And it'd probably be more informative to remove entire phrases such as "follow your passion" in some places rather than individual words. Even so, I find it's a helpful indicator of where to direct my attention. I like the idea of turning these highlights on after reading something for the first time, as I find it prompts me to read each sentence more closely.
 
-But its not the virtues of any particular technique that excite me the most - it's the fact that such techniques are even possible. Here are two other embeddings-based techinques for working with text that others have imagined, which go beyond using embeddings to measure meaning.
+But it isn't the virtues of any particular technique that excite me the most - it's the fact that such techniques are even possible. Here are two other embeddings-based techniques for working with text that others have imagined, which go beyond using embeddings to measure meaning.
 
 #### Measuring Different Scales
 
@@ -326,9 +311,26 @@ We can even create *multi-modal embeddings*, where different modalities, such as
     height={300}
     />
 </div>
+<figcaption className="mt-4 text-center text-sm text-gray-500">Image generated by ChatGPT</figcaption>
 </div>
 
 
 So while I'm personally most excited about text embeddings, embeddings are truly at the heart of the recent advancements in machine learning. And in order to get a more complete understanding of how embeddings work and the transforms they enable, we have to take a closer look at embedding models, which we'll do in the next post.
 
-Stay tuned!
+### Acknowledgements
+
+Thank you to [Ian Johnson](https://twitter.com/enjalot) for his valuable feedback on this post.
+
+### Further Resources
+
+<div className="mt-4 flex flex-col gap-4">
+- [Synthesizers for Thought](https://thesephist.com/posts/synth/) by Linus Lee
+- [Getting Creative with Embeddings](https://wattenberger.com/thoughts/yay-embeddings-math) by Amelia Wattenberger
+- [Prism](https://thesephist.com/posts/prism/) by Linus Lee
+- [Insights with Embeddings](https://enjalot.substack.com/p/insights-with-embeddings) by Ian Johnson
+- [Embeddings are Underrated](https://technicalwriting.dev/data/embeddings.html) by Kayce Basques
+- [Deep Learning, NLP, and Representations](https://colah.github.io/posts/2014-07-NLP-RNNs-Representations/) by Chris Olah (co-founder of Anthropic)
+- [Using Artificial Intelligence to Augment Human Intelligence](https://distill.pub/2017/aia/) by Shan Carter and Michael Nielsen
+- [Intuition & Use-Cases of Embeddings in NLP & beyond](https://www.youtube.com/watch?v=4-QoMdSqG_I&ab_channel=InfoQ) by Jay Alammar (video)
+
+</div>

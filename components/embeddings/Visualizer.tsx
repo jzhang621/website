@@ -76,7 +76,7 @@ const estimateMonospaceWidth = (text: string, fontSize: number) => {
 
 export const EmbeddingVisualizer: React.FC<EmbeddingVisualizerProps> = ({
     embedding,
-    maxPerRow = 100,
+    maxPerRow = 70,
     min = undefined,
     max = undefined,
     abs = false,
@@ -160,8 +160,8 @@ export const EmbeddingVisualizer: React.FC<EmbeddingVisualizerProps> = ({
                         y={y}
                         width={cellWidth}
                         height={height}
-                        stroke="black"
-                        strokeWidth={1}
+                        stroke={colorScale(value)}
+                        strokeWidth={2}
                         fill="none"
                     />
                 )}
@@ -174,7 +174,7 @@ export const EmbeddingVisualizer: React.FC<EmbeddingVisualizerProps> = ({
                             y={y - tooltipHeight - 5}
                             width={tooltipWidth}
                             height={tooltipHeight}
-                            fill="#77A6A9"
+                            fill="#8DA977"
                             rx={4}
                             ry={4}
                         />
