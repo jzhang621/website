@@ -45,8 +45,10 @@ const Array: React.FC<ArrayVisualizationProps> = ({
     const viewBoxHeight = boxSize + margin * 2;
 
     const rect = {
-        fill: "#a7de83",
-        stroke: "#84b067",
+        // fill: "#a7de83",
+        fill: "#77A993",
+        // stroke: "#84b067",
+        stroke: "#5C917A",
         // stroke: "#c9684b",
         strokeWidth: 1.5,
         strokeOpacity: 0.85,
@@ -54,7 +56,7 @@ const Array: React.FC<ArrayVisualizationProps> = ({
     };
 
     const text = {
-        fontSize: 14,
+        fontSize: 16,
         fontWeight: 700,
         fill: "#ffffe3",
         opacity: 1,
@@ -85,8 +87,8 @@ const Array: React.FC<ArrayVisualizationProps> = ({
                 width={viewBoxWidth}
                 height={viewBoxHeight}
                 cellSize={boxSize / 2}
-                stroke={"#d3d3d3cc"}
-                strokeWidth={0.2}
+                stroke={"#d3d3d3aa"}
+                strokeWidth={0.25}
             />
 
             {data.map((item, idx) => (

@@ -5,13 +5,7 @@ import { useState } from "react";
 import { indexTransition, variableTransition } from "@/transitions";
 import PlayButton from "../ReplayButton";
 import { data, variables } from "@/animation-data/bubbleSort";
-import {
-    Box,
-    CircularProgress,
-    CircularProgressProps,
-    LinearProgress,
-    Typography,
-} from "@mui/material";
+
 
 const progressText = (currentStep: number, totalSteps: number) => {
     return `${currentStep + 1} / ${totalSteps}`;

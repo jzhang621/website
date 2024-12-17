@@ -14,15 +14,15 @@ const PlayButton: React.FC<{
         <button
             disabled={disabled}
             className={`${
-                notPlayed ? "animate-pulse-slightly border-[1.5px] border-orange-600" : ""
-            } bg-[rgb(253,226,154,128)] hover:bg-[#FCD468] cursor-pointer
+                notPlayed ? "animate-pulse-slightly border-[1.5px] border-[#A9778D]" : ""
+            } bg-[#A9778D88] hover:bg-[#A9778Dcc] cursor-pointer
             absolute w-8 h-8 flex items-center justify-center rounded-md top-2 right-2 ${
                 disabled ? "cursor-not-allowed opacity-50" : ""
             }`}
             tabIndex={0}
             onClick={onClick}
         >
-            <PlayArrow className="text-amber-500 w-4 h-4 hover:text-amber-600" />
+            <PlayArrow className="text-[#A9778D] w-4 h-4" />
         </button>
     );
 };

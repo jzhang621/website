@@ -1,6 +1,7 @@
 import { promises as fs } from "fs";
 import path from "path";
 import Link from "next/link";
+import AnimatedArray from "@/components/animations/AnimatedArray";
 
 interface BlogPost {
     slug: string;
@@ -54,6 +55,15 @@ export default async function Home() {
             <div className="text-lg text-gray-500">
                 Hey there! I'm Jimmy, and I like using visuals to help explain concepts I find
                 interesting.
+            </div>
+
+            <div className="my-12  border-[#B0807038] lg:mx-12 mx-2">
+                <div className="my-4 mx-auto lg:w-[90%]">
+                    <AnimatedArray />
+                    <div className="text-center mx-auto text-sm text-gray-400 my-4">
+                        An animation of bubble sort I made for fun
+                    </div>
+                </div>
             </div>
 
             <h2 className="text-3xl font-semibold mb-2 mt-12">Posts</h2>
