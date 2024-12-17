@@ -11,12 +11,15 @@ const ColorSwatch: React.FC<ColorSwatchProps> = ({ rgb, label }) => {
 
     return (
         <div className="flex flex-col items-center">
-            <div
-                className={`rounded-sm w-24 h-24`}
-                style={{ backgroundColor: color }}
-            />
-            <div style={{ color: color }} className="mt-2 text-sm font-semibold">{color}</div>
-            {label && <div style={{ color: color }} className="mt-1 text-sm font-semibold">{label}</div>}
+            <div className={`rounded-sm w-24 h-24`} style={{ backgroundColor: color }} />
+            <div style={{ color: color }} className="font-mono mt-2 text-xs font-semibold">
+                {color}
+            </div>
+            {label && (
+                <div style={{ color: color }} className="font-mono text-sm">
+                    {label}
+                </div>
+            )}
         </div>
     );
 };
