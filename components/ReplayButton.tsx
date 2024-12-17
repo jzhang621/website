@@ -11,10 +11,8 @@ const PlayButton: React.FC<{
 }> = ({ restartKey, onClick, progress, disabled = false }) => {
     const notPlayed = restartKey === 0 && progress === 0;
 
-    const { width } = useWindowSize();
-    const sizeClass = width > 768 ? "w-8 h-8" : "w-6 h-6";
-    const iconSizeClass = width > 768 ? "w-4 h-4" : "w-3 h-3";
-
+    const sizeClass = "w-6 h-6";
+    const iconSizeClass = "w-3 h-3";
     return (
         <button
             disabled={disabled}
