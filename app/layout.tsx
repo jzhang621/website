@@ -1,21 +1,32 @@
+"use client";
+import { usePathname } from "next/navigation";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/react";
 
 // app/layout.tsx
-import { Open_Sans } from 'next/font/google';
+import { Open_Sans } from "next/font/google";
 
 const openSans = Open_Sans({
-  subsets: ['latin'],
-  variable: '--font-open-sans',
+    subsets: ["latin"],
+    variable: "--font-open-sans",
 });
 
+function Nav() {
+    const pathname = usePathname();
+    if (pathname === "/") return null;
 
-
-export const metadata: Metadata = {
-    title: "Jimmy Zhang",
-};
+    return (
+        <nav className="bg-[#8DA97711] py-2">
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                <a href="/" className="text-xs text-gray-600 hover:text-gray-900">
+                    ← Home
+                </a>
+            </div>
+        </nav>
+    );
+}
 
 export default function RootLayout({
     children,
@@ -30,8 +41,9 @@ export default function RootLayout({
                 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
             </head>
 
-            <body className={`bg-white  antialiased`}>
-                <div className="mt-8 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">{children}</div>
+            <body className={`bg-white antialiased`}>
+                <Nav />
+                <div className="mt-4 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">{children}</div>
                 <Analytics />
             </body>
         </html>

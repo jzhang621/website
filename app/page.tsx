@@ -49,18 +49,25 @@ export default async function Home() {
 
     return (
         <main className="min-h-screen p-8 max-w-4xl mx-auto">
-            <h1 className="text-4xl font-bold mb-8">Welcome to My Blog</h1>
+            <h1 className="text-4xl font-bold mb-8">Jimmy Meets World!</h1>
 
-            <div className="grid gap-6">
+            <div className="text-lg text-gray-500">
+                Hey there! I'm Jimmy, and I like using visuals to help explain concepts I find
+                interesting.
+            </div>
+
+            <h2 className="text-3xl font-semibold mb-2 mt-12">Posts</h2>
+
+            <div className="grid gap-6 text-slate-700">
                 {posts.map((post) => (
                     <Link
                         key={post.slug}
                         href={`/${post.slug}`}
-                        className="p-6 border-transparent border rounded-lg hover:border-gray-400 transition-colors"
+                        className="px-4 py-6 border-transparent border rounded-lg hover:border-gray-400 transition-colors hover:bg-gray-50"
                     >
-                        <h2 className="text-2xl font-semibold mb-2">{post.title}</h2>
+                        <h3 className="text-xl font-semibold mb-2">{post.title}</h3>
                         <div className="flex items-center justify-between text-gray-500">
-                            <span>Read more →</span>
+                            {/* <span>Read more →</span> */}
                             <time dateTime={post.date}>{post.date}</time>
                         </div>
                     </Link>

@@ -1,0 +1,49 @@
+export const metadata = {
+    published: true,
+    title: "The Underlying Concepts of Algorithms",
+    date: "2022-04-03",
+};
+
+<h1 className="text-4xl font-bold text-[#3F5570]">{metadata.title}</h1>
+
+<div className="mt-2 italic">Originally posted on [Reddit](https://www.reddit.com/r/learnprogramming/comments/tu8pal/i_recently_quit_my_engineering_job_and_now_tutor/) in 2022.</div>
+
+I recently quit my engineering job and now tutor beginner programmers. Here's one big difference I see between beginners and experienced programmers:
+The students I tutor are typically college students in their 2nd programming course, which covers data structures and algorithms. I’ve been programming for 10 years - I graduated college in 2014 and worked as a software engineer until Nov. 2021 - and that experience really helps me see things differently from those who are just starting.
+
+I often work with my students on implementing algorithms they have been assigned for homework. These algorithms all have underlying concepts, which dictate “how” the algorithm transforms an input, such as an unsorted list, to a useful output, such a sorted one. Most importantly, those underlying concepts exist independently of code, or any programming languages.
+
+To illustrate this, let’s look at a scenario we might encounter in every day life. I have a set of mixing bowls in my kitchen. They’re all different sizes, which allows them to stack together nicely. Every so often, they get washed together as part of one dishwasher cycle, and I have to sort them according to their size in order to stack them back together.
+
+This is a rather intuitive task for us as humans. It's so intuitive that we don’t really have to stop and think about what we are doing. But if we were to describe our process in words, it would involve something like:
+
+<div className="my-4 mx-4">
+
+First, pick out the largest bowl from the entire (unordered) set, and use it as the beginning of the stack of ordered bowls.
+
+Second, pick out the 2nd largest bowl from the rest of the unordered set of bowls, and add it to the stack of ordered bowl.
+
+Third, pick out the 3rd largest bowl from the rest of the unordered set of bowls, and add it to the stack of ordered bowls.
+
+Repeat - picking one bowl to add to the stack each time - until all the bowls are stacked in order.
+
+This just so happens to be the underlying concept behind the Selection Sort algorithm for sorting an array. In other words, to implement the Selection Sort algorithm involves translating the above concept into code.
+
+</div>
+**We can therefore think of implementing algorithms as consisting of two tasks. The first involves accurately understanding the algorithm’s underlying concepts. The second is the ability to translate those concepts onto code.**
+
+My experience allows me to clearly see both of these tasks. I can describe the underlying concepts driving the algorithms, and I know how to translate those concepts into code. I see the relationship between the two, meaning I know the role each line of code plays with respect to the underlying concepts.
+
+It’s no surprise that beginners often struggle with the second task - the ability to use code to accomplish certain things is exactly the skill beginners are learning. But I often see them struggle with the first task as well - the accurate understanding of the algorithms underlying concept.
+
+The fuzzy understanding becomes very apparent when debugging or troubleshooting. I observe them making changes in what looks to me to be a “random” fashion (although I suspect the student is actually trying to alter their algorithm by pattern-matching against something they’ve seen before). They often don’t know how to answer questions such as: “what does this variable represent?” or “what’s the effect of this loop on our input?”
+
+I write this with absolutely no intention to take anything away from beginners. I’m sure if you watched me troubleshoot when I was first learning you would have seen me doing similar things. And often times the process of trial and error with code really is the best way to understand an algorithms’ underlying concepts. Rather, I bring it up because I think there are some important implications about ways to effectively learn.
+
+Learning how to code often involves learning a bunch of new things at once. We learn most effectively when the surface area of material we are trying to make sense of is kept to a manageable size. And when we’re first learning how to code, we can keep that surface area manageable by spending a bit more time focusing on the parts that don’t involve code yet - such as accurately understanding how the algorithm works.
+
+So how do we get better at understanding the concepts behind algorithms? Here are some strategies. Solve the problem using pen and paper. Start with smaller inputs. Pay attention to how your brain solves the problem, pay attention to anything your brain stores or compares and what is being done to those values. Try to verbalize “how” the algorithm accomplishes its job, the concepts behind an algorithm. [REMEMBER: these concepts will exist outside of code, or any programming language]. Everything becomes much easier to manage when our task is then limited to how translate those concepts into code, and not trying to figure out both the concept AND the translation at the same time.
+
+Thoughtful instruction can really help as well. When I teach linked lists, I always teach the concepts via diagrams first. We draw nodes with boxes, and the pointers between nodes with arrows. I want my students to develop a feel of what’s involved in the various operations (such as adding / removing nodes) by physically erasing and moving the arrows around as appropriate. Only after they’ve done so a few times, do we move onto how to implement everything in code.
+
+I hope this helps, and best of luck in your programming journey!
