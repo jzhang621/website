@@ -83,6 +83,7 @@ export default function ColorTransform({
                         textAnchor="middle"
                         className="font-mono"
                         fontSize="8px"
+                        fill="#5B5B5B"
                         // fill="#5B5B5B"
                         // opacity={0.75}
                     >
