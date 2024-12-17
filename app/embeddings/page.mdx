@@ -197,7 +197,7 @@ The fact that our embedding model maps any sentence to a list of numbers of leng
 We can get a sense of this by comparing the embeddings of 3 different sentences. Since making sense of 384 numbers is impossible, let's instead visualize an embedding by coloring each number in the embedding according to its value <span className="text-gray-500 text-sm">(hover over each rectangle to see the value)</span>.
 
 
-<div className="w-4/5 mx-auto my-8">
+<div className="md:w-4/5 w-full mx-auto my-8">
 <div className="my-4  mx-auto">
 <figcaption className="mb-2 text-lg">1. Let's generate an embedding of this sentence.</figcaption>
 <EmbeddingVisualizer embedding={e1} min={min} max={max} id="e1" />
@@ -216,7 +216,7 @@ We can get a sense of this by comparing the embeddings of 3 different sentences.
 
 We can compare the embeddings of "Let's generate an embedding of this sentence." `(e1)` and "I have a black cat." `(e2)` by pointwise subtracting each value in `e2` from the corresponding value in `e1`:
 
-<div className="w-4/5 mx-auto my-8">
+<div className="md:w-4/5 w-full mx-auto my-8">
 <div className="my-8 mx-auto">
 <EmbeddingVisualizer embedding={diffArrays(e1, e2)} min={min2} max={max2} id="diff-e1-e2" />
 <figcaption className="mt-2 text-sm text-gray-500 text-center">Let's generate an embedding of this sentence. vs I have a black cat.</figcaption>
@@ -225,7 +225,7 @@ We can compare the embeddings of "Let's generate an embedding of this sentence."
 
 Not surprisingly, these differences are much more pronounced than the differences between the embeddings of "Let's generate an embedding of this sentence." and "Let's get an embedding for this sentence."
 
-<div className="w-4/5 mx-auto my-8">
+<div className="md:w-4/5 w-full mx-auto my-8">
 <div className="my-8 mx-auto">
 <EmbeddingVisualizer embedding={diffArrays(e1, e3)} min={min2} max={max2} id="diff-e1-e3" />
 <figcaption className="mt-2 text-sm text-gray-500 text-center">Let's generate an embedding of this sentence. vs Let's get an embedding for this sentence."</figcaption>
@@ -244,7 +244,7 @@ Cosine similarity brings us back to the main idea of this post: that embeddings 
 
 For example, here's the start of a Paul Graham essay, [When to Do What You Love](https://www.paulgraham.com/when.html), with certain words highlighted with the help of embeddings and cosine similarity:
 
-<div className="m-8">
+<div className="md:m-8 m-4">
     <RemoveWord words={pg_remove_words_results} />
 </div>
 
