@@ -5,6 +5,7 @@ interface CanvasImageProps {
     imageUrl: string;
     otherImageUrl: string;
     width: number;
+    functionLabel: string;
 }
 
 interface HoverState {
@@ -14,7 +15,12 @@ interface HoverState {
     rgb: [number, number, number];
 }
 
-const CanvasImage: React.FC<CanvasImageProps> = ({ imageUrl, otherImageUrl, width }) => {
+const CanvasImage: React.FC<CanvasImageProps> = ({
+    imageUrl,
+    otherImageUrl,
+    width,
+    functionLabel = "Function",
+}) => {
     const height = width;
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const transformedCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -167,8 +173,8 @@ const CanvasImage: React.FC<CanvasImageProps> = ({ imageUrl, otherImageUrl, widt
     };
 
     return (
-        <div className="flex space-x-4">
-            <div onMouseLeave={() => handleMouseLeave()} className="relative">
+        <div className="flex items-center space-x-4">
+            <div onMouseLeave={handleMouseLeave} className="relative">
                 <canvas
                     ref={canvasRef}
                     width={width}
@@ -199,7 +205,45 @@ const CanvasImage: React.FC<CanvasImageProps> = ({ imageUrl, otherImageUrl, widt
                     </div>
                 )}
             </div>
-            <div onMouseLeave={() => handleMouseLeave()} className="relative">
+
+            <svg width="100" height="50" className="flex-none">
+                <defs>
+                    <marker
+                        id="arrow"
+                        viewBox="0 0 10 10"
+                        refX="9"
+                        refY="5"
+                        markerWidth="6"
+                        markerHeight="6"
+                        orient="auto"
+                    >
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#6C6C6C" />
+                    </marker>
+                </defs>
+                <line
+                    x1="0"
+                    y1="25"
+                    x2="100"
+                    y2="25"
+                    stroke="#6C6C6C"
+                    strokeWidth="1.5"
+                    markerEnd="url(#arrow)"
+                    opacity={0.5}
+                />
+                <text
+                    x="50"
+                    y="45"
+                    textAnchor="middle"
+                    className="font-mono"
+                    fontSize="8px"
+                    fill="#5B5B5B"
+                    opacity={0.75}
+                >
+                    {functionLabel}
+                </text>
+            </svg>
+
+            <div onMouseLeave={handleMouseLeave} className="relative">
                 <canvas
                     ref={transformedCanvasRef}
                     width={width}
