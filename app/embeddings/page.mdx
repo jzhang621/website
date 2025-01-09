@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { pg_remove_words_results } from '@/data/words/pg_remove_words_results';
 
 import Wattenberger from '../../public/images/wattenberger.png';
+import E1E2 from '../../public/images/e1-e2.png';
 import ChatGPT from '../../public/images/chat-gpt-transform.png';
 import Embedding from '../../public/images/embedding-model.png';
 import Prism from '../../public/images/prism-toolbar.png';
@@ -250,7 +251,29 @@ For example, here's the start of a Paul Graham essay, [When to Do What You Love]
 
 To create these highlights, I first generate embeddings for each sentence in the essay `(e1)`. I then loop through every word in each sentence, remove that word from the sentence, and generate an embedding for that shortened sentence `(e2)`.
 
+<div className="md:w-4/5 w-full mx-auto my-12">
+<div className="my-12 mx-auto">
+  <Image 
+    src={E1E2} 
+    alt="e1 and e2"
+    />
+</div>
+<figcaption className="mt-2 text-sm text-gray-500 text-center">e2 is e1 with the word "some" removed.</figcaption>
+</div>
+
 I then calculate the cosine similarity between `e1` and `e2`, and use that value to drive the highlighting. Words, that when removed, result in larger differences in cosine similarity, are highlighted darker. The result is a rough measure of how “important” a word is to the meaning of the sentence in which that word appears. 
+
+
+<div className="my-12">
+<div className="flex justify-center">
+```python
+>>> cosine_similarity(e1, e2)
+0.9933603 # high similarity (close to 1)
+```
+</div>
+<figcaption className="mt-8 text-center text-sm text-gray-500">The difference in cosine similarity for "some" is 1 - 0.9933603 = 0.0066397, which is why "some" is barely highlighted green.</figcaption>
+</div>
+
 
 This technique has its shortcomings. For one, long sentences tend to dilute the importance of any single word. And it'd probably be more informative to remove entire phrases such as "follow your passion" in some places rather than individual words. Even so, I find it's a helpful indicator of where to direct my attention. I like the idea of turning these highlights on after reading something for the first time, as I find it prompts me to read each sentence more closely.
 
