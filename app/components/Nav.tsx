@@ -9,9 +9,9 @@ export function Nav() {
 
     return (
         <nav className="bg-[#8DA97711] py-2">
-            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-                <Link href="/" className="text-xs text-gray-600 hover:text-gray-900">
-                    ← Home
+            <div className="max-w-5xl text-center mx-auto px-4 sm:px-6 lg:px-8">
+                <Link href="/" className="text-center text-md text-gray-600 hover:text-gray-900">
+                    Home
                 </Link>
             </div>
         </nav>
