@@ -54,7 +54,7 @@ export const metadata = {
     width={1200}
     height={622}
     className="w-full h-auto"  
-    alt="Cover"
+    alt="Cover image for 'The Anatomy of a Hallucination' article"
     />
 </div>
 
@@ -87,7 +87,7 @@ This operation starts with input text that is converted to a **token sequence**.
 <div className="flex justify-center mx-auto">
   <Image 
     src={Vocab} 
-    alt="Vocabulary of Mistral-7b-v0.1"
+    alt="A visualization showing 20 tokens from Mistral-7b-v0.1's vocabulary of 32,000 tokens"
     />
 </div>
 <FigCaption>
@@ -101,6 +101,7 @@ What we recognize as single words will often look like multiple tokens to a LLM.
 <div className="flex justify-center w-4/5 mx-auto">
   <Image 
     src={Image1} 
+    alt="Example showing how the word 'vocabulary' is split into multiple tokens in the model"
     />
 </div>
 </div>
@@ -111,6 +112,7 @@ As the name implies, next-token prediction involves predicting the next token in
 <div className="flex justify-center mx-auto">
   <Image 
     src={Image2} 
+    alt="Visualization of next-token probability distribution showing top 4 and bottom 3 probabilities"
     />
 </div>
 <FigCaption>
@@ -124,6 +126,7 @@ LLMs can calculate this distribution for virtually any input sequence:
 <div className="flex justify-center mx-auto">
   <Image 
     src={Image3} 
+    alt="Example of how the model calculates probability distributions for different input sequences"
     />
 </div>
 </div>
@@ -139,6 +142,7 @@ This sampled token can now be added to the initial sequence to form a new input,
     <Image 
       src={Image4}
       className="w-screen"
+      alt="Visualization showing token sampling process and subsequent probability distribution calculation"
     />
   </div>
 <FigCaption>
@@ -153,6 +157,7 @@ We can now sample from this new distribution to produce the next token in the se
 <div className="flex justify-center lg:-mx-[calc(26vw-50%)]">
   <Image 
     src={Image5} 
+    alt="Step-by-step visualization of Mistral's text generation process about LeBron James, with sampled tokens highlighted in green"
     />
 </div>
 <FigCaption>
@@ -166,11 +171,13 @@ Sampling is **non-deterministic**: two draws from the same exact hat won't alway
 <div className="flex justify-center w-4/5 mx-auto">
   <Image 
     src={Image6} 
+    alt="First example of model's response to a prompt showing non-deterministic sampling"
     />
 </div>
 <div className="flex justify-center w-4/5 mx-auto">
   <Image 
     src={Image7} 
+    alt="Second example of model's response to the same prompt, demonstrating different output due to non-deterministic sampling"
     />
 </div>
 <FigCaption>
@@ -190,6 +197,7 @@ LLMs are initially untrained, with weights initialized to random values. In this
 <div className="flex justify-center  lg:-mx-[calc(32vw-50%)]">
   <Image 
     src={Image8} 
+    alt="Visualization of untrained model's random weights and meaningless probability distributions"
     />
 </div>
 <FigCaption>
@@ -208,6 +216,7 @@ Pretraining is the first stage in a LLM's training pipeline. Pretraining involve
 <div className="flex justify-center mx-auto">
   <Image 
     src={Image9} 
+    alt="Example of splitting text into tokens and removing the last token for training"
     />
 </div>
 </div>
@@ -218,6 +227,7 @@ Pretraining is the first stage in a LLM's training pipeline. Pretraining involve
 <div className="flex justify-center  mx-auto">
   <Image 
     src={Image10} 
+    alt="Visualization of model's prediction process during training"
     />
 </div>
 </div>
@@ -228,6 +238,7 @@ Pretraining is the first stage in a LLM's training pipeline. Pretraining involve
 <div className="flex justify-center w-4/5 mx-auto">
   <Image 
     src={Image11} 
+    alt="Example of loss calculation based on probability assigned to the removed token"
     />
 </div>
 <FigCaption>
@@ -241,6 +252,7 @@ Pretraining is the first stage in a LLM's training pipeline. Pretraining involve
 <div className="flex justify-center w-full mx-auto">
   <Image 
     src={Image12} 
+    alt="Visualization of weight adjustment process during training"
     />
 </div>
 </div>
@@ -251,6 +263,7 @@ Pretraining is the first stage in a LLM's training pipeline. Pretraining involve
 <div className="flex justify-center w-4/5 mx-auto">
   <Image 
     src={Image13} 
+    alt="Example of how training snippets can be reused multiple times"
     />
 </div>
 </div>
@@ -262,6 +275,7 @@ The objective of these billions and billions of updates is to **minimize predict
 <div className="flex justify-center w-full mx-auto">
   <Image 
     src={Image14} 
+    alt="Visualization of model's improved prediction accuracy after pretraining"
     />
 </div>
 </div>
@@ -282,6 +296,7 @@ If we feed Mistral the input *Once upon a*, here are the 4 most likely next toke
 <div className="flex justify-center mx-auto">
   <Image 
     src={Image15} 
+    alt="Example of specific language pattern showing high probability for 'time' after 'Once upon a'"
     />
 </div>
 </div>
@@ -292,6 +307,7 @@ This is an example of a **specific language pattern** the LLM has learned. Speci
 <div className="flex justify-center mx-auto">
   <Image 
     src={Image16} 
+    alt="Example of factual knowledge pattern showing high probability for 'basketball' in LeBron James context"
     />
 </div>
 </div>
@@ -306,6 +322,7 @@ Generalized language patterns, on the other hand, are patterns that generalize b
 <div className="flex justify-center mx-auto">
   <Image 
     src={Image17} 
+    alt="Example of flat probability distribution for made-up name 'Blake Bourne'"
     />
 </div>
 </div>
@@ -317,6 +334,7 @@ Unlike the LeBron James example, these probabilities are flat and even, reflecti
 <div className="flex justify-center w-4/5 mx-auto">
   <Image 
     src={Image18} 
+    alt="Visualization of how the model learns general patterns from similar phrases"
     />
 </div>
 </div>
@@ -329,6 +347,7 @@ This allows the model to make a *contextually relevant* prediction about Blake B
 <div className="flex justify-center w-4/5 mx-auto">
   <Image 
     src={Image19} 
+    alt="Example of a Mad Libs template showing how language patterns work"
     />
 </div>
 </div>
@@ -339,6 +358,7 @@ I think of generalized language patterns as learning a variety of Mad Libs templ
 <div className="flex justify-center w-4/5 mx-auto">
   <Image 
     src={Image20} 
+    alt="Visualization of how next-token probability distributions can be thought of as Mad Libs templates"
     />
 </div>
 </div>
@@ -363,6 +383,7 @@ Instruction Fine-Tuning does this by showing the model multiple examples of inst
 <div className="flex justify-center w-4/5 mx-auto">
   <Image 
     src={Image21} 
+    alt="Example of instruction-following dataset format with special tokens"
     />
 </div>
 </div>
@@ -374,6 +395,7 @@ The training process looks a lot like pretraining. Chop up these instruction-ans
 <div className="flex justify-center w-4/5 mx-auto">
   <Image 
     src={Image22} 
+    alt="Visualization of instruction fine-tuning process and weight adjustment"
     />
 </div>
 </div>
@@ -386,6 +408,7 @@ The training process looks a lot like pretraining. Chop up these instruction-ans
 <div className="my-8 flex justify-center mx-auto">
   <Image 
     src={Image23} 
+    alt="Visualization of how instruction fine-tuning shapes model responses"
     />
 </div>
 </div>
@@ -402,6 +425,7 @@ If we give Mistral-7b-Instruct the text *Tell me about Blake Bourne* without any
 <div className="flex justify-center  mx-auto">
   <Image 
     src={Image24} 
+    alt="Example of model's response without instruction boundary tokens"
     />
 </div>
 <FigCaption>
@@ -415,6 +439,7 @@ Wrap the text in instruction boundary tokens, however, and the probability distr
 <div className="flex justify-center mx-auto">
   <Image 
     src={Image25} 
+    alt="Example of model's response with instruction boundary tokens"
     />
 </div>
 </div>
@@ -429,6 +454,7 @@ Many of the example answers will share a similar structure. Although we don't kn
 <div className="flex justify-center mx-auto">
   <Image 
     src={Image26} 
+    alt="Example of biographical response templates in instruction-following dataset"
     />
 </div>
 </div>
@@ -440,6 +466,7 @@ If it sees these examples during IFT, the model will learn these answers share a
 <div className="flex justify-center w-4/5 mx-auto">
   <Image 
     src={Image27} 
+    alt="Visualization of learned biographical response template pattern"
     />
 </div>
 </div>
@@ -457,11 +484,12 @@ Here are the underlying probability distributions Mistral samples from to genera
     <Image 
       src={Image28}
       className="w-screen"
+      alt="Probability distributions for Mistral's response about LeBron James"
     />
   </div>
 </div>
 
-We can see that the model is quite certain in the “response template” portion of its answer, which sets it up to make about a claim about LeBron James. Thanks to pretraining, the model has specific language patterns about LeBron James to draw, and the claim is factually correct.
+We can see that the model is quite certain in the "response template" portion of its answer, which sets it up to make about a claim about LeBron James. Thanks to pretraining, the model has specific language patterns about LeBron James to draw, and the claim is factually correct.
 
 **Here's the key: if the instruction-tuning dataset only includes examples that follow these biographical templates, it will apply it to all such prompts, even when Person X doesn't exist.**<FootnoteRef id="4" /> For example, here's what it generates about Blake Bourne:
 
@@ -476,6 +504,7 @@ And here are the probability distributions used to generate the response:
     <Image 
       src={Image29}
       className="w-screen"
+      alt="Probability distributions for Mistral's response about Blake Bourne"
     />
   </div>
 </div>
@@ -496,6 +525,7 @@ If you were to ask ChatGPT today to "Tell me about Blake Bourne", [it will say "
 <div className="flex justify-center w-4/5 mx-auto">
   <Image 
     src={Image30}
+    alt="Example of ChatGPT's 'I don't know' response to query about Blake Bourne"
     />
 </div>
 </div>
@@ -506,6 +536,7 @@ This is something that is also learned during IFT, as instruction-tuning dataset
 <div className="flex justify-center mx-auto">
   <Image 
     src={Image31}
+    alt="Graph showing hallucination rates in different OpenAI models"
     />
 </div>
 </div>
