@@ -146,10 +146,10 @@ This sampled token can now be added to the initial sequence to form a new input,
 </FigCaption>
 </div>
 
-We can now sample from this new distribution to produce the next token in the sequence, and so on, until a special **end-of-sequence** `(</s>)` token is sampled, signaling the model to stop.
+We can now sample from this new distribution to produce the next token in the sequence, and so on, until a special **end-of-sequence** `(</s>)` token is sampled, signaling the model to stop. The visual below shows how Mistral samples from probability distributions to generate text about LeBron James: 
 
 <div className="my-12">
-<div className="flex justify-center mx-auto">
+<div className="flex justify-center mx-auto -mx-[calc(26vw-50%)]">
   <Image 
     src={Image5} 
     />
@@ -186,7 +186,7 @@ LLMs have **weights** (a.k.a **parameters**) that are responsible for calculatin
 LLMs are initially untrained, with weights initialized to random values. In this state, next-token probability distributions are meaningless and sampling from them generates incoherent text. **Training** refers to the process of getting the values of these weights and their associated distributions in a more usable state.
 
 <div className="my-12">
-<div className="flex justify-center mx-auto">
+<div className="flex justify-center mx-auto -mx-[calc(32vw-50%)]">
   <Image 
     src={Image8} 
     />
@@ -198,7 +198,7 @@ LLMs are initially untrained, with weights initialized to random values. In this
 
 ### Pretraining
 
-Pretraining is the first stage in a LLM's training pipeline. Pretraining involves having a LLM predict the next token using a text sequence taken from the internet, and adjusting its weights when it's wrong. Here's a simplified description of how pretraining works:
+Pretraining is the first stage in a LLM's training pipeline. Pretraining involves having a LLM predict the next token using a text sequence taken from the internet, and adjusting its weights when it's wrong. Here's a simplified description of how pretraining works<FootnoteRef id="1" />:
 
 <ol className="mx-2 list-decimal list-inside">
 <li>Take a snippet from the internet and split it into tokens. Remove the **last token**, and feed the rest of the tokens into the model as input.</li>
@@ -230,7 +230,7 @@ Pretraining is the first stage in a LLM's training pipeline. Pretraining involve
     />
 </div>
 <FigCaption>
-  Note: The red bar isn't the actual loss, but it is proportional.
+  Note: The red bar isn't the actual loss, but it is proportional to it.
 </FigCaption>
 </div>
 
@@ -271,9 +271,11 @@ When pretraining is finished, the weights are in a more usable state. A pretrain
 
 I'd like to differentiate between two types of patterns in particular, which I refer to as **specific** and **generalized language patterns**. Hallucinations happen, in part, when LLMs use generalized language patterns to generate responses about topics they lack specific patterns to draw from.
 
+The example probability distributions below come from the [Mistral-7b-v0.1 base model](https://huggingface.co/mistralai/Mistral-7B-v0.1) (there's another variant, [Mistral-7b-Instruct-v0.1](https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.1), which we'll use shortly).
+
 #### Specific Language Patterns
 
-If we feed Mistral the input "Once upon a", here are the 4 most likely next tokens:
+If we feed Mistral the input *Once upon a*, here are the 4 most likely next tokens:
 
 <div className="my-12">
 <div className="flex justify-center mx-auto">
@@ -283,7 +285,7 @@ If we feed Mistral the input "Once upon a", here are the 4 most likely next toke
 </div>
 </div>
 
-This is an example of a **specific language pattern** the LLM has learned. Specific language patterns are characterized by *peaked* probability distributions where only one or a handful of next tokens dominate, and include **factual knowledge** the LLM has picked up on. For example, the high probability assigned to "basketball" reflects the model's knowledge of LeBron James.
+This is an example of a **specific language pattern** the LLM has learned. Specific language patterns are characterized by *peaked* probability distributions where only one or a handful of next tokens dominate, and include **factual knowledge** the LLM has picked up on. For example, the high probability assigned to *basketball* reflects the model's knowledge of LeBron James.
 
 <div className="my-12">
 <div className="flex justify-center mx-auto">
@@ -293,14 +295,14 @@ This is an example of a **specific language pattern** the LLM has learned. Speci
 </div>
 </div>
 
-These high probabilities are the result of minimizing prediction error: each time Mistral sees a snippet about LeBron James in its training data, it assigns higher probabilities to the tokens that follow (e.g. "professional basketball player", "drafted in 2003", "Los Angeles Lakers"). With enough repetition, the next-token probability distributions related to LeBron concentrate around specific tokens. Sampling from those distributions produce those tokens consistently, and when Mistral generates text about LeBron James, it effectively functions as if it's recalling factual knowledge.
+These high probabilities are the result of minimizing prediction error: each time Mistral sees a snippet about LeBron James in its training data, it assigns higher probabilities to the tokens that follow (e.g. "professional basketball player", "drafted in 2003", "Los Angeles Lakers"). With enough repetition, the next-token probability distributions related to LeBron concentrate around these tokens. Sampling from those distributions produce those tokens consistently, and when Mistral generates text about LeBron James, it effectively functions as if it's recalling factual knowledge.
 
 #### Generalized Patterns
 
 Generalized language patterns, on the other hand, are patterns that generalize beyond a specific entity. As an example, here's what happens if I make up a name (Blake Bourne), and ask Mistral to predict the next token:
 
 <div className="my-12"> 
-<div className="flex justify-center w-4/5 mx-auto">
+<div className="flex justify-center mx-auto">
   <Image 
     src={Image17} 
     />
@@ -320,7 +322,7 @@ Unlike the LeBron James example, these probabilities are flat and even, reflecti
 
 Each time it sees a phrase such as *(name of person) competes professionally as a (name of sport)* during pretraining, the model not only associates the specific sport with that person, it also learns the general pattern that *competes professionally as a* is usually followed by a class of sports such as bodybuilding and mixed martial arts. And when it comes to making a prediction about Blake Bourne, it also learns that its "best bet" is to distribute probabilities evenly amongst those activities, since it has no specific associations for the name.
 
-This allows the model to make a *contextually relevant* prediction about Blake Bourne, which means **the model can generate coherent text about new, unseen inputs**. As an analogy, I remember playing Mad Libs in elementary school, a language game involving templates like this one:
+This allows the model to make a *contextually relevant* prediction about Blake Bourne, which means **the model can generate coherent text about new, unseen inputs**. As an analogy, I remember playing [Mad Libs](https://en.wikipedia.org/wiki/Mad_Libs) in elementary school, a game involving templates like this one:
 
 <div className="my-12">
 <div className="flex justify-center w-4/5 mx-auto">
@@ -330,7 +332,7 @@ This allows the model to make a *contextually relevant* prediction about Blake B
 </div>
 </div>
 
-I think of generalized language patterns as learning a variety of Mad Lib templates. With a little imagination, the next-token probability distributions can be thought of as the start of a template:
+I think of generalized language patterns as learning a variety of Mad Libs templates. With a little imagination, the next-token probability distributions can be thought of as the start of a template:
 
 <div className="my-12">
 <div className="flex justify-center w-4/5 mx-auto">
@@ -340,7 +342,7 @@ I think of generalized language patterns as learning a variety of Mad Lib templa
 </div>
 </div>
 
-I could generate coherent stories in elementary school by filling in the blanks of a Mad Lib template. LLMs do something similar, they just do so by noticing what tokens typically come next based on similar contexts from its training data.
+I could generate coherent stories in elementary school by filling in the blanks of a Mad Libs template. LLMs do something similar, they just do so by noticing what tokens typically come next based on similar contexts from its training data.
 
 This is the foundation of my mental model for why LLMs hallucinate, especially when asked about obscure topics: **the lack of representation in the training data means the model has to generate responses using generalized language patterns, rather than drawing from specific language patterns that reflect factual knowledge**. They're essentially "playing Mad Libs".
 
@@ -350,7 +352,7 @@ This is where the Instruction Fine-Tuning (IFT) training stage comes into play. 
 
 ## Instruction Fine-Tuning
 
-Instruction Fine-Tuning (IFT) happens after pretraining. **The goal here is to take the weights learned during pretraining and fine-tune (update) them so that the LLM can "behave" like an assistant.** This involves teaching it how to provide helpful answers in response to instructions <FootnoteRef id="1" />.
+Instruction Fine-Tuning (IFT) happens after pretraining. **The goal here is to take the weights learned during pretraining and fine-tune (update) them so that the LLM can "behave" like an assistant.** This involves teaching it how to provide helpful answers in response to instructions <FootnoteRef id="2" />.
 
 Recall that pretraining teaches a LLM how to fluently continue text based on patterns in its training data. This alone doesn't automatically make a LLM an assistant. To see why, let's take the prompt: *What's the weather like today?* A purely pretrained model might reasonably continue this as part of a dialogue in a story ("she asked, looking out the window…") or as part of a quiz ("A. Sunny B. Rainy C. …"). If we want the LLM to act like an assistant, we need to teach the model to treat prompts as *instructions* to be immediately followed by helpful answers.
 
@@ -389,11 +391,11 @@ The training process looks a lot like pretraining. Chop up these instruction-ans
 
 ### Response Templates
 
-Just as pretraining involves learning patterns in the training data, IFT involves learning patterns present in the instruction-following dataset which get encoded into the model's weights. This updated model is referred to as an **instruction-tuned model**.
+Just as pretraining involves learning patterns in the training data, IFT involves learning patterns present in the instruction-following dataset which get encoded into the model's weights. This updated model is referred to as an **instruction-tuned model**, and I'll use probability distributions from an instruction-tuned [Mistral-7B-Instruct-v0.1](https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.1) to demonstrate two of these patterns. 
 
 #### Instruction Boundaries
 
-If we give Mistral-7b-Instruct the text "Tell me about Blake Bourne" without any formatting tokens, the next-token probability distribution favors tokens that promote continuation (it generates "Tell me about Blake Bourne, part 1. This article was originally posted…")
+If we give Mistral-7b-Instruct the text *Tell me about Blake Bourne* without any formatting tokens, the next-token probability distribution favors tokens that promote continuation (it generates *Tell me about Blake Bourne, part 1. This article was originally posted…*)
 
 <div className="my-12">
 <div className="flex justify-center  mx-auto">
@@ -401,6 +403,9 @@ If we give Mistral-7b-Instruct the text "Tell me about Blake Bourne" without any
     src={Image24} 
     />
 </div>
+<FigCaption>
+  `\n` means a new line - the equivalent of hitting Enter.
+</FigCaption>
 </div>
 
 Wrap the text in instruction boundary tokens, however, and the probability distribution shifts dramatically:
@@ -417,10 +422,10 @@ Instead of continuing the text, the model has learned that the next token should
 
 #### Response Templates
 
-Many of the example answers will share a similar structure. Although we don't know the exact contents of Mistral's instruction-tuning dataset, it's reasonable to assume it might contain a few examples that look like this:
+Many of the example answers will share a similar structure. Although we don't know the exact contents of Mistral's instruction-tuning dataset, it's reasonable to assume it might contain a few examples that look like this<FootnoteRef id="3" />:
 
 <div className="my-12">
-<div className="flex justify-center w-4/5 mx-auto">
+<div className="flex justify-center mx-auto">
   <Image 
     src={Image26} 
     />
@@ -441,6 +446,7 @@ If it sees these examples during IFT, the model will learn these answers share a
 There are glimpses of this template in the response Mistral-7b-Instruct generates about LeBron James:
 
 > [INST] Tell me about LeBron James [/INST]
+>
 > LeBron James is an American professional basketball player who is widely considered to be one of the greatest...
 
 Here are the underlying probability distributions Mistral samples from to generate the response:
@@ -454,9 +460,9 @@ Here are the underlying probability distributions Mistral samples from to genera
   </div>
 </div>
 
-We can see that the model is quite certain in the “response template” portion of its answer, which sets it up to make about a claim about LeBron James. Thanks to pretraining, the model has specific language patterns about LeBron James to draw, and the claim is factually correct: 
+We can see that the model is quite certain in the “response template” portion of its answer, which sets it up to make about a claim about LeBron James. Thanks to pretraining, the model has specific language patterns about LeBron James to draw, and the claim is factually correct.
 
-**Here's the key: if the instruction-tuning dataset only includes examples that follow these biographical templates, it will apply it to all such prompts, even when Person X doesn't exist <FootnoteRef id="1" />.** For example, here's what it generates about Blake Bourne:
+**Here's the key: if the instruction-tuning dataset only includes examples that follow these biographical templates, it will apply it to all such prompts, even when Person X doesn't exist.**<FootnoteRef id="4" /> For example, here's what it generates about Blake Bourne:
 
 > [INST] Tell me about Blake Bourne [/INST]
 > 
@@ -493,7 +499,7 @@ If you were to ask ChatGPT today to "Tell me about Blake Bourne", [it will say "
 </div>
 </div>
 
-This is something that is also learned during IFT, as instruction-tuning datasets now contain examples of when the model should respond with uncertainty or "I don't know". But even with this ability, LLMs still hallucinate - OpenAI even reports that its latest reasoning model [o3 hallucinates at twice the rate of its predecessor o1](https://cdn.openai.com/pdf/2221c875-02dc-4789-800b-e7758f3722c1/o3-and-o4-mini-system-card.pdf).
+This is something that is also learned during IFT, as instruction-tuning datasets now contain examples of when the model should respond with uncertainty or "I don't know". But even with this ability, LLMs still hallucinate - OpenAI even reports that its latest reasoning model o3 hallucinates at twice the rate of its predecessor o1 <FootnoteRef id="5" />.
 
 <div className="my-12">
 <div className="flex justify-center mx-auto">
@@ -509,6 +515,18 @@ Thanks for reading!
 
 <Footnotes>
   <Footnote id="1">
-    Test 
+    Highly recommend watching [Large Language Models explained briefly](https://youtu.be/LPZh9BOjkQs?si=ZjkN3JXs2-EubGau&t=88) by 3Blue1Brown if you want an animated explanation.
+  </Footnote>
+  <Footnote id="2">
+    [01:01:06](https://youtu.be/7xTGNNLPyMI?si=UdW4CO2NXiY4i3l9&t=3668) from Andrej Karpathy's YouTube video Deep Dive into LLMs like ChatGPT
+  </Footnote>
+  <Footnote id="3">
+    [R-Tuning: Teaching Large Language Models to Refuse Unknown Questions](https://ar5iv.labs.arxiv.org/html/2311.09677#:~:text=traditional%20fine%2Dtuning%20methods%20force%20the%20models%20to%20complete%20the%20sentence,it%20remains%20unequipped%20to%20do%20so%20when%20confronted%20with%20unknowns)
+  </Footnote>
+  <Footnote id="4">
+    The [OpenAssistant dataset](https://huggingface.co/datasets/OpenAssistant/oasst1/viewer?views%5B%5D=train) contains examples of an instruction-following dataset. Karparthy mentions this at [01:12:46](https://youtu.be/7xTGNNLPyMI?si=ByShDRRE-dZeg-xP&t=4366).
+  </Footnote>
+  <Footnote id="5">
+    [OpenAI o3 and o4-mini System Card](https://cdn.openai.com/pdf/2221c875-02dc-4789-800b-e7758f3722c1/o3-and-o4-mini-system-card.pdf). See 3.3 Hallucinations.
   </Footnote>
 </Footnotes>

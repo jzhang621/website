@@ -157,3 +157,19 @@ h2 {
 .mdx-blockquote p:last-child {
   margin-bottom: 0 !important;
 }
+/* Footnote styles */
+.footnote p {
+  margin: 1.5rem 0 !important;
+  font-size: inherit !important;
+  color: inherit !important;
+  line-height: inherit !important;
+  font-family: inherit !important;
+}
+
+.footnote p:first-child {
+  margin-top: 0 !important;
+}
+
+.footnote p:last-child {
+  margin-bottom: 0 !important;
+}

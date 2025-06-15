@@ -171,7 +171,7 @@ export function useMDXComponents(components) {
                 href={href}
                 style={{
                     fontFamily: "var(--font-inter)",
-                    color: "#2563eb",
+                    color: "#64748b",
                     textDecoration: "underline",
                     textDecorationColor: "#cbd5e1",
                     textUnderlineOffset: "3px",
@@ -344,16 +344,16 @@ export function useMDXComponents(components) {
 
         // Add a component for a collection of footnotes
         Footnotes: ({ children }) => (
-            <div className="mt-12 pt-8 border-t border-gray-200">
-                <h2 className="text-2xl font-semibold text-gray-800 mb-4">Footnotes</h2>
-                <div className="space-y-4">{children}</div>
+            <div className="footnote mt-12 pt-8 border-t border-gray-200">
+                <h2 className="text-3xl font-semibold text-gray-800 mb-4">References</h2>
+                <div className="space-y-2">{children}</div>
             </div>
         ),
 
         // Add a component for bibliography
         Bibliography: ({ children }) => (
             <div className="mt-12 pt-8 border-t border-gray-200">
-                <h2 className="text-xl font-semibold text-gray-800 mb-4">References</h2>
+                <h1 className="text-2xl font-semibold text-gray-800 mb-4">References</h1>
                 <div className="space-y-4">{children}</div>
             </div>
         ),
