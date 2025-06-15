@@ -518,7 +518,7 @@ The LLMs we use in AI Assistants such as ChatGPT have undergone both Pretraining
 
 After we type a prompt into ChatGPT and hit Enter, our prompt is first wrapped with `<inst> … </inst>` tokens and sent to the LLM. The model, having learned to treat these tokens as an instruction boundary, now switch to answer mode - this activates a "response template" it has for how it should answer the prompt. If the topic of the prompt is not well-represented in the training data, the model lacks specific patterns to draw from, and it will be forced "fill in the blanks" of the template using generalized language patterns. Generalized language patterns produce tokens that are contextually relevant but not factually grounded, and when they are used to make "claims", you get a hallucination.
 
-## Conclusion: Saying I Don't Know
+## Saying I Don't Know
 
 If you were to ask ChatGPT today to "Tell me about Blake Bourne", [it will say "I Don't Know"](https://chatgpt.com/share/684ef869-3134-8007-af37-e99139c528d5).
 

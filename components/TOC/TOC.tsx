@@ -74,9 +74,8 @@ export function TOC() {
     }
 
     return (
-        <div className="fixed left-4 top-1/3 transform -translate-y-1/2 w-64 max-h-96 overflow-y-auto hidden lg:block">
-            <div className="bg-white rounded-lg shadow-sm p-4">
-                <h3 className="text-md font-semibold text-gray-900 mb-3">Table of Contents</h3>
+        <div className="TOC fixed left-4 top-[41px] mt-12 transform w-48 max-h-96 overflow-y-auto hidden xl:block">
+            <div className="bg-white rounded-lg shadow-sm px-4">
                 <nav>
                     <ul className="space-y-1">
                         {tocItems.map((item) => (
