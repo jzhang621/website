@@ -141,3 +141,19 @@ h2 {
     /* Adjusted line height for better readability */
   }
 }
+/* Blockquote styles */
+.mdx-blockquote p {
+  margin: 1rem 0 !important;
+  font-size: inherit !important;
+  color: inherit !important;
+  line-height: inherit !important;
+  font-family: inherit !important;
+}
+
+.mdx-blockquote p:first-child {
+  margin-top: 0 !important;
+}
+
+.mdx-blockquote p:last-child {
+  margin-bottom: 0 !important;
+}

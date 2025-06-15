@@ -1,6 +1,8 @@
 // This file is required to use @next/mdx in the `app` directory.
 // import { MDXComponents } from "mdx/types";
 import Latex from "./components/Latex";
+import { Footnote, FootnoteReference } from "./components/Footnote";
+import { Citation, CitationReference } from "./components/Citation";
 
 // Import Inter font - add this to your layout.tsx or _app.tsx if not already imported
 // import { Inter } from 'next/font/google';
@@ -207,9 +209,10 @@ export function useMDXComponents(components) {
 
         blockquote: ({ children }) => (
             <blockquote
+                className="mdx-blockquote"
                 style={{
                     fontFamily: "var(--font-inter)",
-                    margin: "2rem 0",
+                    margin: "1rem",
                     padding: "1.5rem 2rem",
                     backgroundColor: "#f8fafc",
                     borderLeft: "4px solid #3b82f6",
@@ -218,22 +221,9 @@ export function useMDXComponents(components) {
                     color: "#475569",
                     fontSize: "1.05rem",
                     lineHeight: "1.7",
-                    position: "relative",
                 }}
             >
-                <div
-                    style={{
-                        position: "absolute",
-                        top: "1rem",
-                        left: "1rem",
-                        fontSize: "2rem",
-                        color: "#cbd5e1",
-                        lineHeight: "1",
-                    }}
-                >
-                    "
-                </div>
-                <div style={{ marginLeft: "1rem" }}>{children}</div>
+                {children}
             </blockquote>
         ),
 
@@ -242,7 +232,7 @@ export function useMDXComponents(components) {
                 style={{
                     backgroundColor: "#1e293b",
                     color: "#e2e8f0",
-                    padding: "1.5rem",
+                    padding: "1rem",
                     borderRadius: "8px",
                     overflow: "auto",
                     margin: "2rem 0",
@@ -335,6 +325,59 @@ export function useMDXComponents(components) {
             >
                 {children}
             </td>
+        ),
+
+        // Add new components for citations and footnotes
+        Citation: ({ children, id }) => <Citation id={id}>{children}</Citation>,
+
+        CitationRef: ({ id }) => <CitationReference id={id} />,
+
+        // Add a component for a collection of citations
+        Citations: ({ children }) => (
+            <div className="mt-12 pt-8 border-t border-gray-200">
+                <h2 className="text-xl font-semibold text-gray-800 mb-4">Citations</h2>
+                <div className="space-y-4">{children}</div>
+            </div>
+        ),
+
+        Footnote: ({ children, id }) => <Footnote id={id}>{children}</Footnote>,
+
+        FootnoteRef: ({ id }) => <FootnoteReference id={id} />,
+
+        // Add a component for a collection of footnotes
+        Footnotes: ({ children }) => (
+            <div className="mt-12 pt-8 border-t border-gray-200">
+                <h2 className="text-2xl font-semibold text-gray-800 mb-4">Footnotes</h2>
+                <div className="space-y-4">{children}</div>
+            </div>
+        ),
+
+        // Add a component for bibliography
+        Bibliography: ({ children }) => (
+            <div className="mt-12 pt-8 border-t border-gray-200">
+                <h2 className="text-xl font-semibold text-gray-800 mb-4">References</h2>
+                <div className="space-y-4">{children}</div>
+            </div>
+        ),
+
+        // Add a component for individual bibliography items
+        BibItem: ({ id, children }) => (
+            <div id={`bib-${id}`} className="text-sm text-gray-600">
+                <span className="text-gray-400 mr-2">[{id}]</span>
+                {children}
+            </div>
+        ),
+
+        // Add a component for bibliography references
+        BibRef: ({ id }) => (
+            <sup>
+                <a
+                    href={`#bib-${id}`}
+                    className="text-blue-600 hover:text-blue-800 no-underline text-sm"
+                >
+                    [{id}]
+                </a>
+            </sup>
         ),
     };
 

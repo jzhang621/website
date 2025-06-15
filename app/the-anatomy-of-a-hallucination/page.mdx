@@ -45,7 +45,12 @@ export const metadata = {
     date: "2025-06-14",
 };
 
-<h1 className="text-4xl font-bold text-[#3F5570]">{metadata.title}</h1>
+<h1 className="text-5xl my-8 font-bold text-[#3F5570]">{metadata.title}</h1>
+
+# My Article
+
+This is a sentence with a citation <FootnoteRef id="1" /> and another one <FootnoteRef id="2" />.
+
 
 Welcome! In this post, I'd like to share my working mental model for why LLMs hallucinate.
 
@@ -169,7 +174,7 @@ LLMs have **weights** (a.k.a **parameters**) that are responsible for calculatin
 LLMs are initially untrained, with weights initialized to random values. In this state, next-token probability distributions are meaningless and sampling from them generates incoherent text. **Training** refers to the process of getting the values of these weights and their associated distributions in a more usable state.
 
 <div className="my-12">
-<div className="flex justify-center w-4/5 mx-auto">
+<div className="flex justify-center mx-auto">
   <Image 
     src={Image8} 
     />
@@ -413,14 +418,13 @@ If it sees these examples during IFT, the model will learn these answers share a
 
 There are glimpses of this template in the response Mistral-7b-Instruct generates about LeBron James:
 
-> `[INST] Tell me about LeBron James [/INST]`
-> 
-> `LeBron James is an American professional basketball player who is widely considered to be one of the greatest...`
+> [INST] Tell me about LeBron James [/INST]
+> LeBron James is an American professional basketball player who is widely considered to be one of the greatest...
 
 Here are the underlying probability distributions Mistral samples from to generate the response:
 
 <div className="my-12">
-<div className="flex justify-center w-4/5 mx-auto">
+<div className="flex justify-center mx-auto">
   <Image 
     src={Image28}
     />
@@ -429,16 +433,16 @@ Here are the underlying probability distributions Mistral samples from to genera
 
 We can see that the model is quite certain in the “response template” portion of its answer, which sets it up to make about a claim about LeBron James. Thanks to pretraining, the model has specific language patterns about LeBron James to draw, and the claim is factually correct: 
 
-**Here's the key: if the instruction-tuning dataset only includes examples that follow these biographical templates, it will apply it to all such prompts, even when Person X doesn't exist.** For example, here's what it generates about Blake Bourne:
+**Here's the key: if the instruction-tuning dataset only includes examples that follow these biographical templates, it will apply it to all such prompts, even when Person X doesn't exist <FootnoteRef id="3" />.** For example, here's what it generates about Blake Bourne:
 
-> `[INST] Tell me about Blake Bourne [/INST]`
+> [INST] Tell me about Blake Bourne [/INST]
 > 
-> `Blake Bourne is an American football coach and former player. He was born on June 3,...`
+> Blake Bourne is an American football coach and former player. He was born on June 3,...
 
 And here are the probability distributions used to generate the response: 
 
 <div className="my-12">
-<div className="flex justify-center w-4/5 mx-auto">
+<div className="flex justify-center mx-auto">
   <Image 
     src={Image29}
     />
@@ -470,3 +474,13 @@ This is something that is also learned during IFT, as instruction-tuning dataset
 So while this post is my attempt to explain **why** LLMs hallucinate, there's an equally important question to be asked - **when** do LLMs hallucinate? Are there certain conditions and prompts that make hallucinations more likely? Recent research from Anthropic provides some insight here that I'd love to talk about, but this post is already too long, so I'll save that for next time.
 
 Thanks for reading!
+
+
+<Footnotes>
+  <Footnote id="1">
+    This is the first footnote explaining something in more detail.
+  </Footnote>
+  <Footnote id="2">
+    This is the second footnote with additional information.
+  </Footnote>
+</Footnotes>
