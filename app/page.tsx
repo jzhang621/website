@@ -63,7 +63,7 @@ export default async function Home() {
                 <div className="my-4 mx-auto lg:w-[90%]">
                     <AnimatedArray />
                     <div className="text-center mx-auto text-sm text-gray-400 my-4">
-                        An animation of bubble sort I made
+                        Bubble sort, animated!
                     </div>
                 </div>
             </div>
