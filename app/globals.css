@@ -166,6 +166,9 @@ h2 {
   font-family: inherit !important;
 }
 
+.post-metadata p {
+  margin: 0 !important;
+}
 /* .footnote p:first-child {
   margin-top: 0 !important;
 }

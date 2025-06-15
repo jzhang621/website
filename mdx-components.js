@@ -268,9 +268,13 @@ export function useMDXComponents(components) {
             <hr
                 style={{
                     border: "none",
-                    height: "1px",
+                    height: "2px",
                     backgroundColor: "#e5e7eb",
-                    margin: "3rem 0",
+                    margin: "1.5rem 0",
+                    width: "100%",
+                    maxWidth: "800px",
+                    marginLeft: "auto",
+                    marginRight: "auto",
                 }}
             />
         ),
