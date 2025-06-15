@@ -134,7 +134,7 @@ LLMs can **sample** from probability distributions to produce a new token. Imagi
 This sampled token can now be added to the initial sequence to form a new input, which the model can use to calculate a new probability distribution.
 
 <div className="my-12">
-<div className="flex justify-center mx-auto -mx-[calc(32vw-50%)]">
+<div className="flex justify-center  lg:-mx-[calc(32vw-50%)]">
     <Image 
       src={Image4}
       className="w-screen"
@@ -149,7 +149,7 @@ This sampled token can now be added to the initial sequence to form a new input,
 We can now sample from this new distribution to produce the next token in the sequence, and so on, until a special **end-of-sequence** `(</s>)` token is sampled, signaling the model to stop. The visual below shows how Mistral samples from probability distributions to generate text about LeBron James: 
 
 <div className="my-12">
-<div className="flex justify-center mx-auto -mx-[calc(26vw-50%)]">
+<div className="flex justify-center lg:-mx-[calc(26vw-50%)]">
   <Image 
     src={Image5} 
     />
@@ -186,7 +186,7 @@ LLMs have **weights** (a.k.a **parameters**) that are responsible for calculatin
 LLMs are initially untrained, with weights initialized to random values. In this state, next-token probability distributions are meaningless and sampling from them generates incoherent text. **Training** refers to the process of getting the values of these weights and their associated distributions in a more usable state.
 
 <div className="my-12">
-<div className="flex justify-center mx-auto -mx-[calc(32vw-50%)]">
+<div className="flex justify-center  lg:-mx-[calc(32vw-50%)]">
   <Image 
     src={Image8} 
     />
@@ -452,7 +452,7 @@ There are glimpses of this template in the response Mistral-7b-Instruct generate
 Here are the underlying probability distributions Mistral samples from to generate the response:
 
 <div className="my-12">
-  <div className="flex justify-center mx-auto -mx-[calc(36vw-50%)]">
+  <div className="flex justify-center lg:-mx-[calc(36vw-50%)]">
     <Image 
       src={Image28}
       className="w-screen"
@@ -471,7 +471,7 @@ We can see that the model is quite certain in the “response template” portio
 And here are the probability distributions used to generate the response: 
 
 <div className="my-12">
-  <div className="flex justify-center mx-auto -mx-[calc(36vw-50%)]">
+  <div className="flex justify-center lg:-mx-[calc(36vw-50%)]">
     <Image 
       src={Image29}
       className="w-screen"
