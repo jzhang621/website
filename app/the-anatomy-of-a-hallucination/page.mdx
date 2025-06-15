@@ -1,5 +1,7 @@
 import Image from 'next/image';
 
+import { TOC } from '@/components/TOC/TOC';
+
 import Vocab from '@/public/images/hallucination/image.png';
 import Image1 from '@/public/images/hallucination/image_1.png';
 import Image2 from '@/public/images/hallucination/image_2.png';
@@ -46,6 +48,7 @@ export const metadata = {
     date: "2025-06-14",
 };
 
+<TOC />
 
 <div className="my-12">
   <Image 
@@ -280,7 +283,7 @@ The objective of these billions and billions of updates is to **minimize predict
 </div>
 </div>
 
-### Learning Language Patterns
+#### Learning Language Patterns
 
 When pretraining is finished, the weights are in a more usable state. A pretrained LLM is referred to as a **base model**, and their weights encode **language patterns** present in the training data. These patterns can be leveraged to fluently continue text.
 
@@ -371,7 +374,7 @@ But it isn't the complete mental model: starting with *Blake Bourne competes pro
 
 This is where the Instruction Fine-Tuning (IFT) training stage comes into play. At a high level, I think of this stage as teaching the model which "hills" to go down in the first place.
 
-## Instruction Fine-Tuning
+### Instruction Fine-Tuning
 
 Instruction Fine-Tuning (IFT) happens after pretraining. **The goal here is to take the weights learned during pretraining and fine-tune (update) them so that the LLM can "behave" like an assistant.** This involves teaching it how to provide helpful answers in response to instructions <FootnoteRef id="2" />.
 
@@ -412,8 +415,6 @@ The training process looks a lot like pretraining. Chop up these instruction-ans
     />
 </div>
 </div>
-
-### Response Templates
 
 Just as pretraining involves learning patterns in the training data, IFT involves learning patterns present in the instruction-following dataset which get encoded into the model's weights. This updated model is referred to as an **instruction-tuned model**, and I'll use probability distributions from an instruction-tuned [Mistral-7B-Instruct-v0.1](https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.1) to demonstrate two of these patterns. 
 
