@@ -35,7 +35,7 @@ import Image31 from '@/public/images/hallucination/image_31.png';
 import Cover from '@/public/images/hallucination/cover_1.png';
 
 export const FigCaption = ({ children }) => (
-  <div className="text-center mx-auto text-gray-500 mt-2 max-w-2xl [&>p]:text-xs [&>p]:!text-xs [&>p]:!m-0 [&>p]:!leading-normal">
+  <div className="text-center mx-auto text-gray-500 mt-4 max-w-2xl [&>p]:text-xs [&>p]:!text-xs [&>p]:!m-0 [&>p]:!leading-normal">
     {children}
   </div>
 );
@@ -46,18 +46,24 @@ export const metadata = {
     date: "2025-06-14",
 };
 
-{/* <h1 className="text-5xl my-8 font-bold text-[#3F5570]">{metadata.title}</h1> */}
 
 <div className="my-12">
-<div className="flex justify-center w-full mx-auto">
   <Image 
     src={Cover}
     loading="eager"
+    width={1200}
+    height={622}
+    className="w-full h-auto"  
+    alt="Cover"
     />
 </div>
-</div>
 
-Welcome! In this post, I'd like to share my working mental model for why LLMs hallucinate.
+Published: June 14, 2025
+
+---
+
+
+In this post, I'd like to share my working mental model for why LLMs hallucinate.
 
 This is intended for those who use LLMs via ChatGPT and other AI assistants, but aren't very familiar with the underlying technology. I'm by no means a LLM expert, but I do enjoy finding intuitive ways to explain how they work, so treat this post as more of an accessible introduction and less of a definitive guide.
 
@@ -83,9 +89,9 @@ This operation starts with input text that is converted to a **token sequence**.
     alt="Creating an embedding from a sentence" 
     />
 </div>
-<figcaption className="text-center text-sm text-gray-500">
+<FigCaption>
   Vocabulary of Mistral-7b-v0.1
-</figcaption>
+</FigCaption>
 </div>
 
 What we recognize as single words will often look like multiple tokens to a LLM. Notice how "vocabulary" is split into two tokens in the example below:
@@ -266,7 +272,7 @@ I'd like to differentiate between two types of patterns in particular, which I r
 If we feed Mistral the input "Once upon a", here are the 4 most likely next tokens:
 
 <div className="my-12">
-<div className="flex justify-center w-4/5 mx-auto">
+<div className="flex justify-center mx-auto">
   <Image 
     src={Image15} 
     />
@@ -276,7 +282,7 @@ If we feed Mistral the input "Once upon a", here are the 4 most likely next toke
 This is an example of a **specific language pattern** the LLM has learned. Specific language patterns are characterized by **peaked** probability distributions where only one or a handful of next tokens dominate, and include **factual knowledge** the LLM has picked up on. For example, the high probability assigned to "basketball" reflects the model's knowledge of LeBron James.
 
 <div className="my-12">
-<div className="flex justify-center w-4/5 mx-auto">
+<div className="flex justify-center mx-auto">
   <Image 
     src={Image16} 
     />
@@ -344,7 +350,7 @@ Instruction Fine-Tuning (IFT) happens after pretraining. **The goal here is to t
 
 Recall that pretraining teaches a LLM how to fluently continue text based on patterns in its training data. This alone doesn't automatically make a LLM an assistant. To see why, let's take the prompt: "What's the weather like today?" A purely pretrained model might reasonably continue this as part of a dialogue in a story ("she asked, looking out the window…") or as part of a quiz ("A. Sunny B. Rainy C. …"). If we want the LLM to act like an assistant, we need to teach the model to treat prompts as **instructions** to be immediately followed by helpful answers.
 
-Instruction Fine-Tuning does this by showing the model multiple examples of instructions that are immediately followed by helpful answers - these examples are known as the **instruction-following dataset**. Crucially, these training examples include special formatting tokens (`<INST>` and `</INST>`) that indicate the start and end of an instruction:
+Instruction Fine-Tuning does this by showing the model multiple examples of instructions that are immediately followed by helpful answers - these examples are known as the **instruction-following dataset**. Crucially, these training examples include special formatting tokens `<INST>` and `</INST>` that indicate the start and end of an instruction:
 
 <div className="my-12">
 <div className="flex justify-center w-4/5 mx-auto">
@@ -357,12 +363,19 @@ Instruction Fine-Tuning does this by showing the model multiple examples of inst
 
 The training process looks a lot like pretraining. Chop up these instruction-answer pairs, remove the last token, have the LLM predict the next token, and adjust weights according to the loss.
 
-<div className="my-12">
+<div className="mt-12">
 <div className="flex justify-center w-4/5 mx-auto">
   <Image 
     src={Image22} 
     />
 </div>
+</div>
+<FigCaption>
+  Top: IFT training "snippets".<br/>
+  Bottom: Training on those snippets adjusts the model's weights to minimize prediction error.
+</FigCaption>
+
+<div className="mb-12">
 <div className="my-8 flex justify-center w-4/5 mx-auto">
   <Image 
     src={Image23} 
@@ -379,7 +392,7 @@ Just as pretraining involves learning patterns in the training data, IFT involve
 If we give Mistral-7b-Instruct the text "Tell me about Blake Bourne" without any formatting tokens, the next-token probability distribution favors tokens that promote continuation (it generates "Tell me about Blake Bourne, part 1. This article was originally posted…")
 
 <div className="my-12">
-<div className="flex justify-center w-4/5 mx-auto">
+<div className="flex justify-center  mx-auto">
   <Image 
     src={Image24} 
     />
@@ -389,7 +402,7 @@ If we give Mistral-7b-Instruct the text "Tell me about Blake Bourne" without any
 Wrap the text in instruction boundary tokens, however, and the probability distribution shifts dramatically:
 
 <div className="my-12">
-<div className="flex justify-center w-4/5 mx-auto">
+<div className="flex justify-center mx-auto">
   <Image 
     src={Image25} 
     />
@@ -429,16 +442,17 @@ There are glimpses of this template in the response Mistral-7b-Instruct generate
 Here are the underlying probability distributions Mistral samples from to generate the response:
 
 <div className="my-12">
-<div className="flex justify-center mx-auto">
-  <Image 
-    src={Image28}
+  <div className="flex justify-center mx-auto -mx-[calc(32vw-50%)]">
+    <Image 
+      src={Image28}
+      className="w-screen"
     />
-</div>
+  </div>
 </div>
 
 We can see that the model is quite certain in the “response template” portion of its answer, which sets it up to make about a claim about LeBron James. Thanks to pretraining, the model has specific language patterns about LeBron James to draw, and the claim is factually correct: 
 
-**Here's the key: if the instruction-tuning dataset only includes examples that follow these biographical templates, it will apply it to all such prompts, even when Person X doesn't exist <FootnoteRef id="3" />.** For example, here's what it generates about Blake Bourne:
+**Here's the key: if the instruction-tuning dataset only includes examples that follow these biographical templates, it will apply it to all such prompts, even when Person X doesn't exist <FootnoteRef id="1" />.** For example, here's what it generates about Blake Bourne:
 
 > [INST] Tell me about Blake Bourne [/INST]
 > 
@@ -447,11 +461,12 @@ We can see that the model is quite certain in the “response template” portio
 And here are the probability distributions used to generate the response: 
 
 <div className="my-12">
-<div className="flex justify-center mx-auto">
-  <Image 
-    src={Image29}
+  <div className="flex justify-center mx-auto -mx-[calc(32vw-50%)]">
+    <Image 
+      src={Image29}
+      className="w-screen"
     />
-</div>
+  </div>
 </div>
 
 Just like the LeBron James example, the model is certain that it should start with a "response template" to make a claim about Blake Bourne. But this drops the model in the middle of a steep hill, and when it comes to filling in the details about who he is, our model has no specific patterns to draw from. It has to rely on a general language pattern (actor, professional, football?), and we get a hallucination.
@@ -464,7 +479,7 @@ After we type a prompt into ChatGPT and hit Enter, our prompt is first wrapped w
 
 ## Conclusion: Saying I Don't Know
 
-If you were to ask ChatGPT today to "Tell me about Blake Bourne", it will say "I Don't Know":
+If you were to ask ChatGPT today to "Tell me about Blake Bourne", [it will say "I Don't Know"](https://chatgpt.com/share/684ef869-3134-8007-af37-e99139c528d5).
 
 <div className="my-12">
 <div className="flex justify-center w-4/5 mx-auto">
@@ -474,18 +489,22 @@ If you were to ask ChatGPT today to "Tell me about Blake Bourne", it will say "I
 </div>
 </div>
 
-This is something that is also learned during IFT, as instruction-tuning datasets now contain examples of when the model should respond with uncertainty or "I don't know". But even with this ability, LLMs still hallucinate - OpenAI even reports that its latest reasoning model o3 hallucinates at twice the rate of its predecessor o1.
+This is something that is also learned during IFT, as instruction-tuning datasets now contain examples of when the model should respond with uncertainty or "I don't know". But even with this ability, LLMs still hallucinate - OpenAI even reports that its latest reasoning model [o3 hallucinates at twice the rate of its predecessor o1](https://cdn.openai.com/pdf/2221c875-02dc-4789-800b-e7758f3722c1/o3-and-o4-mini-system-card.pdf).
 
-So while this post is my attempt to explain **why** LLMs hallucinate, there's an equally important question to be asked - **when** do LLMs hallucinate? Are there certain conditions and prompts that make hallucinations more likely? Recent research from Anthropic provides some insight here that I'd love to talk about, but this post is already too long, so I'll save that for next time.
+<div className="my-12">
+<div className="flex justify-center mx-auto">
+  <Image 
+    src={Image31}
+    />
+</div>
+</div>
+
+So while this post explains **why** LLMs hallucinate, there's an equally important question to consider, which is **when** do LLMs hallucinate? Are there certain conditions and prompts that make hallucinations more likely? [Recent research from Anthropic](https://transformer-circuits.pub/2025/attribution-graphs/biology.html#dives-hallucinations) provides some insight here that I'd love to talk about, but this post is already too long, so I'll save that for next time.
 
 Thanks for reading!
 
-
 <Footnotes>
   <Footnote id="1">
-    This is the first footnote explaining something in more detail.
-  </Footnote>
-  <Footnote id="2">
-    This is the second footnote with additional information.
+    Test 
   </Footnote>
 </Footnotes>
