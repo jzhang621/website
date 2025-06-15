@@ -452,7 +452,7 @@ There are glimpses of this template in the response Mistral-7b-Instruct generate
 Here are the underlying probability distributions Mistral samples from to generate the response:
 
 <div className="my-12">
-  <div className="flex justify-center mx-auto -mx-[calc(32vw-50%)]">
+  <div className="flex justify-center mx-auto -mx-[calc(36vw-50%)]">
     <Image 
       src={Image28}
       className="w-screen"
@@ -471,7 +471,7 @@ We can see that the model is quite certain in the “response template” portio
 And here are the probability distributions used to generate the response: 
 
 <div className="my-12">
-  <div className="flex justify-center mx-auto -mx-[calc(32vw-50%)]">
+  <div className="flex justify-center mx-auto -mx-[calc(36vw-50%)]">
     <Image 
       src={Image29}
       className="w-screen"
@@ -499,7 +499,7 @@ If you were to ask ChatGPT today to "Tell me about Blake Bourne", [it will say "
 </div>
 </div>
 
-This is something that is also learned during IFT, as instruction-tuning datasets now contain examples of when the model should respond with uncertainty or "I don't know". But even with this ability, LLMs still hallucinate - OpenAI even reports that its latest reasoning model o3 hallucinates at twice the rate of its predecessor o1 <FootnoteRef id="5" />.
+This is something that is also learned during IFT, as instruction-tuning datasets now contain examples of when the model should respond with uncertainty or "I don't know". But even with this ability, LLMs still hallucinate - OpenAI even reports that its latest reasoning model o3 hallucinates more than its predecessor o1 <FootnoteRef id="5" />.
 
 <div className="my-12">
 <div className="flex justify-center mx-auto">
@@ -520,11 +520,11 @@ Thanks for reading!
   <Footnote id="2">
     [01:01:06](https://youtu.be/7xTGNNLPyMI?si=UdW4CO2NXiY4i3l9&t=3668) from Andrej Karpathy's YouTube video Deep Dive into LLMs like ChatGPT
   </Footnote>
-  <Footnote id="3">
-    [R-Tuning: Teaching Large Language Models to Refuse Unknown Questions](https://ar5iv.labs.arxiv.org/html/2311.09677#:~:text=traditional%20fine%2Dtuning%20methods%20force%20the%20models%20to%20complete%20the%20sentence,it%20remains%20unequipped%20to%20do%20so%20when%20confronted%20with%20unknowns)
+   <Footnote id="3">
+    The [OpenAssistant dataset](https://huggingface.co/datasets/OpenAssistant/oasst1/viewer?views%5B%5D=train) contains examples of an instruction-following dataset. Karparthy mentions this at [01:12:46](https://youtu.be/7xTGNNLPyMI?si=ByShDRRE-dZeg-xP&t=4366).
   </Footnote>
   <Footnote id="4">
-    The [OpenAssistant dataset](https://huggingface.co/datasets/OpenAssistant/oasst1/viewer?views%5B%5D=train) contains examples of an instruction-following dataset. Karparthy mentions this at [01:12:46](https://youtu.be/7xTGNNLPyMI?si=ByShDRRE-dZeg-xP&t=4366).
+    [R-Tuning: Teaching Large Language Models to Refuse Unknown Questions](https://ar5iv.labs.arxiv.org/html/2311.09677#:~:text=traditional%20fine%2Dtuning%20methods%20force%20the%20models%20to%20complete%20the%20sentence,it%20remains%20unequipped%20to%20do%20so%20when%20confronted%20with%20unknowns)
   </Footnote>
   <Footnote id="5">
     [OpenAI o3 and o4-mini System Card](https://cdn.openai.com/pdf/2221c875-02dc-4789-800b-e7758f3722c1/o3-and-o4-mini-system-card.pdf). See 3.3 Hallucinations.
