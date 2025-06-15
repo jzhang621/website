@@ -69,24 +69,24 @@ This is intended for those who use LLMs via ChatGPT and other AI assistants, but
 
 Here's a high-level description of my hallucination mental model:
 
-1. LLMs generate text via next-token prediction, which involves repeatedly predicting the next piece of text using everything that has come before it.
+1. LLMs generate text by repeatedly predicting the next piece of text using everything that has come before it, a process known as next-token prediction.
 2. The LLM training process shapes those predictions to reflect both factual knowledge and broader language patterns that generalize to a variety of contexts - this can sometimes look like "making stuff up".
 3. LLM training can also bias LLMs into making "claims" about unfamiliar topics.
 4. Hallucinations are the result of making such claims and relying on generalized language patterns to fill in the details.
 
-The rest of the post explains each point in greater detail by showing concrete examples from [Mistral-7b-v0.1](https://huggingface.co/mistralai/Mistral-7B-v0.1), a popular open-source LLM. Mistral is an older model, which makes it more prone to hallucinations - we can get it to hallucinate simply by asking it to "Tell me about Blake Bourne" (a name I made up). The LLMs that currently power AI assistants are a bit "smarter" now - for instance, ChatGPT will say it doesn't recognize the name for reasons I talk about at the end. Nonetheless, the general explanation for why LLMs hallucinate is applicable to all models.
+The rest of the post explains each point in greater detail by showing concrete examples from [Mistral-7b-v0.1](https://huggingface.co/mistralai/Mistral-7B-v0.1), a popular open-source LLM. Mistral is an older model, which makes it more prone to hallucinations - we can get it to hallucinate simply by asking it to *Tell me about Blake Bourne* (a name I made up). The LLMs that currently power AI assistants are a bit "smarter" now - for instance, ChatGPT will say it doesn't recognize the name for reasons I talk about at the end. Nonetheless, the general explanation for why LLMs hallucinate is applicable to all models.
 
 ## Next-Token Prediction
 
 LLMs generate text by repeatedly predicting the next piece of text in a sequence, an operation known as **next-token prediction**.
 
-This operation starts with input text that is converted to a **token sequence**. Tokens are numbers that represent bits of text. These bits might be words, parts of words, or symbols and punctuations. LLMs have a fixed set of tokens they can work with, which is known as a **vocabulary**. Mistral's vocabulary contains 32,000 tokens.
+This operation starts with input text that is converted to a **token sequence**. Tokens are numbers that represent bits of text. These bits might be words, parts of words, or symbols and punctuations. LLMs have a fixed set of tokens they can work with, which is known as a **vocabulary**. Mistral's vocabulary contains 32,000 tokens - 20 of which are shown below:
 
 <div className="my-12">
-<div className="flex justify-center w-4/5 mx-auto">
+<div className="flex justify-center mx-auto">
   <Image 
     src={Vocab} 
-    alt="Creating an embedding from a sentence" 
+    alt="Vocabulary of Mistral-7b-v0.1"
     />
 </div>
 <FigCaption>
@@ -94,7 +94,7 @@ This operation starts with input text that is converted to a **token sequence**.
 </FigCaption>
 </div>
 
-What we recognize as single words will often look like multiple tokens to a LLM. Notice how "vocabulary" is split into two tokens in the example below:
+What we recognize as single words will often look like multiple tokens to a LLM. Notice how *vocabulary* is split into two tokens here:
 
 <div className="my-12">
 <div className="flex justify-center w-4/5 mx-auto">
@@ -107,20 +107,20 @@ What we recognize as single words will often look like multiple tokens to a LLM.
 As the name implies, next-token prediction involves predicting the next token in a given input sequence. LLMs express their predictions by assigning a probability to every token in its vocabulary. These probabilities indicate how likely each token is to follow the input, and are known as a **next-token probability distribution**.
 
 <div className="my-12">
-<div className="flex justify-center w-4/5 mx-auto">
+<div className="flex justify-center mx-auto">
   <Image 
     src={Image2} 
     />
 </div>
 <FigCaption>
-  The next-token probabilities are shown on the right. Only the top 4 and the bottom 4 are shown, but each token in the vocabulary has a probability assigned to it.
+  The next-token probabilities are shown on the right. Each token in the vocabulary has a probability assigned to it, but only the top 4 and the bottom 3 are shown here.
 </FigCaption>
 </div>
 
-LLMs can calculate this distribution for virtually any input sequence.
+LLMs can calculate this distribution for virtually any input sequence:
 
 <div className="my-12">
-<div className="flex justify-center w-4/5 mx-auto">
+<div className="flex justify-center mx-auto">
   <Image 
     src={Image3} 
     />
@@ -129,16 +129,17 @@ LLMs can calculate this distribution for virtually any input sequence.
 
 ### Text Generation
 
-LLMs can **sample** from probability distributions to produce a new token. Imagine a hat with 10,000 slips of paper, with a token written on each slip. In the "twinkle twinkle little" example, "star" would be on 7,373 slips, "stars" would be on 639 slips, "bat" on 332, and so on. A token is drawn from the hat at random and is called a sample.
+LLMs can **sample** from probability distributions to produce a new token. Imagine a hat with 10,000 slips of paper, with a token written on each slip. In the "twinkle twinkle little" example, *star* would be on 7,373 slips, *stars* would be on 639 slips, *bat* on 332, and so on. A token is drawn from the hat at random and is called a sample.
 
 This sampled token can now be added to the initial sequence to form a new input, which the model can use to calculate a new probability distribution.
 
 <div className="my-12">
-<div className="flex justify-center w-4/5 mx-auto">
-  <Image 
-    src={Image4} 
+<div className="flex justify-center mx-auto -mx-[calc(32vw-50%)]">
+    <Image 
+      src={Image4}
+      className="w-screen"
     />
-</div>
+  </div>
 <FigCaption>
   TOP: 94% of the time, the model will sample "skills" and add it to the input.<br/>
   BOTTOM: It then calculates a new probability distribution for the new sequence.
@@ -148,7 +149,7 @@ This sampled token can now be added to the initial sequence to form a new input,
 We can now sample from this new distribution to produce the next token in the sequence, and so on, until a special **end-of-sequence** `(</s>)` token is sampled, signaling the model to stop.
 
 <div className="my-12">
-<div className="flex justify-center w-4/5 mx-auto">
+<div className="flex justify-center mx-auto">
   <Image 
     src={Image5} 
     />
@@ -176,7 +177,7 @@ Sampling is **non-deterministic**: two draws from the same exact hat won't alway
 </FigCaption>
 </div>
 
-When we use ChatGPT, our initial prompt serves as the starting token sequence, and the model generates a response by **predicting what comes after our prompt**. For the most part, these responses are quite helpful, but they sometimes contain hallucinations - statements that sound plausible but are factually incorrect. To understand why hallucinations occur, we need to look at how LLMs are trained.
+When we use ChatGPT, our initial prompt serves as the starting token sequence, and the model generates a response by *predicting what comes after our prompt*. For the most part, these responses are quite helpful, but they sometimes contain hallucinations - statements that sound plausible but are factually incorrect. To understand why hallucinations occur, we need to look at how LLMs are trained.
 
 ## LLM Training
 
@@ -203,7 +204,7 @@ Pretraining is the first stage in a LLM's training pipeline. Pretraining involve
 <li>Take a snippet from the internet and split it into tokens. Remove the **last token**, and feed the rest of the tokens into the model as input.</li>
 
 <div className="my-12">
-<div className="flex justify-center w-4/5 mx-auto">
+<div className="flex justify-center mx-auto">
   <Image 
     src={Image9} 
     />
@@ -213,7 +214,7 @@ Pretraining is the first stage in a LLM's training pipeline. Pretraining involve
 <li>Use the current configuration of the model's weights to calculate a next-token probability distribution. This distribution represents the model's **prediction** of what the next token will be.</li>
 
 <div className="my-12">
-<div className="flex justify-center w-4/5 mx-auto">
+<div className="flex justify-center  mx-auto">
   <Image 
     src={Image10} 
     />
@@ -228,12 +229,15 @@ Pretraining is the first stage in a LLM's training pipeline. Pretraining involve
     src={Image11} 
     />
 </div>
+<FigCaption>
+  Note: The red bar isn't the actual loss, but it is proportional.
+</FigCaption>
 </div>
 
 <li>Adjust the weights according to the loss so the removed token gets a slightly higher probability next time, and the incorrect ones get slightly lower probabilities.</li>
 
 <div className="my-12">
-<div className="flex justify-center w-4/5 mx-auto">
+<div className="flex justify-center w-full mx-auto">
   <Image 
     src={Image12} 
     />
@@ -254,7 +258,7 @@ Pretraining is the first stage in a LLM's training pipeline. Pretraining involve
 The objective of these billions and billions of updates is to **minimize prediction error**. Intuitively, this means if you were to run the same training snippets through a model after pretraining, it would consistently assign high probabilities to the correct next tokens.
 
 <div className="my-12">
-<div className="flex justify-center w-4/5 mx-auto">
+<div className="flex justify-center w-full mx-auto">
   <Image 
     src={Image14} 
     />
@@ -279,7 +283,7 @@ If we feed Mistral the input "Once upon a", here are the 4 most likely next toke
 </div>
 </div>
 
-This is an example of a **specific language pattern** the LLM has learned. Specific language patterns are characterized by **peaked** probability distributions where only one or a handful of next tokens dominate, and include **factual knowledge** the LLM has picked up on. For example, the high probability assigned to "basketball" reflects the model's knowledge of LeBron James.
+This is an example of a **specific language pattern** the LLM has learned. Specific language patterns are characterized by *peaked* probability distributions where only one or a handful of next tokens dominate, and include **factual knowledge** the LLM has picked up on. For example, the high probability assigned to "basketball" reflects the model's knowledge of LeBron James.
 
 <div className="my-12">
 <div className="flex justify-center mx-auto">
@@ -314,9 +318,9 @@ Unlike the LeBron James example, these probabilities are flat and even, reflecti
 </div>
 </div>
 
-Each time it sees a phrase such as "(name of person) competes professionally as a (name of sport)" during pretraining, the model not only associates the specific sport with that person, it also learns the general pattern that "competes professionally as a" is usually followed by a class of sports such as bodybuilding and mixed martial arts. And when it comes to making a prediction about Blake Bourne, it also learns that its "best bet" is to distribute probabilities evenly amongst those activities, since it has no specific associations for the name.
+Each time it sees a phrase such as *(name of person) competes professionally as a (name of sport)* during pretraining, the model not only associates the specific sport with that person, it also learns the general pattern that *competes professionally as a* is usually followed by a class of sports such as bodybuilding and mixed martial arts. And when it comes to making a prediction about Blake Bourne, it also learns that its "best bet" is to distribute probabilities evenly amongst those activities, since it has no specific associations for the name.
 
-This allows the model to make a **contextually relevant** prediction about Blake Bourne, which means **the model can generate coherent text about new, unseen inputs**. As an analogy, I remember playing Mad Libs in elementary school, a language game involving templates like this one:
+This allows the model to make a *contextually relevant* prediction about Blake Bourne, which means **the model can generate coherent text about new, unseen inputs**. As an analogy, I remember playing Mad Libs in elementary school, a language game involving templates like this one:
 
 <div className="my-12">
 <div className="flex justify-center w-4/5 mx-auto">
@@ -336,19 +340,19 @@ I think of generalized language patterns as learning a variety of Mad Lib templa
 </div>
 </div>
 
-I could generate coherent stories in elementary school by filling in the blanks of a Mad Lib template. LLMs can do something similar, they just do so by noticing what tokens typically come next based on similar contexts from its training data.
+I could generate coherent stories in elementary school by filling in the blanks of a Mad Lib template. LLMs do something similar, they just do so by noticing what tokens typically come next based on similar contexts from its training data.
 
-This is the foundation of my mental model for why LLMs hallucinate, especially when asked about obscure topics: **the lack of representation in the training data means the model has to generate responses using generalized language patterns, rather than drawing from specific language patterns that reflect factual knowledge**.
+This is the foundation of my mental model for why LLMs hallucinate, especially when asked about obscure topics: **the lack of representation in the training data means the model has to generate responses using generalized language patterns, rather than drawing from specific language patterns that reflect factual knowledge**. They're essentially "playing Mad Libs".
 
-But it isn't the complete mental model: starting with "Blake Bourne competes professionally as a" is a bit like dropping the LLM off in the middle of a steep hill - it basically forces the LLM to hallucinate. To continue it coherently, the model has to guess the name of a sport. It's too late to stop, climb back to the top, and say "I don't know who that is."
+But it isn't the complete mental model: starting with *Blake Bourne competes professionally as a* is a bit like dropping the LLM off in the middle of a steep hill - it basically forces the LLM to hallucinate. To continue it coherently, the model has to guess the name of a sport. It's too late to stop, climb back to the top, and say "I don't know who that is."
 
 This is where the Instruction Fine-Tuning (IFT) training stage comes into play. At a high level, I think of this stage as teaching the model which "hills" to go down in the first place.
 
 ## Instruction Fine-Tuning
 
-Instruction Fine-Tuning (IFT) happens after pretraining. **The goal here is to take the weights learned during pretraining and fine-tune (update) them so that the LLM can "behave" like an assistant.** This involves teaching it how to provide helpful answers in response to instructions.
+Instruction Fine-Tuning (IFT) happens after pretraining. **The goal here is to take the weights learned during pretraining and fine-tune (update) them so that the LLM can "behave" like an assistant.** This involves teaching it how to provide helpful answers in response to instructions <FootnoteRef id="1" />.
 
-Recall that pretraining teaches a LLM how to fluently continue text based on patterns in its training data. This alone doesn't automatically make a LLM an assistant. To see why, let's take the prompt: "What's the weather like today?" A purely pretrained model might reasonably continue this as part of a dialogue in a story ("she asked, looking out the window…") or as part of a quiz ("A. Sunny B. Rainy C. …"). If we want the LLM to act like an assistant, we need to teach the model to treat prompts as **instructions** to be immediately followed by helpful answers.
+Recall that pretraining teaches a LLM how to fluently continue text based on patterns in its training data. This alone doesn't automatically make a LLM an assistant. To see why, let's take the prompt: *What's the weather like today?* A purely pretrained model might reasonably continue this as part of a dialogue in a story ("she asked, looking out the window…") or as part of a quiz ("A. Sunny B. Rainy C. …"). If we want the LLM to act like an assistant, we need to teach the model to treat prompts as *instructions* to be immediately followed by helpful answers.
 
 Instruction Fine-Tuning does this by showing the model multiple examples of instructions that are immediately followed by helpful answers - these examples are known as the **instruction-following dataset**. Crucially, these training examples include special formatting tokens `<INST>` and `</INST>` that indicate the start and end of an instruction:
 
@@ -376,7 +380,7 @@ The training process looks a lot like pretraining. Chop up these instruction-ans
 </FigCaption>
 
 <div className="mb-12">
-<div className="my-8 flex justify-center w-4/5 mx-auto">
+<div className="my-8 flex justify-center mx-auto">
   <Image 
     src={Image23} 
     />

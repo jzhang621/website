@@ -186,9 +186,7 @@ export function useMDXComponents(components) {
             <em
                 style={{
                     fontFamily: "var(--font-inter)",
-                    color: "#059669",
                     fontStyle: "italic",
-                    fontWeight: "500",
                 }}
             >
                 {children}
