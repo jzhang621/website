@@ -74,7 +74,7 @@ This is intended for those who use LLMs via ChatGPT and other AI assistants, but
 Here's a high-level description of my hallucination mental model:
 
 1. LLMs generate text by repeatedly predicting the next piece of text using everything that has come before it, a process known as next-token prediction.
-2. The LLM training process shapes those predictions to reflect both factual knowledge and broader language patterns that generalize to a variety of contexts - this can sometimes look like "making stuff up".
+2. The LLM training process shapes those predictions to reflect both factual knowledge and broader language patterns that generalize to a variety of contexts. The latter can sometimes look like "making stuff up".
 3. LLM training can also bias LLMs into making "claims" about unfamiliar topics.
 4. Hallucinations are the result of making such claims and relying on generalized language patterns to fill in the details.
 
@@ -108,6 +108,8 @@ What we recognize as single words will often look like multiple tokens to a LLM.
     />
 </div>
 </div>
+
+### Probability Distributions
 
 As the name implies, next-token prediction involves predicting the next token in a given input sequence. LLMs express their predictions by assigning a probability to every token in its vocabulary. These probabilities indicate how likely each token is to follow the input, and are known as a **next-token probability distribution**.
 
