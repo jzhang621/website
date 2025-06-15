@@ -32,6 +32,7 @@ import Image28 from '@/public/images/hallucination/image_28.png';
 import Image29 from '@/public/images/hallucination/image_29.png';
 import Image30 from '@/public/images/hallucination/image_30.png';
 import Image31 from '@/public/images/hallucination/image_31.png';
+import Cover from '@/public/images/hallucination/cover_1.png';
 
 export const FigCaption = ({ children }) => (
   <div className="text-center mx-auto text-gray-500 mt-2 max-w-2xl [&>p]:text-xs [&>p]:!text-xs [&>p]:!m-0 [&>p]:!leading-normal">
@@ -45,8 +46,15 @@ export const metadata = {
     date: "2025-06-14",
 };
 
-<h1 className="text-5xl my-8 font-bold text-[#3F5570]">{metadata.title}</h1>
+{/* <h1 className="text-5xl my-8 font-bold text-[#3F5570]">{metadata.title}</h1> */}
 
+<div className="my-12">
+<div className="flex justify-center w-full mx-auto">
+  <Image 
+    src={Cover}
+    />
+</div>
+</div>
 
 Welcome! In this post, I'd like to share my working mental model for why LLMs hallucinate.
 
