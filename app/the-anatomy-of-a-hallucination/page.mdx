@@ -69,7 +69,8 @@ Published: June 14, 2025
 
 In this post, I'd like to share my working mental model for why LLMs hallucinate.
 
-This is intended for those who use LLMs via ChatGPT and other AI assistants, but aren't very familiar with the underlying technology. I'm by no means a LLM expert, but I do enjoy finding intuitive ways to explain how they work, so treat this post as more of an accessible introduction and less of a definitive guide.
+
+This is intended for users of LLMs via ChatGPT and other AI assistants who aren't necessarily familiar with the underlying technology. I'm by no means a LLM expert, but I do enjoy finding intuitive ways to explain their inner workings with visuals, concrete examples, and analogies. Many of the concepts here are simplified to make them easier to understand, so please treat this post as more of an accessible introduction and less of a definitive guide. 
 
 Here's a high-level description of my hallucination mental model:
 
@@ -78,7 +79,7 @@ Here's a high-level description of my hallucination mental model:
 3. LLM training can also bias LLMs into making "claims" about unfamiliar topics.
 4. Hallucinations are the result of making such claims and relying on generalized language patterns to fill in the details.
 
-The rest of the post explains each point in greater detail by showing concrete examples from [Mistral-7b-v0.1](https://huggingface.co/mistralai/Mistral-7B-v0.1), a popular open-source LLM. Mistral is an older model, which makes it more prone to hallucinations - we can get it to hallucinate simply by asking it to *Tell me about Blake Bourne* (a name I made up). The LLMs that currently power AI assistants are a bit "smarter" now - for instance, ChatGPT will say it doesn't recognize the name for reasons I talk about at the end. Nonetheless, the general explanation for why LLMs hallucinate is applicable to all models.
+The rest of the post explains each point in greater detail by showing concrete examples from [Mistral-7b-v0.1](https://huggingface.co/mistralai/Mistral-7B-v0.1), a popular open-source LLM. Mistral is an older, smaller model, which makes it more prone to hallucinations - we can get it to hallucinate simply by asking it to *Tell me about Blake Bourne* (a name I made up). The LLMs that currently power AI assistants are a bit "smarter" now - for instance, ChatGPT will say it doesn't recognize the name for reasons I talk about at the end. Nonetheless, the general explanation for why LLMs hallucinate is applicable to all models.
 
 ## Next-Token Prediction
 

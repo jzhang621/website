@@ -171,7 +171,7 @@ export function useMDXComponents(components) {
                 href={href}
                 style={{
                     fontFamily: "var(--font-inter)",
-                    color: "#334155",
+                    color: "#0284c7",
                     textDecoration: "underline",
                     textDecorationColor: "#e2e8f0",
                     textUnderlineOffset: "3px",
