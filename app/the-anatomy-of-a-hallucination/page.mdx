@@ -379,7 +379,8 @@ This is where the Instruction Fine-Tuning (IFT) training stage comes into play. 
 
 ### Instruction Fine-Tuning
 
-Instruction Fine-Tuning (IFT) happens after pretraining. **The goal here is to take the weights learned during pretraining and fine-tune (update) them so that the LLM can "behave" like an assistant.** This involves teaching it how to provide helpful answers in response to instructions <FootnoteRef id="2" />.
+Instruction Fine-Tuning (IFT) happens after pretraining. The goal here is to take the weights learned during pretraining and fine-tune (update) them so that the LLM **can "behave" like an assistant** - meaning it can provide helpful answers in response to instructions <FootnoteRef id="2" />.
+
 
 Recall that pretraining teaches a LLM how to fluently continue text based on patterns in its training data. This alone doesn't automatically make a LLM an assistant. To see why, let's take the prompt: *What's the weather like today?* A purely pretrained model might reasonably continue this as part of a dialogue in a story ("she asked, looking out the window…") or as part of a quiz ("A. Sunny B. Rainy C. …"). If we want the LLM to act like an assistant, we need to teach the model to treat prompts as *instructions* to be immediately followed by helpful answers.
 
