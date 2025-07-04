@@ -1,11 +1,44 @@
-import React from "react";
+"use client";
+
+import React, { useState, useContext, createContext } from "react";
+import { FootnoteModal } from "./FootnoteModal";
 
 interface FootnoteProps {
     id: string;
     children: React.ReactNode;
 }
 
+interface FootnoteContextType {
+    footnotes: Map<string, React.ReactNode>;
+    registerFootnote: (id: string, content: React.ReactNode) => void;
+}
+
+const FootnoteContext = createContext<FootnoteContextType>({
+    footnotes: new Map(),
+    registerFootnote: () => {},
+});
+
+export const FootnoteProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const [footnotes, setFootnotes] = useState<Map<string, React.ReactNode>>(new Map());
+
+    const registerFootnote = (id: string, content: React.ReactNode) => {
+        setFootnotes(prev => new Map(prev).set(id, content));
+    };
+
+    return (
+        <FootnoteContext.Provider value={{ footnotes, registerFootnote }}>
+            {children}
+        </FootnoteContext.Provider>
+    );
+};
+
 export const Footnote: React.FC<FootnoteProps> = ({ id, children }) => {
+    const { registerFootnote } = useContext(FootnoteContext);
+    
+    React.useEffect(() => {
+        registerFootnote(id, children);
+    }, [id, children, registerFootnote]);
+
     return (
         <div
             id={`footnote-${id}`}
@@ -18,15 +51,34 @@ export const Footnote: React.FC<FootnoteProps> = ({ id, children }) => {
 };
 
 export const FootnoteReference: React.FC<{ id: string }> = ({ id }) => {
+    const { footnotes } = useContext(FootnoteContext);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const handleClick = (e: React.MouseEvent) => {
+        e.preventDefault();
+        setIsModalOpen(true);
+    };
+
+    const footnoteContent = footnotes.get(id);
+
     return (
-        <sup>
-            <a
-                href={`#footnote-${id}`}
-                id={`footnote-ref-${id}`}
-                className="text-slate-500 hover:text-slate-800 no-underline text-sm"
-            >
-                [{id}]
-            </a>
-        </sup>
+        <>
+            <sup>
+                <button
+                    onClick={handleClick}
+                    className="text-slate-500 hover:text-slate-800 no-underline text-sm cursor-pointer bg-transparent border-none p-0 font-inherit"
+                >
+                    [{id}]
+                </button>
+            </sup>
+            {footnoteContent && (
+                <FootnoteModal
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                    content={footnoteContent}
+                    footnoteId={id}
+                />
+            )}
+        </>
     );
 };

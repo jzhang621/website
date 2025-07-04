@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/react";
 import { Nav } from "./components/Nav";
+import { FootnoteProvider } from "../components/Footnote";
 
 const inter = Inter({
     subsets: ["latin"],
@@ -44,11 +45,13 @@ export default function RootLayout({
     return (
         <html lang="en" className={inter.className}>
             <body className={`bg-white antialiased`}>
-                <Nav />
-                <div className="mt-4 w-full md:max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-                    {children}
-                </div>
-                <Analytics />
+                <FootnoteProvider>
+                    <Nav />
+                    <div className="mt-4 w-full md:max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                        {children}
+                    </div>
+                    <Analytics />
+                </FootnoteProvider>
             </body>
         </html>
     );

@@ -1,7 +1,7 @@
 // This file is required to use @next/mdx in the `app` directory.
 import { MDXComponents } from "mdx/types";
 import Latex from "./components/Latex";
-import { Footnote, FootnoteReference } from "./components/Footnote";
+import { Footnote, FootnoteReference, FootnoteProvider } from "./components/Footnote";
 import { Citation, CitationReference } from "./components/Citation";
 import LinkableHeading from "./components/LinkableHeading";
 
