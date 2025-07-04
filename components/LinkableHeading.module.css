@@ -1,0 +1,53 @@
+.heading {
+    position: relative;
+    scroll-margin-top: 2rem;
+    /* Add scroll margin for better positioning */
+}
+
+.anchor {
+    position: absolute;
+    left: -1.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0;
+    transition: all 0.2s ease-in-out;
+    color: #9ca3af;
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 4px;
+    background-color: transparent;
+    font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+}
+
+.anchor:hover {
+    color: #6b7280;
+    background-color: #f3f4f6;
+    opacity: 1 !important;
+}
+
+.heading:hover .anchor {
+    opacity: 1;
+}
+
+/* Focus styles for accessibility */
+.anchor:focus {
+    opacity: 1;
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .anchor {
+        left: -1rem;
+        width: 1.25rem;
+        height: 1.25rem;
+        font-size: 0.75rem;
+    }
+}

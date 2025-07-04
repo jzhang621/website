@@ -13,60 +13,62 @@ export function TOC() {
     const [activeId, setActiveId] = useState<string>("");
 
     useEffect(() => {
-        // Extract all h2 and h3 elements from the page
-        const headers = document.querySelectorAll("h2, h3");
+      // Extract all h2 and h3 elements from the page
+      const headers = document.querySelectorAll("h2, h3");
 
-        const items: TOCItem[] = [];
+      const items: TOCItem[] = [];
 
-        headers.forEach((header, index) => {
-            const level = parseInt(header.tagName.charAt(1));
-            const text = header.textContent || "";
+      headers.forEach((header, index) => {
+        const level = parseInt(header.tagName.charAt(1));
+        const text = (header.textContent || "").replace(/^#+\s*/, "");
 
-            // Create an ID if it doesn't exist
-            let id = header.id;
-            if (!id) {
-                id = text
-                    .toLowerCase()
-                    .replace(/[^a-z0-9]+/g, "-")
-                    .replace(/(^-|-$)/g, "");
-                header.id = id;
+        // Create an ID if it doesn't exist
+        let id = header.id;
+        if (!id) {
+          id = text
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/(^-|-$)/g, "");
+          header.id = id;
+        }
+
+        items.push({ id, text, level });
+      });
+
+      setTocItems(items);
+
+      // Set up intersection observer for active section highlighting
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              setActiveId(entry.target.id);
             }
+          });
+        },
+        {
+          rootMargin: "-100px 0px -80% 0px",
+        }
+      );
 
-            items.push({ id, text, level });
-        });
+      headers.forEach((header) => {
+        observer.observe(header);
+      });
 
-        setTocItems(items);
-
-        // Set up intersection observer for active section highlighting
-        const observer = new IntersectionObserver(
-            (entries) => {
-                entries.forEach((entry) => {
-                    if (entry.isIntersecting) {
-                        setActiveId(entry.target.id);
-                    }
-                });
-            },
-            {
-                rootMargin: "-100px 0px -80% 0px",
-            }
-        );
-
+      return () => {
         headers.forEach((header) => {
-            observer.observe(header);
+          observer.unobserve(header);
         });
-
-        return () => {
-            headers.forEach((header) => {
-                observer.unobserve(header);
-            });
-        };
+      };
     }, []);
 
     const handleClick = (id: string) => {
-        const element = document.getElementById(id);
-        if (element) {
-            element.scrollIntoView({ behavior: "smooth" });
-        }
+      const element = document.getElementById(id);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "start" });
+        // Update the URL hash without reloading the page
+        window.history.pushState({}, "", `#${id}`);
+      }
     };
 
     if (tocItems.length === 0) {
