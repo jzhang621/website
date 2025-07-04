@@ -1,32 +1,24 @@
 // This file is required to use @next/mdx in the `app` directory.
-// import { MDXComponents } from "mdx/types";
+import { MDXComponents } from "mdx/types";
 import Latex from "./components/Latex";
 import { Footnote, FootnoteReference } from "./components/Footnote";
 import { Citation, CitationReference } from "./components/Citation";
-import LinkableHeading from "./components/LinkableHeading.tsx";
+import LinkableHeading from "./components/LinkableHeading";
 
 // Import Inter font - add this to your layout.tsx or _app.tsx if not already imported
 // import { Inter } from 'next/font/google';
 // const inter = Inter({ subsets: ['latin'] });
 
-export function useMDXComponents(components) {
+export function useMDXComponents(components: MDXComponents): MDXComponents {
   // Default components with LessWrong/Notion-inspired styling
-  const defaultComponents = {
-    Latex: ({ children }) => (
-      <Latex
-        style={{
-          margin: "2rem 0",
-          padding: "1rem",
-          backgroundColor: "#fafafa",
-          borderRadius: "6px",
-          border: "1px solid #e5e5e5",
-        }}
-      >
+  const defaultComponents: MDXComponents = {
+    Latex: ({ children }: { children: string }) => (
+      <Latex>
         {children}
       </Latex>
     ),
 
-    h1: ({ children }) => (
+    h1: ({ children, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
       <LinkableHeading
         level="h1"
         style={{
@@ -46,7 +38,7 @@ export function useMDXComponents(components) {
       </LinkableHeading>
     ),
 
-    h2: ({ children }) => (
+    h2: ({ children, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
       <LinkableHeading
         level="h2"
         style={{
@@ -64,7 +56,7 @@ export function useMDXComponents(components) {
       </LinkableHeading>
     ),
 
-    h3: ({ children }) => (
+    h3: ({ children, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
       <LinkableHeading
         level="h3"
         style={{
@@ -82,7 +74,7 @@ export function useMDXComponents(components) {
       </LinkableHeading>
     ),
 
-    h4: ({ children }) => (
+    h4: ({ children, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
       <LinkableHeading
         level="h4"
         style={{
@@ -99,7 +91,7 @@ export function useMDXComponents(components) {
       </LinkableHeading>
     ),
 
-    p: ({ children, ...props }) => {
+    p: ({ children, ...props }: React.HTMLAttributes<HTMLParagraphElement>) => {
       const style = {
         fontFamily: "var(--font-inter)",
         lineHeight: "1.75",
@@ -110,7 +102,7 @@ export function useMDXComponents(components) {
       };
 
       // Check if the parent is a figcaption
-      const isInFigcaption = props.parentName === "figcaption";
+      const isInFigcaption = (props as any).parentName === "figcaption";
 
       return (
         <p
@@ -132,12 +124,11 @@ export function useMDXComponents(components) {
       );
     },
 
-    ul: ({ children }) => (
+    ul: ({ children, ...props }: React.HTMLAttributes<HTMLUListElement>) => (
       <ul
         style={{
           paddingLeft: "1.75rem",
           listStyle: "disc",
-          listStyleColor: "#9ca3af",
           margin: "1.5rem 0",
         }}
       >
@@ -145,12 +136,11 @@ export function useMDXComponents(components) {
       </ul>
     ),
 
-    ol: ({ children }) => (
+    ol: ({ children, ...props }: React.HTMLAttributes<HTMLOListElement>) => (
       <ol
         style={{
           paddingLeft: "1.75rem",
           listStyle: "decimal",
-          listStyleColor: "#9ca3af",
           margin: "1.5rem 0",
         }}
       >
@@ -158,7 +148,7 @@ export function useMDXComponents(components) {
       </ol>
     ),
 
-    li: ({ children }) => (
+    li: ({ children, ...props }: React.HTMLAttributes<HTMLLIElement>) => (
       <li
         style={{
           fontFamily: "var(--font-inter)",
@@ -171,7 +161,7 @@ export function useMDXComponents(components) {
       </li>
     ),
 
-    a: ({ children, href }) => (
+    a: ({ children, href, ...props }: React.AnchorHTMLAttributes<HTMLAnchorElement>) => (
       <a
         href={href}
         style={{
@@ -187,7 +177,7 @@ export function useMDXComponents(components) {
       </a>
     ),
 
-    em: ({ children }) => (
+    em: ({ children, ...props }: React.HTMLAttributes<HTMLElement>) => (
       <em
         style={{
           fontFamily: "var(--font-inter)",
@@ -198,7 +188,7 @@ export function useMDXComponents(components) {
       </em>
     ),
 
-    strong: ({ children }) => (
+    strong: ({ children, ...props }: React.HTMLAttributes<HTMLElement>) => (
       <strong
         style={{
           fontFamily: "var(--font-inter)",
@@ -210,7 +200,7 @@ export function useMDXComponents(components) {
       </strong>
     ),
 
-    blockquote: ({ children }) => (
+    blockquote: ({ children, ...props }: React.BlockquoteHTMLAttributes<HTMLQuoteElement>) => (
       <blockquote
         className="mdx-blockquote"
         style={{
@@ -230,7 +220,7 @@ export function useMDXComponents(components) {
       </blockquote>
     ),
 
-    pre: ({ children, ...props }) => (
+    pre: ({ children, ...props }: React.HTMLAttributes<HTMLPreElement>) => (
       <pre
         style={{
           backgroundColor: "#1e293b",
@@ -250,7 +240,7 @@ export function useMDXComponents(components) {
       </pre>
     ),
 
-    code: ({ children, ...props }) => (
+    code: ({ children, ...props }: React.HTMLAttributes<HTMLElement>) => (
       <code
         style={{
           fontFamily: "'JetBrains Mono', 'Fira Code', Consolas, monospace",
@@ -284,7 +274,7 @@ export function useMDXComponents(components) {
       />
     ),
 
-    table: ({ children }) => (
+    table: ({ children, ...props }: React.TableHTMLAttributes<HTMLTableElement>) => (
       <div
         style={{
           overflowX: "auto",
@@ -305,7 +295,7 @@ export function useMDXComponents(components) {
       </div>
     ),
 
-    th: ({ children }) => (
+    th: ({ children, ...props }: React.ThHTMLAttributes<HTMLTableHeaderCellElement>) => (
       <th
         style={{
           fontFamily: "var(--font-inter)",
@@ -321,7 +311,7 @@ export function useMDXComponents(components) {
       </th>
     ),
 
-    td: ({ children }) => (
+    td: ({ children, ...props }: React.TdHTMLAttributes<HTMLTableDataCellElement>) => (
       <td
         style={{
           fontFamily: "var(--font-inter)",
@@ -335,24 +325,24 @@ export function useMDXComponents(components) {
     ),
 
     // Add new components for citations and footnotes
-    Citation: ({ children, id }) => <Citation id={id}>{children}</Citation>,
+    Citation: ({ children, id }: { children: React.ReactNode; id: string }) => <Citation id={id}>{children}</Citation>,
 
-    CitationRef: ({ id }) => <CitationReference id={id} />,
+    CitationRef: ({ id }: { id: string }) => <CitationReference id={id} />,
 
     // Add a component for a collection of citations
-    Citations: ({ children }) => (
+    Citations: ({ children }: { children: React.ReactNode }) => (
       <div className="mt-12 pt-8 border-t border-gray-200">
         <h2 className="text-xl font-semibold text-gray-800 mb-4">Citations</h2>
         <div className="space-y-4">{children}</div>
       </div>
     ),
 
-    Footnote: ({ children, id }) => <Footnote id={id}>{children}</Footnote>,
+    Footnote: ({ children, id }: { children: React.ReactNode; id: string }) => <Footnote id={id}>{children}</Footnote>,
 
-    FootnoteRef: ({ id }) => <FootnoteReference id={id} />,
+    FootnoteRef: ({ id }: { id: string }) => <FootnoteReference id={id} />,
 
     // Add a component for a collection of footnotes
-    Footnotes: ({ children }) => (
+    Footnotes: ({ children }: { children: React.ReactNode }) => (
       <div className="footnote my-8 pt-8 border-t border-gray-200">
         <h2 className="text-3xl font-semibold text-gray-800 mb-4">References</h2>
         <div className="space-y-2">{children}</div>
@@ -360,7 +350,7 @@ export function useMDXComponents(components) {
     ),
 
     // Add a component for bibliography
-    Bibliography: ({ children }) => (
+    Bibliography: ({ children }: { children: React.ReactNode }) => (
       <div className="mt-12 pt-8 border-t border-gray-200">
         <h1 className="text-2xl font-semibold text-gray-800 mb-4">References</h1>
         <div className="space-y-4">{children}</div>
@@ -368,7 +358,7 @@ export function useMDXComponents(components) {
     ),
 
     // Add a component for individual bibliography items
-    BibItem: ({ id, children }) => (
+    BibItem: ({ id, children }: { id: string; children: React.ReactNode }) => (
       <div id={`bib-${id}`} className="text-sm text-gray-600">
         <span className="text-gray-400 mr-2">[{id}]</span>
         {children}
@@ -376,7 +366,7 @@ export function useMDXComponents(components) {
     ),
 
     // Add a component for bibliography references
-    BibRef: ({ id }) => (
+    BibRef: ({ id }: { id: string }) => (
       <sup>
         <a href={`#bib-${id}`} className="text-blue-600 hover:text-blue-800 no-underline text-sm">
           [{id}]

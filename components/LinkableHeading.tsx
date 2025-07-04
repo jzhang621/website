@@ -19,7 +19,7 @@ const LinkableHeading: React.FC<LinkableHeadingProps> = ({
   className = "",
   showAnchor = true,
 }) => {
-  const id = generateHeadingId(children as string, level);
+  const id = generateHeadingId(children as string);
   const Tag = level as keyof JSX.IntrinsicElements;
 
   const headingStyle: CSSProperties = {

@@ -1,6 +1,11 @@
 import Link from 'next/link';
 
-const Superscript = ({ text, href }) => {
+interface SuperscriptProps {
+  text: string;
+  href: string;
+}
+
+const Superscript: React.FC<SuperscriptProps> = ({ text, href }) => {
   return (
     <sup>
       <Link href={href} className="text-blue-500 hover:text-blue-700">

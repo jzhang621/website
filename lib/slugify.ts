@@ -1,9 +1,9 @@
 /**
  * Generate a URL-friendly slug from a string
- * @param {string} text - The text to convert to a slug
- * @returns {string} - The slug
+ * @param text - The text to convert to a slug
+ * @returns The slug
  */
-export function slugify(text) {
+export function slugify(text: string): string {
   return text
     .toString()
     .toLowerCase()
@@ -17,9 +17,9 @@ export function slugify(text) {
 
 /**
  * Generate a unique ID for a heading
- * @param {string} text - The heading text
- * @returns {string} - The unique ID
+ * @param text - The heading text
+ * @returns The unique ID
  */
-export function generateHeadingId(text) {
+export function generateHeadingId(text: string): string {
   return slugify(text);
 }

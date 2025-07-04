@@ -1,26 +1,19 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getAllHeadings, generateTableOfContents } from "../lib/headingUtils";
+import { getAllHeadings, generateTableOfContents, TOCItem } from "../lib/headingUtils";
 
 interface TableOfContentsProps {
   className?: string;
   maxDepth?: number;
 }
 
-interface TocItem {
-  id: string;
-  text: string;
-  level: string;
-  slug: string;
-}
-
 const TableOfContents: React.FC<TableOfContentsProps> = ({ className = "", maxDepth = 3 }) => {
-  const [toc, setToc] = useState<TocItem[]>([]);
+  const [toc, setToc] = useState<TOCItem[]>([]);
 
   useEffect(() => {
     const headings = getAllHeadings();
-    const tocItems = generateTableOfContents(headings).filter((item: TocItem) => {
+    const tocItems = generateTableOfContents(headings).filter((item: TOCItem) => {
       const level = parseInt(item.level.replace("h", ""));
       return level <= maxDepth;
     });
@@ -60,7 +53,7 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({ className = "", maxDe
                     behavior: "smooth",
                     block: "start",
                   });
-                  window.history.pushState(null, null, `#${item.id}`);
+                  window.history.pushState(null, "", `#${item.id}`);
                 }
               }}
             >
