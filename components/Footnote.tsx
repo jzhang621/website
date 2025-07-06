@@ -1,35 +1,35 @@
 "use client";
 
-import React, { useState, useContext, createContext } from "react";
+import React, { useState, useContext, createContext, useCallback } from "react";
 import { FootnoteModal } from "./FootnoteModal";
 
 interface FootnoteProps {
-    id: string;
-    children: React.ReactNode;
+  id: string;
+  children: React.ReactNode;
 }
 
 interface FootnoteContextType {
-    footnotes: Map<string, React.ReactNode>;
-    registerFootnote: (id: string, content: React.ReactNode) => void;
+  footnotes: Map<string, React.ReactNode>;
+  registerFootnote: (id: string, content: React.ReactNode) => void;
 }
 
 const FootnoteContext = createContext<FootnoteContextType>({
-    footnotes: new Map(),
-    registerFootnote: () => {},
+  footnotes: new Map(),
+  registerFootnote: () => {},
 });
 
 export const FootnoteProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [footnotes, setFootnotes] = useState<Map<string, React.ReactNode>>(new Map());
+  const [footnotes, setFootnotes] = useState<Map<string, React.ReactNode>>(new Map());
 
-    const registerFootnote = (id: string, content: React.ReactNode) => {
-        setFootnotes(prev => new Map(prev).set(id, content));
-    };
+  const registerFootnote = useCallback((id: string, content: React.ReactNode) => {
+    setFootnotes((prev) => new Map(prev).set(id, content));
+  }, []);
 
-    return (
-        <FootnoteContext.Provider value={{ footnotes, registerFootnote }}>
-            {children}
-        </FootnoteContext.Provider>
-    );
+  return (
+    <FootnoteContext.Provider value={{ footnotes, registerFootnote }}>
+      {children}
+    </FootnoteContext.Provider>
+  );
 };
 
 export const Footnote: React.FC<FootnoteProps> = ({ id, children }) => {
