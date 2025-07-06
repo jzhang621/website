@@ -33,10 +33,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     ),
 
     p: ({ children, ...props }: React.HTMLAttributes<HTMLParagraphElement>) => {
-      // Check if the parent is a figcaption
-      const isInFigcaption = (props as any).parentName === "figcaption";
-
-      return <p className={isInFigcaption ? styles.figcaption : styles.paragraph}>{children}</p>;
+      return <p className={styles.paragraph}>{children}</p>;
     },
 
     ul: ({ children, ...props }: React.HTMLAttributes<HTMLUListElement>) => (
@@ -66,7 +63,9 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     ),
 
     blockquote: ({ children, ...props }: React.BlockquoteHTMLAttributes<HTMLQuoteElement>) => (
-      <blockquote className={styles.blockquote}>{children}</blockquote>
+      <blockquote className={`${styles.blockquote} ${styles["mdx-blockquote"]}`}>
+        {children}
+      </blockquote>
     ),
 
     pre: ({ children, ...props }: React.HTMLAttributes<HTMLPreElement>) => (

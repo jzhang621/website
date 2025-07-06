@@ -104,6 +104,22 @@
     line-height: 1.7;
 }
 
+/* Blockquote styles for paragraph children */
+.mdx-blockquote p {
+    margin: 1rem 0 !important;
+    font-size: inherit !important;
+    color: inherit !important;
+    line-height: inherit !important;
+    font-family: inherit !important;
+}
+
+.mdx-blockquote p:first-child {
+    margin-top: 0 !important;
+}
+
+.mdx-blockquote p:last-child {
+    margin-bottom: 0 !important;
+}
 .pre {
     background-color: #1e293b;
     color: #e2e8f0;

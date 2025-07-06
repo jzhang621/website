@@ -40,13 +40,14 @@ export const Footnote: React.FC<FootnoteProps> = ({ id, children }) => {
     }, [id, children, registerFootnote]);
 
     return (
-        <div
-            id={`footnote-${id}`}
-            className="text-sm text-gray-600 mt-4 mb-4 pl-2 border-l-0 border-gray-200 flex items-center"
-        >
-            <span className="text-gray-400 mr-2 flex-shrink-0">[{id}]</span>
-            <span>{children}</span>
-        </div>
+      <div
+        id={`footnote-${id}`}
+        className="foonote text-sm text-gray-600 mt-4 mb-4 pl-2 border-l-0 border-gray-200 flex items-center"
+      >
+        <span className="text-gray-400 mr-2 flex-shrink-0">[{id}]</span>
+        {/* Remove margin-y from p tags that rendered and styled by mdx */}
+        <span className="footnote-content [&>p]:!my-0 [&>p]:!text-sm">{children}</span>
+      </div>
     );
 };
 
