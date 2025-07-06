@@ -1,7 +1,6 @@
 // This file is required to use @next/mdx in the `app` directory.
 import { MDXComponents } from "mdx/types";
-import Latex from "./components/Latex";
-import { Footnote, FootnoteReference, FootnoteProvider } from "./components/Footnote";
+import { Footnote, FootnoteReference } from "./components/Footnote";
 import { Citation, CitationReference } from "./components/Citation";
 import LinkableHeading from "./components/LinkableHeading";
 
@@ -12,12 +11,6 @@ import LinkableHeading from "./components/LinkableHeading";
 export function useMDXComponents(components: MDXComponents): MDXComponents {
   // Default components with LessWrong/Notion-inspired styling
   const defaultComponents: MDXComponents = {
-    Latex: ({ children }: { children: string }) => (
-      <Latex>
-        {children}
-      </Latex>
-    ),
-
     h1: ({ children, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
       <LinkableHeading
         level="h1"
@@ -325,7 +318,9 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     ),
 
     // Add new components for citations and footnotes
-    Citation: ({ children, id }: { children: React.ReactNode; id: string }) => <Citation id={id}>{children}</Citation>,
+    Citation: ({ children, id }: { children: React.ReactNode; id: string }) => (
+      <Citation id={id}>{children}</Citation>
+    ),
 
     CitationRef: ({ id }: { id: string }) => <CitationReference id={id} />,
 
@@ -337,7 +332,9 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       </div>
     ),
 
-    Footnote: ({ children, id }: { children: React.ReactNode; id: string }) => <Footnote id={id}>{children}</Footnote>,
+    Footnote: ({ children, id }: { children: React.ReactNode; id: string }) => (
+      <Footnote id={id}>{children}</Footnote>
+    ),
 
     FootnoteRef: ({ id }: { id: string }) => <FootnoteReference id={id} />,
 
