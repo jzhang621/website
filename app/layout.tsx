@@ -10,14 +10,6 @@ const inter = Inter({
     display: "swap",
 });
 
-// app/layout.tsx
-import { Open_Sans } from "next/font/google";
-
-const openSans = Open_Sans({
-    subsets: ["latin"],
-    variable: "--font-open-sans",
-});
-
 export const metadata: Metadata = {
   title: {
     default: "Jimmy Meets World",
