@@ -19,40 +19,41 @@ const openSans = Open_Sans({
 });
 
 export const metadata: Metadata = {
-    title: {
-        default: "Jimmy Meets World",
-        template: "%s | Jimmy Meets World",
+  title: {
+    default: "Jimmy Meets World",
+    template: "%s | Jimmy Meets World",
+  },
+  description: "Personal blog and portfolio of Jimmy Zhang",
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/favicon.ico",
+    other: {
+      rel: "icon",
+      type: "image/png",
+      sizes: "32x32",
+      url: "/favicon-32x32.png",
     },
-    description: "Personal blog and portfolio of Jimmy Zhang",
-    icons: {
-        icon: "/favicon.ico",
-        shortcut: "/favicon.ico",
-        apple: "/favicon.ico",
-        other: {
-            rel: "icon",
-            type: "image/png",
-            sizes: "32x32",
-            url: "/favicon-32x32.png",
-        },
-    },
+  },
 };
 
 export default function RootLayout({
-    children,
+  children,
 }: Readonly<{
-    children: React.ReactNode;
+  children: React.ReactNode;
 }>) {
-    return (
-        <html lang="en" className={inter.className}>
-            <body className={`bg-white antialiased`}>
-                <FootnoteProvider>
-                    <Nav />
-                    <div className="mt-4 w-full md:max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-                        {children}
-                    </div>
-                    <Analytics />
-                </FootnoteProvider>
-            </body>
-        </html>
-    );
+  return (
+    <html lang="en" className={inter.className}>
+      <head>
+        <link rel="preconnect" href="https://www.jimmymeetsworld.com" />
+      </head>
+      <body className={`bg-white antialiased`}>
+        <FootnoteProvider>
+          <Nav />
+          <div className="mt-4 w-full md:max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">{children}</div>
+          <Analytics />
+        </FootnoteProvider>
+      </body>
+    </html>
+  );
 }
