@@ -15,7 +15,6 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       <LinkableHeading
         level="h1"
         style={{
-          fontFamily: "var(--font-inter)",
           color: "#1a1a1a",
           fontSize: "2.25rem",
           fontWeight: "700",
@@ -35,7 +34,6 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       <LinkableHeading
         level="h2"
         style={{
-          fontFamily: "var(--font-inter)",
           color: "#2d2d2d",
           fontSize: "1.875rem",
           fontWeight: "600",
@@ -53,7 +51,6 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       <LinkableHeading
         level="h3"
         style={{
-          fontFamily: "var(--font-inter)",
           color: "#404040",
           fontSize: "1.5rem",
           fontWeight: "600",
@@ -71,7 +68,6 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       <LinkableHeading
         level="h4"
         style={{
-          fontFamily: "var(--font-inter)",
           color: "#525252",
           fontSize: "1.25rem",
           fontWeight: "600",
@@ -86,7 +82,6 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
 
     p: ({ children, ...props }: React.HTMLAttributes<HTMLParagraphElement>) => {
       const style = {
-        fontFamily: "var(--font-inter)",
         lineHeight: "1.75",
         fontSize: "1rem",
         color: "#374151",
@@ -102,7 +97,6 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
           style={
             isInFigcaption
               ? {
-                  fontFamily: "var(--font-inter)",
                   fontSize: "0.875rem",
                   color: "#6b7280",
                   fontStyle: "italic",
@@ -144,7 +138,6 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     li: ({ children, ...props }: React.HTMLAttributes<HTMLLIElement>) => (
       <li
         style={{
-          fontFamily: "var(--font-inter)",
           marginBottom: "0.75rem",
           lineHeight: "1.7",
           color: "#374151",
@@ -158,7 +151,6 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       <a
         href={href}
         style={{
-          fontFamily: "var(--font-inter)",
           color: "#0284c7",
           textDecoration: "underline",
           textDecorationColor: "#e2e8f0",
@@ -173,7 +165,6 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     em: ({ children, ...props }: React.HTMLAttributes<HTMLElement>) => (
       <em
         style={{
-          fontFamily: "var(--font-inter)",
           fontStyle: "italic",
         }}
       >
@@ -184,7 +175,6 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     strong: ({ children, ...props }: React.HTMLAttributes<HTMLElement>) => (
       <strong
         style={{
-          fontFamily: "var(--font-inter)",
           color: "#1f2937",
           fontWeight: "700",
         }}
@@ -197,7 +187,6 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       <blockquote
         className="mdx-blockquote"
         style={{
-          fontFamily: "var(--font-inter)",
           margin: "1rem",
           padding: "1.5rem 2rem",
           backgroundColor: "#f8fafc",
@@ -291,7 +280,6 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     th: ({ children, ...props }: React.ThHTMLAttributes<HTMLTableHeaderCellElement>) => (
       <th
         style={{
-          fontFamily: "var(--font-inter)",
           backgroundColor: "#f9fafb",
           padding: "0.75rem 1rem",
           textAlign: "left",
@@ -307,7 +295,6 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     td: ({ children, ...props }: React.TdHTMLAttributes<HTMLTableDataCellElement>) => (
       <td
         style={{
-          fontFamily: "var(--font-inter)",
           padding: "0.75rem 1rem",
           borderBottom: "1px solid #f3f4f6",
           color: "#6b7280",
