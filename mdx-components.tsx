@@ -3,305 +3,99 @@ import { MDXComponents } from "mdx/types";
 import { Footnote, FootnoteReference } from "./components/Footnote";
 import { Citation, CitationReference } from "./components/Citation";
 import LinkableHeading from "./components/LinkableHeading";
-
-// Import Inter font - add this to your layout.tsx or _app.tsx if not already imported
-// import { Inter } from 'next/font/google';
-// const inter = Inter({ subsets: ['latin'] });
+import styles from "./components/mdx-components.module.css";
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {
   // Default components with LessWrong/Notion-inspired styling
   const defaultComponents: MDXComponents = {
     h1: ({ children, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
-      <LinkableHeading
-        level="h1"
-        style={{
-          color: "#1a1a1a",
-          fontSize: "2.25rem",
-          fontWeight: "700",
-          lineHeight: "1.2",
-          marginTop: "3rem",
-          marginBottom: "1.5rem",
-          letterSpacing: "-0.025em",
-          borderBottom: "2px solid #e5e5e5",
-          paddingBottom: "0.75rem",
-        }}
-      >
+      <LinkableHeading level="h1" className={styles.h1}>
         {children}
       </LinkableHeading>
     ),
 
     h2: ({ children, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
-      <LinkableHeading
-        level="h2"
-        style={{
-          color: "#2d2d2d",
-          fontSize: "1.875rem",
-          fontWeight: "600",
-          lineHeight: "1.3",
-          marginTop: "3rem",
-          marginBottom: "1.25rem",
-          letterSpacing: "-0.015em",
-        }}
-      >
+      <LinkableHeading level="h2" className={styles.h2}>
         {children}
       </LinkableHeading>
     ),
 
     h3: ({ children, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
-      <LinkableHeading
-        level="h3"
-        style={{
-          color: "#404040",
-          fontSize: "1.5rem",
-          fontWeight: "600",
-          lineHeight: "1.4",
-          marginTop: "2.5rem",
-          marginBottom: "1rem",
-          letterSpacing: "-0.01em",
-        }}
-      >
+      <LinkableHeading level="h3" className={styles.h3}>
         {children}
       </LinkableHeading>
     ),
 
     h4: ({ children, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
-      <LinkableHeading
-        level="h4"
-        style={{
-          color: "#525252",
-          fontSize: "1.25rem",
-          fontWeight: "600",
-          lineHeight: "1.4",
-          marginTop: "2rem",
-          marginBottom: "0.75rem",
-        }}
-      >
+      <LinkableHeading level="h4" className={styles.h4}>
         {children}
       </LinkableHeading>
     ),
 
     p: ({ children, ...props }: React.HTMLAttributes<HTMLParagraphElement>) => {
-      const style = {
-        lineHeight: "1.75",
-        fontSize: "1rem",
-        color: "#374151",
-        margin: "1.5rem 0",
-        maxWidth: "none",
-      };
-
       // Check if the parent is a figcaption
       const isInFigcaption = (props as any).parentName === "figcaption";
 
-      return (
-        <p
-          style={
-            isInFigcaption
-              ? {
-                  fontSize: "0.875rem",
-                  color: "#6b7280",
-                  fontStyle: "italic",
-                  textAlign: "center",
-                  marginTop: "0.5rem",
-                }
-              : style
-          }
-        >
-          {children}
-        </p>
-      );
+      return <p className={isInFigcaption ? styles.figcaption : styles.paragraph}>{children}</p>;
     },
 
     ul: ({ children, ...props }: React.HTMLAttributes<HTMLUListElement>) => (
-      <ul
-        style={{
-          paddingLeft: "1.75rem",
-          listStyle: "disc",
-          margin: "1.5rem 0",
-        }}
-      >
-        {children}
-      </ul>
+      <ul className={styles.ul}>{children}</ul>
     ),
 
     ol: ({ children, ...props }: React.HTMLAttributes<HTMLOListElement>) => (
-      <ol
-        style={{
-          paddingLeft: "1.75rem",
-          listStyle: "decimal",
-          margin: "1.5rem 0",
-        }}
-      >
-        {children}
-      </ol>
+      <ol className={styles.ol}>{children}</ol>
     ),
 
     li: ({ children, ...props }: React.HTMLAttributes<HTMLLIElement>) => (
-      <li
-        style={{
-          marginBottom: "0.75rem",
-          lineHeight: "1.7",
-          color: "#374151",
-        }}
-      >
-        {children}
-      </li>
+      <li className={styles.li}>{children}</li>
     ),
 
     a: ({ children, href, ...props }: React.AnchorHTMLAttributes<HTMLAnchorElement>) => (
-      <a
-        href={href}
-        style={{
-          color: "#0284c7",
-          textDecoration: "underline",
-          textDecorationColor: "#e2e8f0",
-          textUnderlineOffset: "3px",
-          fontWeight: "500",
-        }}
-      >
+      <a href={href} className={styles.link}>
         {children}
       </a>
     ),
 
     em: ({ children, ...props }: React.HTMLAttributes<HTMLElement>) => (
-      <em
-        style={{
-          fontStyle: "italic",
-        }}
-      >
-        {children}
-      </em>
+      <em className={styles.em}>{children}</em>
     ),
 
     strong: ({ children, ...props }: React.HTMLAttributes<HTMLElement>) => (
-      <strong
-        style={{
-          color: "#1f2937",
-          fontWeight: "700",
-        }}
-      >
-        {children}
-      </strong>
+      <strong className={styles.strong}>{children}</strong>
     ),
 
     blockquote: ({ children, ...props }: React.BlockquoteHTMLAttributes<HTMLQuoteElement>) => (
-      <blockquote
-        className="mdx-blockquote"
-        style={{
-          margin: "1rem",
-          padding: "1.5rem 2rem",
-          backgroundColor: "#f8fafc",
-          borderLeft: "4px solid #3b82f6",
-          borderRadius: "0 6px 6px 0",
-          fontStyle: "italic",
-          color: "#475569",
-          fontSize: "1.05rem",
-          lineHeight: "1.7",
-        }}
-      >
-        {children}
-      </blockquote>
+      <blockquote className={styles.blockquote}>{children}</blockquote>
     ),
 
     pre: ({ children, ...props }: React.HTMLAttributes<HTMLPreElement>) => (
-      <pre
-        style={{
-          backgroundColor: "#1e293b",
-          color: "#e2e8f0",
-          padding: "1rem",
-          borderRadius: "8px",
-          overflow: "auto",
-          margin: "2rem 0",
-          fontSize: "0.875rem",
-          lineHeight: "1.6",
-          border: "1px solid #334155",
-          fontFamily: "'JetBrains Mono', 'Fira Code', Consolas, monospace",
-        }}
-        {...props}
-      >
+      <pre className={styles.pre} {...props}>
         {children}
       </pre>
     ),
 
     code: ({ children, ...props }: React.HTMLAttributes<HTMLElement>) => (
-      <code
-        style={{
-          fontFamily: "'JetBrains Mono', 'Fira Code', Consolas, monospace",
-          backgroundColor: "#f1f5f9",
-          color: "#e11d48",
-          padding: "0.25rem 0.5rem",
-          borderRadius: "4px",
-          fontSize: "0.875em",
-          fontWeight: "500",
-          border: "1px solid #e2e8f0",
-        }}
-        {...props}
-      >
+      <code className={styles.code} {...props}>
         {children}
       </code>
     ),
 
     // Additional components for better content structure
-    hr: () => (
-      <hr
-        style={{
-          border: "none",
-          height: "2px",
-          backgroundColor: "#e5e7eb",
-          margin: "1.5rem 0",
-          width: "100%",
-          maxWidth: "800px",
-          marginLeft: "auto",
-          marginRight: "auto",
-        }}
-      />
-    ),
+    hr: () => <hr className={styles.hr} />,
 
     table: ({ children, ...props }: React.TableHTMLAttributes<HTMLTableElement>) => (
-      <div
-        style={{
-          overflowX: "auto",
-          margin: "2rem 0",
-          borderRadius: "8px",
-          border: "1px solid #e5e7eb",
-        }}
-      >
-        <table
-          style={{
-            width: "100%",
-            borderCollapse: "collapse",
-            fontSize: "0.875rem",
-          }}
-        >
-          {children}
-        </table>
+      <div className={styles.tableWrapper}>
+        <table className={styles.table}>{children}</table>
       </div>
     ),
 
     th: ({ children, ...props }: React.ThHTMLAttributes<HTMLTableHeaderCellElement>) => (
-      <th
-        style={{
-          backgroundColor: "#f9fafb",
-          padding: "0.75rem 1rem",
-          textAlign: "left",
-          fontWeight: "600",
-          color: "#374151",
-          borderBottom: "1px solid #e5e7eb",
-        }}
-      >
-        {children}
-      </th>
+      <th className={styles.th}>{children}</th>
     ),
 
     td: ({ children, ...props }: React.TdHTMLAttributes<HTMLTableDataCellElement>) => (
-      <td
-        style={{
-          padding: "0.75rem 1rem",
-          borderBottom: "1px solid #f3f4f6",
-          color: "#6b7280",
-        }}
-      >
-        {children}
-      </td>
+      <td className={styles.td}>{children}</td>
     ),
 
     // Add new components for citations and footnotes
@@ -313,9 +107,9 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
 
     // Add a component for a collection of citations
     Citations: ({ children }: { children: React.ReactNode }) => (
-      <div className="mt-12 pt-8 border-t border-gray-200">
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">Citations</h2>
-        <div className="space-y-4">{children}</div>
+      <div className={styles.citations}>
+        <h2 className={styles.citationsTitle}>Citations</h2>
+        <div className={styles.citationsList}>{children}</div>
       </div>
     ),
 
@@ -327,32 +121,32 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
 
     // Add a component for a collection of footnotes
     Footnotes: ({ children }: { children: React.ReactNode }) => (
-      <div className="footnote my-8 pt-8 border-t border-gray-200">
-        <h2 className="text-3xl font-semibold text-gray-800 mb-4">References</h2>
-        <div className="space-y-2">{children}</div>
+      <div className={styles.footnotes}>
+        <h2 className={styles.footnotesTitle}>References</h2>
+        <div className={styles.footnotesList}>{children}</div>
       </div>
     ),
 
     // Add a component for bibliography
     Bibliography: ({ children }: { children: React.ReactNode }) => (
-      <div className="mt-12 pt-8 border-t border-gray-200">
-        <h1 className="text-2xl font-semibold text-gray-800 mb-4">References</h1>
-        <div className="space-y-4">{children}</div>
+      <div className={styles.bibliography}>
+        <h1 className={styles.bibliographyTitle}>References</h1>
+        <div className={styles.bibliographyList}>{children}</div>
       </div>
     ),
 
     // Add a component for individual bibliography items
     BibItem: ({ id, children }: { id: string; children: React.ReactNode }) => (
-      <div id={`bib-${id}`} className="text-sm text-gray-600">
-        <span className="text-gray-400 mr-2">[{id}]</span>
+      <div id={`bib-${id}`} className={styles.bibItem}>
+        <span className={styles.bibItemId}>[{id}]</span>
         {children}
       </div>
     ),
 
     // Add a component for bibliography references
     BibRef: ({ id }: { id: string }) => (
-      <sup>
-        <a href={`#bib-${id}`} className="text-blue-600 hover:text-blue-800 no-underline text-sm">
+      <sup className={styles.bibRef}>
+        <a href={`#bib-${id}`} className={styles.bibRefLink}>
           [{id}]
         </a>
       </sup>
