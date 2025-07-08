@@ -56,8 +56,7 @@ export default async function Home() {
       </h1>
 
       <div className="text-lg text-gray-500 dark:text-gray-400">
-        Hey there! I&apos;m Jimmy, and I like using visuals to help explain concepts I find
-        interesting.
+        Hey there! I&apos;m Jimmy, and I like using visuals to make things easier to understand.
       </div>
 
       <div className="my-12 border-[#B0807038] dark:border-gray-700 lg:mx-12 mx-2">
