@@ -1,6 +1,8 @@
 import rehypePrettyCode from "rehype-pretty-code";
 import createMDX from "@next/mdx";
 import bundleAnalyzer from "@next/bundle-analyzer";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
 
 const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === "true",
@@ -13,7 +15,8 @@ const prettyCodeOptions = {
 
 const withMDX = createMDX({
   options: {
-    rehypePlugins: [[rehypePrettyCode, prettyCodeOptions]],
+    remarkPlugins: [remarkMath],
+    rehypePlugins: [[rehypePrettyCode, prettyCodeOptions], rehypeKatex],
   },
 });
 
