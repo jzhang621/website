@@ -39,6 +39,12 @@ export default function RootLayout({
     <html lang="en" className={inter.className}>
       <head>
         <link rel="preconnect" href="https://www.jimmymeetsworld.com" />
+        <link
+          rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"
+          integrity="sha384-XBVoM37SGVm5YnvXWZ2VSO/1hxuXz71m3fQlpQOqF+08YEmtExElOL7slq+WjpY"
+          crossOrigin="anonymous"
+        />
       </head>
       <body className={`bg-white dark:bg-gray-900 antialiased`}>
         <ThemeProvider>
