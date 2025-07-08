@@ -2,7 +2,6 @@ import { promises as fs } from "fs";
 import path from "path";
 import Link from "next/link";
 import AnimatedArray from "@/components/animations/AnimatedArray";
-import { ThemeToggle } from "@/components/ThemeToggle";
 
 interface BlogPost {
   slug: string;
@@ -24,8 +23,9 @@ async function getBlogPosts(): Promise<BlogPost[]> {
       try {
         const files = await fs.readdir(path.join(postsDirectory, entry.name));
         if (files.some((file) => file.match(/^page\.(mdx|tsx)$/))) {
-          // load the page and then extract the metadata object
           const { metadata } = await import(`./${entry.name}/page.mdx`);
+
+          // load the page and then extract the metadata object
           if (metadata.published) {
             // For MDX files, you might want to read the file to extract the title
             // For now, we'll just use the directory name as the title
@@ -33,7 +33,7 @@ async function getBlogPosts(): Promise<BlogPost[]> {
               ...metadata,
               slug: entry.name,
             });
-          }
+            }
         }
       } catch (error) {
         console.error(`Error reading directory ${entry.name}:`, error);

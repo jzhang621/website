@@ -1,11 +1,10 @@
 "use client";
 import React, { useState } from "react";
-import TwoPane from "../layout/TwoPane";
 import EditableAttribute from "./EditableSVGAttribute";
 import { Source_Code_Pro } from "next/font/google";
 import styles from "./SVGSyntax.module.css";
 import SVGGrid from "../SVGGrid";
-import { ACCENT, BLUE, BLUE_ACCENT, COGNAC, COGNAC_ACCENT, SAGE, SAGE_ACCENT } from "@/palette";
+import { ACCENT, COGNAC, COGNAC_ACCENT } from "@/palette";
 
 const sourceCodePro = Source_Code_Pro({ subsets: ["latin"], weight: ["400", "700"] });
 
