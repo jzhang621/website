@@ -52,7 +52,7 @@ export default async function Home() {
   return (
     <main className="min-h-screen p-4 max-w-4xl mx-auto">
       <h1 className="text-4xl font-bold mb-8 text-[#3F5570] dark:text-gray-200 text-center">
-        Jimmy Meets World
+        Jimmy Meets World - bad Branch!
       </h1>
 
       <div className="text-lg text-gray-500 dark:text-gray-400">
