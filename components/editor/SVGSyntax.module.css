@@ -1,7 +1,7 @@
 /* SyntaxHighlightedCode.module.css */
 .codeContainer {
     background-color: #fdf6e399;
-        padding: 2rem;
+    padding: 2rem;
     border-radius: 5px;
     width: fit-content;
     overflow: auto;
@@ -13,23 +13,59 @@
     color: "#073642";
 }
 
+/* Dark mode styles */
+.dark .codeContainer {
+    background-color: #1a1a1a;
+    color: #e5e5e5;
+}
 .comment {
     color: #6a737d;
     font-style: italic;
 }
 
+.dark .comment {
+    color: #9ca3af;
+}
 .tag {
     color: #859900;
     font-weight: bold;
     /* Solarized green */
 }
 
+.dark .tag {
+    color: #10b981;
+    /* Emerald green for dark mode */
+}
 .attribute {
     color: #b58900;
     /* Solarized yellow */
 }
 
+.dark .attribute {
+    color: #f59e0b;
+    /* Amber for dark mode */
+}
 .number {
     color: #415A77;
     /* Solarized blue */
+}
+
+.dark .number {
+    color: #60a5fa;
+    /* Blue for dark mode */
+}
+
+/* Input and select styles for dark mode */
+.dark input[type="number"],
+.dark select {
+    background-color: #374151;
+    color: #e5e5e5;
+    border: 1px solid #4b5563;
+}
+
+.dark input[type="number"]:focus,
+.dark select:focus {
+    outline: none;
+    border-color: #60a5fa;
+    box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.2);
 }

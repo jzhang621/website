@@ -25,43 +25,43 @@ const EditableAttribute: React.FC<EditableAttributeProps> = ({ name, label, valu
     };
 
     return (
-        <span>
-            <span className={styles.attribute}>{label}</span>
-            {`="`}
-            {isNumber ? (
-                <input
-                    type="number"
-                    value={value}
-                    onChange={handleChange}
-                    min={min}
-                    max={max}
-                    step={5}
-                    className={styles.number}
-                    style={{
-                        width: "60px",
-                        padding: "0px 5px",
-                        borderRadius: "3px",
-                    }}
-                />
-            ) : (
-                <select
-                    value={value}
-                    onChange={handleChange}
-                    className={styles.number}
-                    style={{
-                        padding: "2px 8px",
-                        borderRadius: "3px",
-                    }}
-                >
-                    {options.map((option) => (
-                        <option key={option} value={option}>
-                            {option}
-                        </option>
-                    ))}
-                </select>
-            )}
-            {`"`}
-        </span>
+      <span>
+        <span className={styles.attribute}>{label}</span>
+        {`="`}
+        {isNumber ? (
+          <input
+            type="number"
+            value={value}
+            onChange={handleChange}
+            min={min}
+            max={max}
+            step={5}
+            className={`${styles.number} bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100`}
+            style={{
+              width: "60px",
+              padding: "0px 5px",
+              borderRadius: "3px",
+            }}
+          />
+        ) : (
+          <select
+            value={value}
+            onChange={handleChange}
+            className={`${styles.number} bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100`}
+            style={{
+              padding: "2px 8px",
+              borderRadius: "3px",
+            }}
+          >
+            {options.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+        )}
+        {`"`}
+      </span>
     );
 };
 

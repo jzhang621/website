@@ -22,21 +22,21 @@ const SVGWrapperElementSnippet: React.FC<SVGWrapperProps> = ({ name, attributes,
     };
 
     return (
-        <div
-            className={`rounded-sm text-xs md:text-sm max-h-[600px] w-fit overflow-y-auto overflow-x-hidden leading-7 ${sourceCodePro.className} text-slate-700 p-4 md:p-8 bg-[#fdf6e399]`}
-        >
-            <pre>
-                <code>
-                    <span className={styles.tag}>{`<${name} `}</span>
-                    {renderAttributes()}
-                    <span className={styles.tag}>{`>`}</span>
-                    <br />
-                    {children}
-                    <br />
-                    <span className={styles.tag}>{`</${name}>`}</span>
-                </code>
-            </pre>
-        </div>
+      <div
+        className={`rounded-sm text-xs md:text-sm max-h-[600px] w-fit overflow-y-auto overflow-x-hidden leading-7 ${sourceCodePro.className} text-slate-700 dark:text-slate-200 p-4 md:p-8 bg-[#fdf6e399] dark:bg-gray-900`}
+      >
+        <pre>
+          <code>
+            <span className={styles.tag}>{`<${name} `}</span>
+            {renderAttributes()}
+            <span className={styles.tag}>{`>`}</span>
+            <br />
+            {children}
+            <br />
+            <span className={styles.tag}>{`</${name}>`}</span>
+          </code>
+        </pre>
+      </div>
     );
 };
 
