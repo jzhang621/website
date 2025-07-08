@@ -23,17 +23,19 @@ async function getBlogPosts(): Promise<BlogPost[]> {
       try {
         const files = await fs.readdir(path.join(postsDirectory, entry.name));
         if (files.some((file) => file.match(/^page\.(mdx|tsx)$/))) {
-          const { metadata } = await import(`./${entry.name}/page.mdx`);
+          try {
+            const { metadata } = await import(`./${entry.name}/metadata.tsx`);
 
-          // load the page and then extract the metadata object
-          if (metadata.published) {
-            // For MDX files, you might want to read the file to extract the title
-            // For now, we'll just use the directory name as the title
-            posts.push({
-              ...metadata,
-              slug: entry.name,
-            });
+            // load the metadata and then extract the metadata object
+            if (metadata.published) {
+              posts.push({
+                ...metadata,
+                slug: entry.name,
+              });
             }
+          } catch (error) {
+            console.error(`Error importing metadata from ${entry.name}:`, error);
+          }
         }
       } catch (error) {
         console.error(`Error reading directory ${entry.name}:`, error);
