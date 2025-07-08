@@ -38,13 +38,15 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({ className = "", maxDe
 
   return (
     <nav className={`toc ${className}`}>
-      <h2 className="text-lg font-semibold text-gray-800 mb-4">Table of Contents</h2>
+      <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">
+        Table of Contents
+      </h2>
       <ul className="space-y-2">
         {toc.map((item, index) => (
           <li key={index} className={getIndentClass(item.level)}>
             <a
               href={`#${item.id}`}
-              className="text-sm text-gray-600 hover:text-gray-800 transition-colors duration-200 block py-1"
+              className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors duration-200 block py-1"
               onClick={(e) => {
                 e.preventDefault();
                 const element = document.getElementById(item.id);

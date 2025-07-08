@@ -42,9 +42,9 @@ export const Footnote: React.FC<FootnoteProps> = ({ id, children }) => {
     return (
       <div
         id={`footnote-${id}`}
-        className="foonote text-sm text-gray-600 mt-4 mb-4 pl-2 border-l-0 border-gray-200 flex items-center"
+        className="foonote text-sm text-gray-600 dark:text-gray-300 mt-4 mb-4 pl-2 border-l-0 border-gray-200 dark:border-gray-700 flex items-center"
       >
-        <span className="text-gray-400 mr-2 flex-shrink-0">[{id}]</span>
+        <span className="text-gray-400 dark:text-gray-500 mr-2 flex-shrink-0">[{id}]</span>
         {/* Remove margin-y from p tags that rendered and styled by mdx */}
         <span className="footnote-content [&>p]:!my-0 [&>p]:!text-sm">{children}</span>
       </div>
@@ -63,23 +63,23 @@ export const FootnoteReference: React.FC<{ id: string }> = ({ id }) => {
     const footnoteContent = footnotes.get(id);
 
     return (
-        <>
-            <sup>
-                <button
-                    onClick={handleClick}
-                    className="text-slate-500 hover:text-slate-800 no-underline text-sm cursor-pointer bg-transparent border-none p-0 font-inherit"
-                >
-                    [{id}]
-                </button>
-            </sup>
-            {footnoteContent && (
-                <FootnoteModal
-                    isOpen={isModalOpen}
-                    onClose={() => setIsModalOpen(false)}
-                    content={footnoteContent}
-                    footnoteId={id}
-                />
-            )}
-        </>
+      <>
+        <sup>
+          <button
+            onClick={handleClick}
+            className="text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 no-underline text-sm cursor-pointer bg-transparent border-none p-0 font-inherit"
+          >
+            [{id}]
+          </button>
+        </sup>
+        {footnoteContent && (
+          <FootnoteModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            content={footnoteContent}
+            footnoteId={id}
+          />
+        )}
+      </>
     );
 };

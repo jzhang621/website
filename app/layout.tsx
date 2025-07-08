@@ -4,10 +4,11 @@ import "./globals.css";
 import { Analytics } from "@vercel/analytics/react";
 import { Nav } from "./components/Nav";
 import { FootnoteProvider } from "../components/Footnote";
+import { ThemeProvider } from "@/contexts/ThemeProvider";
 
 const inter = Inter({
-    subsets: ["latin"],
-    display: "swap",
+  subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -39,12 +40,14 @@ export default function RootLayout({
       <head>
         <link rel="preconnect" href="https://www.jimmymeetsworld.com" />
       </head>
-      <body className={`bg-white antialiased`}>
-        <FootnoteProvider>
-          <Nav />
-          <div className="mt-4 w-full md:max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">{children}</div>
-          <Analytics />
-        </FootnoteProvider>
+      <body className={`bg-white dark:bg-gray-900 antialiased`}>
+        <ThemeProvider>
+          <FootnoteProvider>
+            <Nav />
+            <div className="w-full md:max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">{children}</div>
+            <Analytics />
+          </FootnoteProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

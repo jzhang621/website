@@ -76,31 +76,31 @@ export function TOC() {
     }
 
     return (
-        <div className="TOC fixed left-4 top-[41px] mt-12 transform w-48 max-h-96 overflow-y-auto hidden xl:block">
-            <div className="bg-white rounded-lg shadow-sm px-4">
-                <nav>
-                    <ul className="space-y-1">
-                        {tocItems.map((item) => (
-                            <li key={item.id}>
-                                <button
-                                    onClick={() => handleClick(item.id)}
-                                    className={`
+      <div className="TOC fixed left-4 top-[41px] mt-12 transform w-48 max-h-96 overflow-y-auto hidden xl:block">
+        <div className="rounded-lg shadow-sm px-4">
+          <nav>
+            <ul className="space-y-1">
+              {tocItems.map((item) => (
+                <li key={item.id}>
+                  <button
+                    onClick={() => handleClick(item.id)}
+                    className={`
                     block w-full text-left text-xs leading-5 transition-colors
                     ${item.level === 2 ? "pl-0" : "pl-4"}
                     ${
-                        activeId === item.id
-                            ? "text-green-800 font-medium"
-                            : "text-slate-600 hover:text-green-900"
+                      activeId === item.id
+                        ? "text-green-800 dark:text-zinc-200 font-medium"
+                        : "text-muted-foreground hover:text-foreground"
                     }
                   `}
-                                >
-                                    {item.text}
-                                </button>
-                            </li>
-                        ))}
-                    </ul>
-                </nav>
-            </div>
+                  >
+                    {item.text}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </nav>
         </div>
+      </div>
     );
 }

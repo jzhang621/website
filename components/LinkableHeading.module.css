@@ -11,7 +11,7 @@
     transform: translateY(-50%);
     opacity: 0;
     transition: all 0.2s ease-in-out;
-    color: #9ca3af;
+    color: var(--text-muted);
     text-decoration: none;
     font-size: 1rem;
     font-weight: 400;
@@ -26,8 +26,8 @@
 }
 
 .anchor:hover {
-    color: #6b7280;
-    background-color: #f3f4f6;
+    color: var(--text-secondary);
+        background-color: var(--bg-code);
     opacity: 1 !important;
 }
 
@@ -38,7 +38,7 @@
 /* Focus styles for accessibility */
 .anchor:focus {
     opacity: 1;
-    outline: 2px solid #3b82f6;
+    outline: 2px solid var(--link-color);
     outline-offset: 2px;
 }
 

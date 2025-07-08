@@ -1,6 +1,68 @@
 @tailwind base;
 @tailwind utilities;
 
+/* MDX Component CSS Custom Properties */
+:root {
+  --text-primary: #1a1a1a;
+  --text-secondary: #374151;
+  --text-muted: #6b7280;
+  --text-heading: #2d2d2d;
+  --text-heading-h3: #404040;
+  --text-heading-h4: #525252;
+  --text-strong: #1f2937;
+  --border-color: #e5e5e5;
+  --border-light: #e2e8f0;
+  --border-code: #e2e8f0;
+  --bg-code: #f1f5f9;
+  --bg-code-dark: #1e293b;
+  --bg-blockquote: #f8fafc;
+  --bg-blockquote-dark: #1f2937;
+  --link-color: #0284c7;
+  --link-color-dark: #60a5fa;
+  --code-color: #e11d48;
+  --code-color-dark: #f87171;
+  --blockquote-border: #3b82f6;
+  --blockquote-border-dark: #60a5fa;
+  --hr-color: #e5e7eb;
+  --hr-color-dark: #374151;
+  --table-border: #d1d5db;
+  --table-border-dark: #374151;
+  --table-bg: #ffffff;
+  --table-bg-dark: #1f2937;
+  --table-header-bg: #f9fafb;
+  --table-header-bg-dark: #374151;
+}
+
+.dark {
+  --text-primary: #d1d5db;
+    --text-secondary: #d1d5db;
+  --text-muted: #9ca3af;
+  --text-heading: #d1d5db;
+    --text-heading-h3: #d1d5db;
+    --text-heading-h4: #d1d5db3;
+    --text-strong: #d1d5db3;
+  --border-color: #374151;
+  --border-light: #374151;
+  --border-code: #4b5563;
+  --bg-code: #374151;
+  --bg-code-dark: #1e293b;
+  --bg-blockquote: #1f2937;
+  --bg-blockquote-dark: #1f2937;
+  --link-color: #60a5fa;
+  --link-color-dark: #60a5fa;
+  --code-color: #f87171;
+  --code-color-dark: #f87171;
+  --blockquote-border: #60a5fa;
+  --blockquote-border-dark: #60a5fa;
+  --hr-color: #374151;
+  --hr-color-dark: #374151;
+  --table-border: #374151;
+  --table-border-dark: #374151;
+  --table-bg: #1f2937;
+  --table-bg-dark: #1f2937;
+  --table-header-bg: #374151;
+  --table-header-bg-dark: #374151;
+}
 /* :root {
   --background: #ffffff;
   --foreground: #171717;
