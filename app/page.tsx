@@ -22,7 +22,7 @@ async function getBlogPosts(): Promise<BlogPost[]> {
       // Check for page.mdx or page.tsx in each directory
       try {
         const files = await fs.readdir(path.join(postsDirectory, entry.name));
-        if (files.some((file) => file.match(/^page\.(mdx|tsx)$/))) {
+        if (files.some((file) => file.match(/^page\.mdx$/))) {
           try {
             const { metadata } = await import(`./${entry.name}/metadata.tsx`);
 
