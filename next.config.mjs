@@ -24,6 +24,11 @@ const withMDX = createMDX({
 const nextConfig = {
   pageExtensions: ["ts", "tsx", "js", "jsx", "md", "mdx"],
   reactStrictMode: true,
+  turbo: {
+    rules: {
+      '*.svg': ['@svgr/webpack'],
+    },
+  },
 };
 
 export default withBundleAnalyzer(withMDX(nextConfig));
