@@ -26,4 +26,4 @@ const nextConfig = {
   reactStrictMode: true,
 };
 
-export default withBundleAnalyzer(withMDX(nextConfig));
+export default process.env.ANALYZE === "true" ? withBundleAnalyzer(withMDX(nextConfig)) : withMDX(nextConfig);

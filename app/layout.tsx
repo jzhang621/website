@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/react";
-import { Nav } from "./components/Nav";
+import { Nav } from "../components/Nav";
 import { FootnoteProvider } from "../components/Footnote";
 import { ThemeProvider } from "@/contexts/ThemeProvider";
 
