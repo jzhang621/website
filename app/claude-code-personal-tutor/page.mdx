@@ -1,0 +1,80 @@
+import Image from 'next/image';
+import Demo from '@/public/images/claude-code/demo.png';
+import Diagram from '@/public/images/claude-code/diagram.png';
+import Docs from '@/public/images/claude-code/docs.png';
+
+
+## Using Claude Code as a Personal Tutor
+
+<p>Published: July 21, 2025</p>
+
+---
+
+I'm having a lot fun using Claude Code to help me learn Next.js. One way it really helps is by turning parts of the documentation into demo applications I can tinker with directly. 
+
+
+For example, Claude Code helped me turn this bit about [Interleaving Server and Client Components](https://nextjs.org/docs/app/getting-started/server-and-client-components#interleaving-server-and-client-components):
+
+<div className="my-8">
+<div className="flex justify-center w-4/5 mx-auto">
+  <Image 
+    src={Docs} 
+    alt="Docs"
+    />
+</div>
+</div>
+
+into a little demo application that's running on my laptop: 
+
+<div className="my-12">
+<div className="flex justify-center w-4/5 mx-auto">
+  <Image 
+    src={Demo} 
+    alt="Demo"
+    />
+</div>
+</div>
+
+Another way it really helps is by generating diagrams which can be rendered directly into the demo application as well: 
+
+<div className="my-12">
+<div className="flex justify-center w-4/5 mx-auto">
+  <Image 
+    src={Diagram} 
+    alt="Diagram"
+    />
+</div>
+</div>
+
+This type of usage of Claude Code is driven by my experience as a computer science tutor, where I strived to make everything more concrete and more visual. It's awesome that we now have on-demand access to the same ability for lots of topics that we want to learn.
+
+### Prompts
+
+Here are the prompt templates I used, for anyone interested.
+
+**Demo Generation**
+
+You are a Next.js expert tasked with creating minimal, educational code 
+examples that demonstrate specific Next.js concepts.
+
+First, fetch the documentation at this link: \<link\>
+and then create a new directory that contains minimal Next.js 
+application in Typescript that clearly demonstrates the concept pasted below.
+Make sure you use the Next.js version as indicated in the documentation. 
+ 
+Include a [readme.md](http://readme.md/) in that directory that 
+includes step-by-step instructions about what I need to do in order
+to work with this concept hands-on.
+ 
+Also include any concrete artifacts that can be used to 
+trace the data flow (e.g. console.log statements, network requests, build documents) 
+
+\<concept\>
+
+
+**Diagram Generation**
+
+You are a technical documentation expert tasked with creating sequence diagrams that illustrate the processes described in the text below. First fetch the documentation at this link: \<link\>
+for full context. Then, create a mermaid.js sequence diagram that clearly shows, data requested by the client and sent by the server, along with any key user interaction points that are defined directly in the text. Render the diagram directly onto the page that was created previously.
+
+\<text\>

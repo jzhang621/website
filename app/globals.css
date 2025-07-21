@@ -1,6 +1,6 @@
+@import 'katex/dist/katex.min.css';
 @tailwind base;
 @tailwind utilities;
-@import 'katex/dist/katex.min.css';
 /* MDX Component CSS Custom Properties */
 :root {
   --text-primary: #1a1a1a;
