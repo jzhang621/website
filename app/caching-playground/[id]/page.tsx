@@ -2,9 +2,11 @@ export default async function CachingPlayground({ params }: { params: Promise<{ 
   // need to force this request to be dynamic.
   const { id } = await params;
 
-  const response = await fetch("https://api.vercel.app/blog", {
+  const fetchStart = Date.now();
+  const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/timestamp`, {
     cache: "force-cache",
   });
+  const fetchDuration = Date.now() - fetchStart;
 
   const data = await response.json();
   const fetchTime = new Date().toISOString();
@@ -16,13 +18,16 @@ export default async function CachingPlayground({ params }: { params: Promise<{ 
       <div className="bg-gray-100 p-4 rounded-lg mb-6">
         <h2 className="text-xl font-semibold mb-2">Data Cache Details</h2>
         <p>
-          <strong>API:</strong> https://api.vercel.app/blog
+          <strong>API:</strong> /api/timestamp (3s delay)
         </p>
         <p>
-          <strong>Cache Strategy:</strong> next: &#123; revalidate: 30 &#125;
+          <strong>Cache Strategy:</strong> force-cache
         </p>
         <p>
           <strong>ID Parameter:</strong> {id}
+        </p>
+        <p>
+          <strong>Fetch Duration:</strong> {fetchDuration}ms
         </p>
         <p>
           <strong>Component Render Time:</strong> {fetchTime}
@@ -32,18 +37,6 @@ export default async function CachingPlayground({ params }: { params: Promise<{ 
       <div className="bg-blue-50 p-4 rounded-lg">
         <h2 className="text-xl font-semibold mb-2">Fetched Data</h2>
         <pre className="text-sm overflow-x-auto">{JSON.stringify(data, null, 2)}</pre>
-      </div>
-
-      <div className="mt-6 text-sm text-gray-600">
-        <p>
-          <strong>How to verify data caching:</strong>
-        </p>
-        <ol className="list-decimal list-inside mt-2 space-y-1">
-          <li>Check console logs - should only see cache hit every 30s</li>
-          <li>Page still gets generated on each request (note render time changes)</li>
-          <li>But the fetch response is cached for 30 seconds</li>
-          <li>This is different from ISR - page isn&rsquo;t cached, just the data</li>
-        </ol>
       </div>
     </div>
   );
