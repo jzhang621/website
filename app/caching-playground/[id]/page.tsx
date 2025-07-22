@@ -1,3 +1,5 @@
+export const revalidate = 10; // seconds
+
 export default async function CachingPlayground({ params }: { params: Promise<{ id: string }> }) {
   // need to force this request to be dynamic.
   const { id } = await params;
@@ -38,6 +40,11 @@ export default async function CachingPlayground({ params }: { params: Promise<{ 
         <h2 className="text-xl font-semibold mb-2">Fetched Data</h2>
         <pre className="text-sm overflow-x-auto">{JSON.stringify(data, null, 2)}</pre>
       </div>
+
+      <div className="mt-6 text-sm text-gray-600">Some static content</div>
+      <div className="mt-6 text-sm text-gray-600">Some static content</div>
+      <div className="mt-6 text-sm text-gray-600">Some static content</div>
+      <div className="mt-6 text-sm text-gray-600">Some static content</div>
     </div>
   );
 }
