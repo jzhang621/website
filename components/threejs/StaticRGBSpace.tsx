@@ -18,11 +18,12 @@ const StaticRGBSpace: React.FC<StaticRGBSceneProps> = ({
     const canvasRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
+        const container = canvasRef.current;
         const { labelRenderer, scene, camera, renderer, light } = createScene(width, height);
 
-        if (canvasRef.current) {
-            canvasRef.current.appendChild(renderer.domElement);
-            canvasRef.current.appendChild(labelRenderer.domElement);
+        if (container) {
+            container.appendChild(renderer.domElement);
+            container.appendChild(labelRenderer.domElement);
         }
 
         // Setup scene
@@ -87,12 +88,12 @@ const StaticRGBSpace: React.FC<StaticRGBSceneProps> = ({
 
         // Cleanup
         return () => {
-            if (canvasRef.current) {
-                canvasRef.current.removeChild(renderer.domElement);
-                canvasRef.current.removeChild(labelRenderer.domElement);
+            if (container) {
+                container.removeChild(renderer.domElement);
+                container.removeChild(labelRenderer.domElement);
             }
         };
-    }, [points, width, height]);
+    }, [points, width, height, rotationAngle]);
 
     return <div ref={canvasRef} className={styles.canvasContainer} />;
 };

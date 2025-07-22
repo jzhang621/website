@@ -56,10 +56,11 @@ const AnimatedRGBSpace: React.FC<AnimatedRGBSceneProps> = ({
                 (linesRef.current[index].material as THREE.LineBasicMaterial).color.set(newColor);
             });
         }
-    }, [progress, isRunning]);
+    }, [progress, isRunning, startPoints, endPoints]);
 
     // Setup the scene
     useEffect(() => {
+        const container = canvasRef.current;
         const { labelRenderer, scene, camera, renderer } = createScene(width, height);
 
         if (rotationAngle !== undefined) {
@@ -68,9 +69,9 @@ const AnimatedRGBSpace: React.FC<AnimatedRGBSceneProps> = ({
             camera.lookAt(0, 0, 0);
         }
 
-        if (canvasRef.current) {
-            canvasRef.current.appendChild(renderer.domElement);
-            // canvasRef.current.appendChild(labelRenderer.domElement);
+        if (container) {
+            container.appendChild(renderer.domElement);
+            // container.appendChild(labelRenderer.domElement);
         }
 
         // Setup scene
@@ -117,12 +118,12 @@ const AnimatedRGBSpace: React.FC<AnimatedRGBSceneProps> = ({
 
         // Cleanup
         return () => {
-            if (canvasRef.current) {
-                canvasRef.current.removeChild(renderer.domElement);
-                // canvasRef.current.removeChild(labelRenderer.domElement);
+            if (container) {
+                container.removeChild(renderer.domElement);
+                // container.removeChild(labelRenderer.domElement);
             }
         };
-    }, []);
+    }, [width, height, rotationAngle, cameraYPosition, startPoints]);
 
     return (
         <div className={`${styles.canvasContainer}`}>

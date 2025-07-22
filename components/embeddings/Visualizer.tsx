@@ -87,7 +87,8 @@ export const EmbeddingVisualizer: React.FC<EmbeddingVisualizerProps> = ({
     const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
     useEffect(() => {
-        if (!containerRef.current) return;
+        const container = containerRef.current;
+        if (!container) return;
 
         const updateWidth = () => {
             const newWidth = containerRef.current?.getBoundingClientRect().width || 960;
@@ -96,11 +97,11 @@ export const EmbeddingVisualizer: React.FC<EmbeddingVisualizerProps> = ({
 
         updateWidth();
         const resizeObserver = new ResizeObserver(updateWidth);
-        resizeObserver.observe(containerRef.current);
+        resizeObserver.observe(container);
 
         return () => {
-            if (containerRef.current) {
-                resizeObserver.unobserve(containerRef.current);
+            if (container) {
+                resizeObserver.unobserve(container);
             }
         };
     }, []);
