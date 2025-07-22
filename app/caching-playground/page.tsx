@@ -27,7 +27,7 @@ export default async function CachingPlayground() {
       <div className="mt-6 text-sm text-gray-600">
         <p><strong>How to verify caching:</strong></p>
         <ol className="list-decimal list-inside mt-2 space-y-1">
-          <li>Note the "Fetch Time" above</li>
+          <li>Note the &ldquo;Fetch Time&rdquo; above</li>
           <li>Refresh this page multiple times</li>
           <li>The fetch time should remain the same (cached)</li>
           <li>Deploy to Vercel and the time should persist across deployments</li>
