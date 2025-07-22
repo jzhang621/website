@@ -1,6 +1,8 @@
 export const revalidate = 10; // seconds
 
 export default async function CachingPlayground() {
+  console.log(`🔄 REGENERATING: ${new Date().toISOString()}`);
+
   const response = await fetch("https://api.vercel.app/blog");
 
   const data = await response.json();
