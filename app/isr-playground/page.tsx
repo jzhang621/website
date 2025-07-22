@@ -1,7 +1,7 @@
-export const revalidate = 10; // seconds
+export const revalidate = 12.5; // seconds
 
 export default async function ISRPlayground() {
-  // console.log(`🔄 REGENERATING: ${new Date().toISOString()}`);
+  console.log(`🔄 REGENERATING: ${new Date().toISOString()}`);
 
   const response = await fetch("https://api.vercel.app/blog");
 
