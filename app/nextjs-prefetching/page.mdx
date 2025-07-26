@@ -1,4 +1,7 @@
 import { TOC } from '@/components/TOC/TOC';
+import { FootnoteReference, Footnote, FootnoteProvider } from '@/components/Footnote';
+
+<FootnoteProvider>
 
 {/* <TOC /> */}
 
@@ -16,20 +19,19 @@ Prefetching is a Next.js feature that is designed to reduce that wait. A solid u
 
 Navigating to a route without prefetching sends a request to the server for a **RSC payload**. The payload is then used by the client to render the route's UI. 
 
-To request a RSC payload, clients send a GET request to the name of the route with `RSC: 1` in the header. We'll refer to this type of request as a **navigation RSC request**. 
+To request a RSC payload, clients send a GET request to the name of the route with `RSC: 1` in the header. We'll refer to this type of request as a **Navigation RSC Request**. 
 
-```
-GET /<route>?rsc=_____ HTTP/1.1
-Host: localhost:3000
+```bash
+GET /<route> HTTP/1.1
+Host: <Next.js server>
 RSC: 1
 ```
 
-What the server does after receiving the request depends on if the route is **static** or **dynamic.** 
+What the server does after receiving the request depends on if the route is [static](https://nextjs.org/docs/app/getting-started/partial-prerendering#static-rendering) or [dynamic](https://nextjs.org/docs/app/getting-started/partial-prerendering#dynamic-rendering).
 
 In a static route: 
-
-- The RSC payload has been **prerendered** and is cached at build time.
-- The **cached payload** **is returned directly**, and the component that renders the route does not run.
+- The RSC payload has been **prerendered and cached** at build time <span className="text-gray-500 text-sm">(before any requests are made)</span>.
+- The **cached payload** **is returned directly**, and the component that renders the route does not execute.
 
 <div className="flex justify-center items-center">
   <object data="/images/nextjs-prefetching/static-no-prefetch.svg" type="image/svg+xml" height="auto" className="mx-auto my-12 w-90">
@@ -40,11 +42,16 @@ In a static route:
 In a dynamic route: 
 
 - The payload **has not been** prerendered.
-- Instead, the component must **run on-demand** to return the payload.
+- Instead, the component must **execute on-demand** to return the payload.
 
-[client/server visual here]
+<div className="flex justify-center items-center">
+  <object data="/images/nextjs-prefetching/dynamic-no-prefetch.svg" type="image/svg+xml" height="auto" className="mx-auto my-12 w-90">
+    Your browser does not support SVG
+  </object>
+</div>
 
-In both cases, the client must wait for the server to respond with the RSC payload before it can display new content. Prefetching avoids this by requesting the payload *before* a user actually navigates to a route. 
+
+In both cases, **the client must wait** for the server to respond with the RSC payload before it can display new content. Prefetching minimizes the wait by requesting the payload *before* a user actually navigates to a route. 
 
 We'll look at how this works for the simpler case first, static routes.
 
@@ -54,73 +61,201 @@ We'll look at how this works for the simpler case first, static routes.
 
 Prefetching for static routes begins at build time, before any requests are made. Let's say we have this `page.tsx` component that serves the `/about` route:
 
-As part of the build process, Next.js determines this is a static route and prerenders the route's response in two formats - `about.html` and `about.rsc` . You can see these files at `.next/server/app` (after running `next build`).
+```tsx
+// app/about/page.tsx
 
-The `.html` file contains a non-interactive version of the page and is only sent during an initial request to `/about`. The `.rsc` file contains the aforementioned React Server Component payload and is returned whenever the user navigates to `/about` from somewhere inside the app. 
+export default function About() {
+  return (
+    <div>
+      <h1>About Me</h1>
+      <p>Hi, my name is Jimmy.</p>
+      <ul>
+        <li>I like basketball and designing cool visuals.</li>
+      </ul>
+    </div>
+  );
+}
+```
+
+As part of the build process, Next.js determines `/about` is a static route.
+```bash {6,9}
+(main) $ next build
+  ...
+Route (app)                                 Size  First Load JS
+┌ ○ /                                      162 B         103 kB
+├ ○ /_not-found                            990 B         101 kB
+├ ○ /about                                 131 B        99.7 kB
+└ ƒ /profile                               131 B        99.7 kB
+  ...
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+```
+
+It then prerenders the route's response in two formats: HTML and RSC. After running `next build`, you can see these responses saved as files at `.next/server/app`:
+
+
+```bash {4,6}
+.next/server/app/
+  ...
+  ├── about/
+  ├── about.html # HTML response
+  ├── about.meta
+  └── about.rsc # RSC response
+```
+
+
+The `.html` file contains a non-interactive version of the page and is only sent during an initial request to `/about`. The `.rsc` file contains the aforementioned React Server Component payload. This payload is used whenever the user navigates to `/about` from somewhere inside the app, and plays a key role in prefetching.
 
 ### **Prefetching**
 
-With prefetching, whenever a `<Link />` to `/about` appears in the user's viewport, Next.js automatically initiates a background request for its RSC payload. 
-
-The request looks like the navigation RSC request, except it includes a special `Next-Router-Prefetch: 1` header. We'll refer to requests with this prefetch headers as a **Prefetch RSC Request.** 
+With prefetching, whenever a link to `/about` appears in the user's viewport, Next.js automatically initiates a background request for the route's RSC payload<FootnoteReference id="1" />.
 
 [show GIF of the scrolling and the request to the RSC payload in dev tools]
 
-```tsx
-GET /about?rsc=_____ HTTP/1.1
-Host: localhost:3000
+The request looks like the Navigation RSC Request, except it includes a special `Next-Router-Prefetch: 1` header. We'll refer to requests with this prefetch header as a **Prefetch RSC Request.** 
+
+```bash {4}
+GET /about HTTP/1.1
+Host: <Next.js server>
 RSC: 1
 Next-Router-Prefetch: 1
 ```
 
-The server responds with the payload that was prerendered and cached during build. **Crucially, this RSC payload contains all the data the client needs to render the `/about` page.** Note how the body of the `/about` page component is directly encoded in the payload: 
+The server responds with the payload that was prerendered and cached during build. **This RSC payload contains everything the client needs to render the `/about` page.** Note how the body of the `/about` page component is directly encoded in the payload: 
 
-[show visual here of payload, with body of about component labeled in both the code and the RSC payload]
+```bash
+$ curl 'http://localhost:3000/about' -H 'RSC: 1' -H 'Next-Router-Prefetch: 1'
+... # truncated
+["$","div",null,{
+  "children":[
+    ["$","h1",null,{"children":"About Me"}],
+    ["$","p",null,{"children":"Hi, my name is Jimmy."}],
+    ["$","ul",null,{"children":
+      ["$","li",null,{"children":"I like basketball and designing cool visuals."}]
+    }]
+  ]
+}]
+...
+```
 
-Now, when the user clicks the link to `/about`, all the new content is already loaded on the client and can be shown immediately. The rendering process for the `/about` page with prefetching looks like this:
+Now, when the user clicks the link to `/about`, all the new content is already loaded on the client and the route can be rendered immediately:
 
-[client / server sequence visual here] 
+<div className="flex justify-center items-center">
+  <object data="/images/nextjs-prefetching/static-w-prefetch.svg" type="image/svg+xml" height="auto" className="mx-auto my-12 w-90">
+    Your browser does not support SVG
+  </object>
+</div>
 
 ## Dynamic Routes
 
-Let's say we have this `page.tsx` component that renders a `/___.` 
+Let's say we have this `page.tsx` component that serves a dynamic route `/profile`:
 
-As mentioned before, the build process doesn't prerender responses for dynamic routes. This means the prefetching process for dynamic routes is a bit more involved.  
+```tsx
+// app/profile/page.tsx
 
-**Default Case**
+import { headers } from 'next/headers';
 
-Just like for static routes, whenever a `<Link />` to `/____` appears in the user's viewport, Next.js automatically initiates a Prefetch RSC request. 
-
+export default async function Profile() {
+  const headersList = await headers();
+  const userAgent = headersList.get('user-agent');
+  
+  return (
+    <div>
+      <h1>Profile</h1>
+      <p>Your browser: {userAgent}</p>
+    </div>
+  );
+}
 ```
-GET /______rsc=_____ HTTP/1.1
-Host: localhost:3000
+
+<div className="w-4/5 mx-auto my-8 px-4 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded">
+  <div className="text-sm text-gray-800 dark:text-gray-200">
+    <strong>Why is this route dynamic?</strong> This component uses the <code className="bg-gray-100 dark:bg-gray-800 px-1 py-1 rounded text-xs">headers()</code> function, which requires server-side execution to read request headers. Since request headers vary per request, Next.js cannot prerender this route at build time.
+  </div>
+</div>
+
+As mentioned before, responses for dynamic routes are not prerendered as part of the build process. This makes prefetching for dynamic routes a bit more involved.
+
+
+### Default Case
+
+Just like for static routes, whenever a link to `/profile` appears in the user's viewport, Next.js automatically initiates a Prefetch RSC request. 
+
+```bash
+GET /profile HTTP/1.1
+Host: <Next.js server>
 RSC: 1
 Next-Router-Prefetch: 1
 ```
 
-Since this is a dynamic route, the server has no cached payload to return. But instead of running code to generate the payload, the server returns immediately, with what's an essentially empty response. **The client can't use this payload to render the new route, and prefetching is effectively skipped.** This "avoids unnecessary work on the server for routes the user may never visit". 
+But since this is a dynamic route, the server has no cached payload to return. Instead of running code to generate the payload, the server opts to return what is essentially an empty response. **In other words, prefetching is skipped by default** for dynamic routes<FootnoteReference id="2" />.
 
-[show output of RSC payload and show that contains "nothing"]
+```bash
+$ curl 'http://localhost:3000/profile' -H 'RSC: 1' -H 'Next-Router-Prefetch: 1'
 
-Now, when the user clicks the link to `/____`, **the client the initiates a Navigation RSC request (without the `Next-Router-Prefetch: 1` header)**. The client has to wait for a server response before it can show new content, which can make it feel like the application is not responding. 
-
-**Loading.tsx**
-
-To get the benefits of prefetching for dynamic routes, include a `loading.tsx` component in the same directory as our `page.tsx` component. 
-
-When `loading.tsx` is defined, the server's response to the Prefetch RSC payload contains the loading component! 
-
-```
-GET /______rsc=_____ HTTP/1.1
-Host: localhost:3000
-RSC: 1
-Next-Router-Prefetch: 1
+0:{"b":"woJZgBelu67N0IfkMHHX9",
+   "f":[[["",{"children":["profile",{"children":["__PAGE__",{}]}]},
+         "$undefined","$undefined",true],
+         null,[null,null],true]],
+   "S":false}
 ```
 
-[response here]
+Now, when the user clicks the link to `/profile`, the client the initiates a Navigation RSC request to get the actual payload for the route. **But because nothing was prefetched, the client has to wait for this response** before it can show any new content, which can make it feel like the application is unresponsive.
 
-Now, when the user clicks the link to `/____`, the loading UI is shown immediately, without having to wait for a server response. The client will still then initiate the navigation `RSC` request, which the client uses to replace the loading UI. 
+<div className="flex justify-center items-center">
+  <object data="/images/nextjs-prefetching/dynamic-no-loading.svg" type="image/svg+xml" height="auto" className="mx-auto my-12 w-90">
+    Your browser does not support SVG
+  </object>
+</div>
 
-The key is that the loading.tsx component gives the client something meaningful it can prefetch. This results in a better user experience as the user sees the loading UI immediately while waiting, making the app feel much more responsive. 
+### **Loading.tsx**
 
-[visual here]
+To get the benefits of prefetching for dynamic routes, include a `loading.tsx` component in the same directory as the `page.tsx` component. 
+
+```tsx
+// app/profile/loading.tsx
+
+export default function Loading() {
+  return (
+    <div className="animate-pulse">
+      <h1>Loading...</h1>
+      <p>Please wait while we load the profile...</p>
+    </div>
+  );
+}
+```
+
+When `loading.tsx` is defined, the server responds to the prefetch RSC request with the loading component!
+
+```bash
+$ curl 'http://localhost:3000/profile' -H 'RSC: 1' -H 'Next-Router-Prefetch: 1'
+... # truncated
+  "loading": [["$","div","l",{
+    "className":"animate-pulse",
+    "children":[
+      ["$","h1",null,{"children":"Loading..."}],
+      ["$","p",null,{"children":"Please wait while we load the profile..."}]
+    ]
+  }],[],[],false]},null,false]
+...
+```
+
+Now, when the user clicks the link to `/profile`, the loading UI is shown immediately, without having to wait for a server response. The client will still then initiate the navigation RSC request to get the actual payload for the route, which the client uses to replace the loading UI when it returns. 
+
+**The key is that `loading.tsx` gives the client something meaningful it can prefetch.** This results in a better user experience as the user sees the loading UI immediately while waiting, making the app feel much more responsive. 
+
+<div className="flex justify-center items-center">
+  <object data="/images/nextjs-prefetching/dynamic-w-loading.svg" type="image/svg+xml" height="auto" className="mx-auto my-12 w-90">
+    Your browser does not support SVG
+  </object>
+</div>
+
+<Footnote id="1">
+  This behavior only applies to Next.js Link components, not regular HTML anchor tags. See [Next.js Link documentation](https://nextjs.org/docs/app/api-reference/components/link#prefetch) for details.
+</Footnote>
+
+<Footnote id="2">
+  This ["avoids unnecessary work on the server for routes the user may never visit."](https://nextjs.org/docs/app/getting-started/linking-and-navigating#prefetching:~:text=By%20skipping%20or%20partially%20prefetching%20dynamic%20routes%2C%20Next.js%20avoids%20unnecessary%20work%20on%20the%20server%20for%20routes%20the%20users%20may%20never%20visit.)
+</Footnote>
+
+</FootnoteProvider>

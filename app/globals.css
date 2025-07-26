@@ -180,3 +180,16 @@ body {
   }
 }
 
+/* Line highlighting for rehype-pretty-code */
+[data-rehype-pretty-code-figure] pre [data-line] {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+[data-rehype-pretty-code-figure] pre [data-highlighted-line] {
+  background-color: rgba(59, 130, 246, 0.25);
+}
+
+.dark [data-rehype-pretty-code-figure] pre [data-highlighted-line] {
+  background-color: rgba(59, 130, 246, 0.35);
+}
