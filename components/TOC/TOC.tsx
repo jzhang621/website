@@ -17,6 +17,7 @@ export function TOC() {
       const headers = document.querySelectorAll("h2, h3");
 
       const items: TOCItem[] = [];
+      const usedIds = new Set<string>();
 
       headers.forEach((header, index) => {
         const level = parseInt(header.tagName.charAt(1));
@@ -25,13 +26,23 @@ export function TOC() {
         // Create an ID if it doesn't exist
         let id = header.id;
         if (!id) {
-          id = text
+          let baseId = text
             .toLowerCase()
             .replace(/[^a-z0-9]+/g, "-")
             .replace(/(^-|-$)/g, "");
+          
+          // Ensure unique ID
+          id = baseId;
+          let counter = 1;
+          while (usedIds.has(id)) {
+            id = `${baseId}-${counter}`;
+            counter++;
+          }
+          
           header.id = id;
         }
 
+        usedIds.add(id);
         items.push({ id, text, level });
       });
 
@@ -80,8 +91,8 @@ export function TOC() {
         <div className="rounded-lg shadow-sm px-4">
           <nav>
             <ul className="space-y-1">
-              {tocItems.map((item) => (
-                <li key={item.id}>
+              {tocItems.map((item, index) => (
+                <li key={`${item.id}-${index}`}>
                   <button
                     onClick={() => handleClick(item.id)}
                     className={`
