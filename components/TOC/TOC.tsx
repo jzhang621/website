@@ -26,7 +26,7 @@ export function TOC() {
         // Create an ID if it doesn't exist
         let id = header.id;
         if (!id) {
-          let baseId = text
+          const baseId = text
             .toLowerCase()
             .replace(/[^a-z0-9]+/g, "-")
             .replace(/(^-|-$)/g, "");
@@ -46,6 +46,9 @@ export function TOC() {
         items.push({ id, text, level });
       });
 
+      // Debug: log the items to see if there are duplicates
+      console.log('TOC items:', items.map(item => ({ id: item.id, text: item.text })));
+      
       setTocItems(items);
 
       // Set up intersection observer for active section highlighting
