@@ -1,0 +1,256 @@
+import { TOC } from '@/components/TOC/TOC';
+import { FootnoteReference, Footnote, FootnoteProvider } from '@/components/Footnote';
+import MermaidSequenceDiagram from '@/components/MermaidSequenceDiagram';
+import Image from 'next/image';
+
+export const FigCaption = ({ children }) => (
+  <div className="text-center mx-auto text-gray-500 max-w-2xl [&>p]:text-xs [&>p]:!text-xs [&>p]:!m-0 [&>p]:!leading-normal">
+    {children}
+  </div>
+);
+
+<TOC/>
+
+
+# Incremental Static Regeneration
+
+Static routes in Next.js are prerendered at build time, which means they can be loaded quickly and efficiently. But updates to the underlying content are expensive since they require rebuilding the entire site. [Incremental Static Regeneration (ISR)](https://nextjs.org/docs/app/guides/incremental-static-regeneration) in Next.js addresses this problem. This post contains a brief overview of how ISR works and shows you how to see ISR "in action" for your own application.
+
+<div className="text-gray-500 text-sm">
+  <p>See also: <a href="https://nextjs.org/docs/app/guides/incremental-static-regeneration" className="text-blue-500">Next.js Docs</a></p>
+</div>
+
+## Conceptual Overview
+
+
+Static routes are prerendered at build time and cached (stored on disk). Users who visit the route are then served these cached responses. **This cache needs to be refreshed with new content whenever we want to update a  static route**. Without ISR, this would require re-building and re-deploying the entire site.
+
+
+With ISR, each route defines a **revalidation interval** that determines how long its cached response is valid. Requests that fall within the revalidation interval are served from the cache. **But the first request that falls outside the interval triggers a cache refresh** (via background job) for only that route. This is *incremental regeneration*: we can update static routes individually without a full rebuild.
+
+## ISR in Action
+
+1. To use ISR, create a statically rendered route and include a variable `revalidate` with the revalidation interval<FootnoteReference id="1"/>. The route below uses 60 seconds:
+
+   ```tsx
+   // app/about/page.tsx
+   export const revalidate = 60;
+
+   export default function About() {
+     const date = new Date();
+     return <div>
+       <h1>About Page</h1>
+       <p>This page was rendered at {date.toLocaleString()}.</p>
+     </div>;
+   }
+   ```
+
+2. Run `next build`. If ISR is working, you'll see the a value for `Revalidate` included in the output:
+
+    ```bash {6}
+    (main) $ next build
+    # ... truncated output ...
+    Route (app)                                 Size  First Load JS  Revalidate  Expire
+    ┌ ○ /                                      127 B        99.7 kB
+    ├ ○ /_not-found                            992 B         101 kB
+    └ ○ /about                                 127 B        99.7 kB          1m      1y
+    # ... truncated ...
+    ```
+
+3. Inspect the `.next/server/app` directory. You'll see the cached responses saved in the `about.html` and `about.rsc` files. **The file modification time is the last time the route was revalidated**. 
+
+    In the output below, `about.html` and `about.rsc` files were last modified on July 29, 2025 at 13:01:54, and our revalidation interval is 60 seconds.
+
+    ```bash {4,5}
+    ls -lt -D '%Y-%m-%d %H:%M:%S.%f' .next/server/app
+    # ... truncated output
+    drwxr-xr-x  5 jimmyzhang  staff    160 Jul 29 13:01.53 about
+    -rw-r--r--  1 jimmyzhang  staff   6138 Jul 29 13:01.54 about.html
+    -rw-r--r--  1 jimmyzhang  staff   3800 Jul 29 13:01.54 about.rsc
+    -rw-r--r--  1 jimmyzhang  staff    175 Jul 29 13:01.54 about.meta
+    ```
+
+    Note the body of the `about.html` file contains the text "This page was rendered at 7/29/2025, 1:01:54 PM.", which matches the time of the last modification time of the file.
+
+    <div className="flex justify-center my-8">
+        <Image 
+            src="/images/nextjs-isr/html-response.png"
+            alt="HTML response being served from Next.js ISR"
+            width={500}
+            height={500}
+            className="mx-auto h-auto rounded-md border"
+        />
+    </div>    
+
+4. Run `next start` and make a request to `/about`. If the request is within the revalidation interval <span className="text-xs text-gray-500">(before 13:02:54)</span>, we'll get the cached response.
+
+    <div className="flex justify-center my-8">
+        <Image 
+            src="/images/nextjs-isr/cached-response.png"
+            alt="Cached response being served from Next.js ISR"
+            width={3572}
+            height={1544}
+            className="w-[90%] mx-auto h-auto rounded-md border"
+        />
+    </div>
+
+5. On the first request made that falls outside the re-validation interval, **the cached response is still served**.
+
+
+     <div className="flex justify-center my-8">
+        <Image 
+            src="/images/nextjs-isr/invalidate-response.png"
+            alt="Cached response being served from Next.js ISR"
+            width={3572}
+            height={1544}
+            className="w-[90%] mx-auto h-auto rounded-md border"
+        />
+    </div>
+
+
+6. **Stale-while-revalidate**: this request now **triggers a background job to re-render the route and refresh the cache**. When the background job finishes, the `about.html` and `about.rsc` files now show a last modified time of 13:17:50. The other files are unchanged. Hello, incremental regeneration!
+
+    ```bash {3-5}
+    (main) isr ls -lt -D '%Y-%m-%d %H:%M:%S.%f' .next/server/app
+    total 224
+    -rw-r--r--  1 jimmyzhang  staff    124 2025-07-29 13:17:50.f about.meta # REFRESHED
+    -rw-r--r--  1 jimmyzhang  staff   3799 2025-07-29 13:17:50.f about.rsc # REFRESHED
+    -rw-r--r--  1 jimmyzhang  staff   6108 2025-07-29 13:17:50.f about.html # REFRESHED
+    -rw-r--r--  1 jimmyzhang  staff   3503 2025-07-29 13:01:56.f page.js.nft.json # unchanged
+    -rw-r--r--  1 jimmyzhang  staff    145 2025-07-29 13:01:54.f index.meta # unchanged
+    -rw-r--r--  1 jimmyzhang  staff   3437 2025-07-29 13:01:54.f index.rsc # unchanged
+    -rw-r--r--  1 jimmyzhang  staff   5746 2025-07-29 13:01:54.f index.html # unchanged
+    # ... truncated output
+    ```
+
+7. The next request to `/about` will get the refreshed response with updated content. This may or may not trigger the background job again, depending on when the request is made relative to the revalidation interval.
+
+
+     <div className="flex justify-center my-8">
+        <Image 
+            src="/images/nextjs-isr/refresh.png"
+            alt="Refreshed response being served from Next.js ISR"
+            width={3572}
+            height={1544}
+            className="w-[90%] mx-auto h-auto rounded-md border"
+        />
+    </div>
+
+
+## Sequence Diagram
+
+The sequence diagram below visualizes the **stale-while-revalidate** behavior of ISR. The `/about` route is a static route with a 60 second revalidation interval.
+
+<MermaidSequenceDiagram 
+  diagram={`sequenceDiagram
+    participant Client
+    participant Server
+    participant Cache
+    participant BGJob as Background Job
+
+    Note left of Client: t=13:02:09
+
+    rect rgb(240, 248, 255)
+        Note over Client, Cache: Within re-validation interval
+        Client->>Server: navigate to /about
+        Server->>Cache: serve from cache
+        Cache-->>Server: cached content (HTML)
+        Server-->>Client: render route
+    end
+
+    Note left of Client: t=13:17:50<br/><br/>First stale request
+
+    rect rgb(255, 248, 240)
+        Note over Client, BGJob: Stale-while-revalidate
+        Client->>Server: navigate to route
+        Server->>Cache: serve cached content (stale)
+        Cache-->>Server: stale content
+        Server-->>Client: render route
+
+        Note over Server, BGJob: background job
+        Server->>BGJob: trigger revalidation job
+        activate BGJob
+        BGJob->>BGJob: regenerate content
+        BGJob->>Cache: update cache<br/>(last modified: 13:17:50)
+        BGJob->>Server: revalidation complete
+        deactivate BGJob
+    end`}
+  className="w-4/5 mx-auto my-12"
+/>
+
+
+After the background job completes, the next request will receive the updated content.
+
+* For requests within the revalidation interval <span className="text-xs text-gray-500">(before 13:18:50)</span>, just serve the refreshed cached response.
+
+    <MermaidSequenceDiagram 
+        diagram={`sequenceDiagram
+            participant Client
+            participant Server
+            participant Cache
+            participant BGJob as Background Job
+
+            Note left of Client: t=13:18:23
+
+            rect rgb(240, 248, 255)
+                Note over Client, Cache: Within re-validation interval
+                Client->>Server: navigate to /about
+                Server->>Cache: serve from cache
+                Cache-->>Server: cached content (HTML)
+                Server-->>Client: render route
+            end
+
+            `}
+        className="w-4/5 mx-auto my-12"
+    />
+
+
+* For requests outside the revalidation interval, serve the cached response, but also trigger a background job to refresh the cache.
+
+
+
+
+
+
+  <MermaidSequenceDiagram 
+    diagram={`sequenceDiagram
+        participant Client
+        participant Server
+        participant Cache
+        participant BGJob as Background Job
+
+        Note left of Client: t=13:19:23
+
+        rect rgb(255, 248, 240)
+            Note over Client, BGJob: Stale-while-revalidate
+            Client->>Server: navigate to route
+            Server->>Cache: serve cached content (stale)
+            Cache-->>Server: stale content
+            Server-->>Client: render route
+
+            Note over Server, BGJob: background job
+            Server->>BGJob: trigger revalidation job
+            activate BGJob
+            BGJob->>BGJob: regenerate content
+            BGJob->>Cache: update cache<br/>(last modified: 13:19:23)
+            BGJob->>Server: revalidation complete
+            deactivate BGJob
+        end`}
+        className="w-4/5 mx-auto my-12"
+    />
+
+
+## Potential Use Case
+
+I'm working on a project that involves showing up-to-date player profile for NCAA men's college basketball players. I could take advantage of static rendering to pre-render player profiles to ensure fast response times and reduce server load. I could then use [path-based revalidation](https://nextjs.org/docs/app/guides/incremental-static-regeneration#on-demand-revalidation-with-revalidatepath) to refresh the cached profiles whenever a player's stats change. This allows users to see the most up-to-date stats as soon as they are available, while also serving cached responses for all subsequent requests.
+
+
+
+
+
+
+---
+
+<Footnote id="1">
+  ISR also supports on-demand and tag-based revalidation. See [the Next.js docs](https://nextjs.org/docs/app/guides/incremental-static-regeneration#on-demand-revalidation-with-revalidatepath).
+</Footnote>
