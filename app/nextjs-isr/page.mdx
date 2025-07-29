@@ -23,6 +23,22 @@ Static routes in Next.js are prerendered at build time, which means they can be 
 
 Static routes are prerendered at build time and cached (stored on disk). Users who visit the route are then served these cached responses. **This cache needs to be refreshed with new content whenever we want to update a  static route**. Without ISR, this would require re-building and re-deploying the entire site.
 
+<MermaidSequenceDiagram 
+  diagram={`sequenceDiagram
+    participant Client
+    participant Server
+    participant Cache
+
+    rect rgb(240, 248, 255)
+        Client->>Server: navigate to static route
+        Server->>Cache: serve from cache
+        Cache-->>Server: cached content (HTML)
+        Server-->>Client: render route
+    end`}
+  className="w-4/5 mx-auto my-12"
+/>
+
+
 
 With ISR, each route defines a **revalidation interval** that determines how long its cached response is valid. Requests that fall within the revalidation interval are served from the cache. **But the first request that falls outside the interval triggers a cache refresh** (via background job) for only that route. This is *incremental regeneration*: we can update static routes individually without a full rebuild.
 
