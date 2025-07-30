@@ -21,7 +21,7 @@ Static routes in Next.js are prerendered at build time, which means they can be 
 ## Conceptual Overview
 
 
-Static routes are prerendered at build time and cached (stored on disk). Users who visit the route are then served these cached responses. **This cache needs to be refreshed with new content whenever we want to update a  static route**. Without ISR, this would require re-building and re-deploying the entire site.
+Static routes are prerendered at build time and cached (stored on disk). Users who visit the route are then served these cached responses:
 
 <MermaidSequenceDiagram 
   diagram={`sequenceDiagram
@@ -38,13 +38,17 @@ Static routes are prerendered at build time and cached (stored on disk). Users w
   className="w-4/5 mx-auto my-12"
 />
 
+<FigCaption>
+  Static routes in Next.js are prerendered and served from a cache.
+</FigCaption>
 
+**In order to update a static route, we need to refresh this cache with new content**. Without ISR, this would require re-building and re-deploying the entire site. 
 
-With ISR, each route defines a **revalidation interval** that determines how long its cached response is valid. Requests that fall within the revalidation interval are served from the cache. **But the first request that falls outside the interval triggers a cache refresh** (via background job) for only that route. This is *incremental regeneration*: we can update static routes individually without a full rebuild.
+With ISR, routes can define a **revalidation interval**<FootnoteReference id="1"/> that determines how long its cached response is valid. Requests that fall within the revalidation interval are served from the cache. **But the first request that falls outside the interval triggers a cache refresh** (via background job) for only that route. This is *incremental regeneration*: we can update static routes individually without a full rebuild.
 
 ## ISR in Action
 
-1. To use ISR, create a statically rendered route and include a variable `revalidate` with the revalidation interval<FootnoteReference id="1"/>. The route below uses 60 seconds:
+1. To use ISR, create a statically rendered route and include a variable `revalidate` with the revalidation interval. The route below uses 60 seconds:
 
    ```tsx
    // app/about/page.tsx
@@ -71,7 +75,7 @@ With ISR, each route defines a **revalidation interval** that determines how lon
     # ... truncated ...
     ```
 
-3. Inspect the `.next/server/app` directory. You'll see the cached responses saved in the `about.html` and `about.rsc` files. **The file modification time is the last time the route was revalidated**. 
+3. Inspect the `.next/server/app` directory. You'll see the cached responses saved in the `about.html` and `about.rsc` files. **The file modification time is the start of the revalidation interval** for that route.
 
     In the output below, `about.html` and `about.rsc` files were last modified on July 29, 2025 at 13:01:54, and our revalidation interval is 60 seconds.
 
