@@ -44,7 +44,7 @@ Static routes are prerendered at build time and cached (stored on disk). Users w
 
 **In order to update a static route, we need to refresh this cache with new content**. Without ISR, this would require re-building and re-deploying the entire site. 
 
-With ISR, routes can define a **revalidation interval**<FootnoteReference id="1"/> that determines how long its cached response is valid. Requests that fall within the revalidation interval are served from the cache. **But the first request that falls outside the interval triggers a cache refresh** (via background job) for only that route. This is *incremental regeneration*: we can update static routes individually without a full rebuild.
+With ISR, we can update static routes incrementally, without a full rebuild. Each route can define a **revalidation interval**<FootnoteReference id="1"/> that determines how long its cached response is valid. Requests that fall within the revalidation interval are served from the cache. **But the first request that falls outside the interval triggers a background job to refresh the cache** for the next request.
 
 ## ISR in Action
 
