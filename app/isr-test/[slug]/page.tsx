@@ -1,6 +1,6 @@
-export default function ISRTest({ params }: { params: { slug: string } }) {
-   
+export default async function ISRTest({ params }: { params: Promise<{ slug: string }> }) {
+    const { slug } = await params;
 
     console.log("Hello, where will this be logged?");
-    return <div>ISR Test - Slug: {params.slug}</div>;
+    return <div>ISR Test - Slug: {slug}</div>;
 }
