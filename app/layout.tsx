@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Nav } from "../components/Nav";
 import { FootnoteProvider } from "../components/Footnote";
 import { ThemeProvider } from "@/contexts/ThemeProvider";
@@ -46,6 +47,7 @@ export default function RootLayout({
             <Nav />
             <div className="w-full md:max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">{children}</div>
             <Analytics />
+            <SpeedInsights />
           </FootnoteProvider>
         </ThemeProvider>
       </body>
