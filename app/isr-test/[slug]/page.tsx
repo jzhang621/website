@@ -1,6 +1,8 @@
-export default async function ISRTest({ params }: { params: Promise<{ slug: string }> }) {
-    const { slug } = await params;
+export const revalidate = 60;
 
-    console.log("Hello, where will this be logged?");
-    return <div>ISR Test - Slug: {slug}</div>;
+export default async function ISRTest({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+
+  console.log("Hello, where will this be logged?");
+  return <div>ISR Test - Slug: {slug}</div>;
 }
