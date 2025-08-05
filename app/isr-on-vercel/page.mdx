@@ -1,0 +1,28 @@
+import { TOC } from '@/components/TOC/TOC';
+import { FootnoteReference, Footnote, FootnoteProvider } from '@/components/Footnote';
+import MermaidSequenceDiagram from '@/components/MermaidSequenceDiagram';
+import Image from 'next/image';
+
+export const FigCaption = ({ children }) => (
+  <div className="text-center mx-auto text-gray-500 max-w-2xl [&>p]:text-xs [&>p]:!text-xs [&>p]:!m-0 [&>p]:!leading-normal">
+    {children}
+  </div>
+);
+
+<TOC/>
+
+
+# ISR on Vercel
+
+This post looks at how Incremental Static Regeneration (ISR) works with a Next.js running on Vercel. For a more general overview of ISR, see [this post](/nextjs-isr).
+
+
+## Build Time
+
+Vercel's documentation on [ISR](https://vercel.com/docs/concepts/functions/incremental-static-regeneration) is a good starting point.
+
+
+## How to use ISR on Vercel
+
+
+## How to use ISR on Vercel
