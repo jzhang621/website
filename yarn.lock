@@ -1214,7 +1214,7 @@
   resolved "https://registry.npmjs.org/@unrs/resolver-binding-darwin-arm64/-/resolver-binding-darwin-arm64-1.9.0.tgz"
   integrity sha512-nJ9z47kfFnCxN1z/oYZS7HSNsFh43y2asePzTEZpEvK7kGyuShSl3RRXnm/1QaqFL+iP+BjMwuB+DYUymOkA5A==
 
-"@vercel/analytics@^1.4.1":
+"@vercel/analytics@^1.5.0":
   version "1.5.0"
   resolved "https://registry.npmjs.org/@vercel/analytics/-/analytics-1.5.0.tgz"
   integrity sha512-MYsBzfPki4gthY5HnYN7jgInhAZ7Ac1cYDoRWFomwGHWEX7odTEzbtg9kf/QSo7XEsEAqlQugA6gJ2WS2DEa3g==
