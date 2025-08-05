@@ -2,6 +2,8 @@ import { TOC } from '@/components/TOC/TOC';
 import { FootnoteReference, Footnote, FootnoteProvider } from '@/components/Footnote';
 import MermaidSequenceDiagram from '@/components/MermaidSequenceDiagram';
 import Image from 'next/image';
+import NextBuild from '@/public/images/vercel-isr/next-build.png';
+import ISRFunctions from '@/public/images/vercel-isr/isr-functions.png';
 
 export const FigCaption = ({ children }) => (
   <div className="text-center mx-auto text-gray-500 max-w-2xl [&>p]:text-xs [&>p]:!text-xs [&>p]:!m-0 [&>p]:!leading-normal">
@@ -14,15 +16,44 @@ export const FigCaption = ({ children }) => (
 
 # ISR on Vercel
 
-This post looks at how Incremental Static Regeneration (ISR) works with a Next.js running on Vercel. For a more general overview of ISR, see [this post](/nextjs-isr).
+I was curious about how Incremental Static Regeneration (ISR) works with a Next.js app running on Vercel, and this post documents what I found.
+
+For a more general overview of ISR, see [this post](/nextjs-isr).
 
 
-## Build Time
+## Deployment
 
-Vercel's documentation on [ISR](https://vercel.com/docs/concepts/functions/incremental-static-regeneration) is a good starting point.
+* Routes that use time-based validation will include a value for the `revalidate` column that you can see in the output of Vercel's build logs.
+
+<div className="my-8">
+<div className="flex justify-center w-4/5 mx-auto">
+  <Image 
+    src={NextBuild} 
+    alt="Next.js build logs showing revalidate column"
+    />
+</div>
+</div>
+
+* **All static routes** in the build are shown under the `ISR Functions` panel on the deployment page, regardless of whether or not they include any time-based validations. I'm assuming this because all static routes can be revalidated using path-based validation.
 
 
-## How to use ISR on Vercel
+<div className="my-8">
+<div className="flex justify-center w-4/5 mx-auto">
+  <Image 
+    src={ISRFunctions}
+    alt="Next.js build logs showing revalidate column"
+    />
+</div>
+</div>
+
+## Network Requests
+
+You can use a page's Response Headers to tell where the route is with respect to its ISR lifecycle.
+
+* **Initial Request**: The initial request to a static route will be served from the PRERENDER cache. 
+
+## Vercel Logs
 
 
-## How to use ISR on Vercel
+
+
