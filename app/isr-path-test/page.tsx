@@ -1,4 +1,4 @@
-export const revalidate = 3600; // 1 hour
+export const revalidate = 300; // 1 hour
 
 export default function ISRPathTest() {
   const now = new Date();
