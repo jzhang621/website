@@ -1,0 +1,179 @@
+import { TOC } from '@/components/TOC/TOC';
+import { FootnoteReference, Footnote, FootnoteProvider } from '@/components/Footnote';
+import MermaidSequenceDiagram from '@/components/MermaidSequenceDiagram';
+import Image from 'next/image';
+import NextBuild from '@/public/images/vercel-isr/next-build.png';
+import ISRFunctions from '@/public/images/vercel-isr/isr-functions.png';
+import Prerender from '@/public/images/vercel-isr/x-vercel-cache-prerender2x.avif'
+import HIT from '@/public/images/vercel-isr/x-vercel-cache-hit2x.avif'
+import STALE from '@/public/images/vercel-isr/x-vercel-cache-stale2x.avif'
+import Stale from '@/public/images/vercel-isr/stale.png'
+import CacheHit from '@/public/images/vercel-isr/cache-hit.png'
+import PrerenderScreenshot from '@/public/images/vercel-isr/pre-render.png'
+import Revalidated from '@/public/images/vercel-isr/x-vercel-cache-revalidated2x.avif'
+import RevalidatedScreenshot from '@/public/images/vercel-isr/revalidated.png'
+import PrerenderLogs from '@/public/images/vercel-isr/prerender-logs.png'
+import PrerenderBackground from '@/public/images/vercel-isr/prerender-background.png'
+import EdgeCacheHit from '@/public/images/vercel-isr/edge-cache.png'
+
+export const FigCaption = ({ children }) => (
+  <div className="text-center mx-auto text-gray-500 max-w-2xl [&>p]:text-xs [&>p]:!text-xs [&>p]:!m-0 [&>p]:!leading-normal">
+    {children}
+  </div>
+);
+
+<TOC/>
+
+
+# ISR on Vercel
+
+I was curious about how Incremental Static Regeneration (ISR) works with a Next.js app running on Vercel, and this post documents what I found.
+
+For a more general overview of ISR, see [this post](/nextjs-isr).
+
+
+## Deployment
+
+* Routes that use time-based validation will include a value for the `revalidate` column that you can see in the output of Vercel's build logs.
+
+<div className="my-8">
+<div className="flex justify-center w-4/5 mx-auto">
+  <Image 
+    src={NextBuild} 
+    alt="Next.js build logs showing revalidate column"
+    />
+</div>
+</div>
+
+* **All static routes** in the build are shown under the `ISR Functions` panel on the deployment page, regardless of whether or not they include any time-based validations. I'm assuming this because all static routes can be revalidated using path-based validation.
+
+
+
+## Network Requests
+
+You can look at the [`x-vercel-cache` response header](https://vercel.com/docs/headers/response-headers#x-vercel-cache) to tell where a static route is with respect to its ISR lifecycle and if it exists on the [Vercel Edge Cache](https://vercel.com/docs/edge-cache).
+
+* **Initial Request**: The initial request to a static route is served from the origin server and then brought into the Edge Cache as a result. Theses response have `x-vercel-cache` header value `PRERENDER`.
+
+<div className="my-8">
+<div className="flex justify-center w-4/5 mx-auto">
+  <Image 
+    src={Prerender}
+    alt="Next.js build logs showing revalidate column"
+    />
+</div>
+</div>
+<FigCaption>Image Credit: https://vercel.com/docs/headers/response-headers#prerender</FigCaption>
+
+<div className="my-8">
+<div className="flex justify-center w-4/5 mx-auto">
+  <Image 
+    src={PrerenderScreenshot}
+    alt="Next.js build logs showing revalidate column"
+    />
+</div>
+</div>
+
+* **Within Revalidation Period**: Any subsequent requests made to the route before it has been invalidated are served from the Edge Cache. These responses have `x-vercel-cache` header value `HIT`.
+
+<div className="my-8">
+<div className="flex justify-center w-4/5 mx-auto">
+  <Image 
+    src={HIT}
+    alt="Next.js build logs showing revalidate column"
+    />
+</div>
+</div>
+<FigCaption>Image Credit: https://vercel.com/docs/headers/response-headers#hit</FigCaption>
+
+The response also contains an `age` header that indicates how long the response has been in the Edge Cache, which can be useful for debugging routes that use time-based validation.
+
+<div className="my-8">
+<div className="flex justify-center w-4/5 mx-auto">
+  <Image 
+    src={CacheHit}
+    alt="Next.js build logs showing revalidate column"
+    />
+</div>
+</div>
+
+* **After Revalidation Period**: If the route uses time-based validation, the first request after the revalidation period is served from Edge Cache. These responses have `x-vercel-cache` header value `STALE` to indicate that a "background request to the origin server was made to update the content."
+
+<div className="my-8">
+<div className="flex justify-center w-4/5 mx-auto">
+  <Image 
+    src={STALE}
+    alt="Next.js build logs showing revalidate column"
+    />
+</div>
+</div>
+<FigCaption>Image Credit: https://vercel.com/docs/headers/response-headers#stale</FigCaption>
+
+<div className="my-8">
+<div className="flex justify-center w-4/5 mx-auto">
+  <Image 
+    src={Stale}
+    alt="Next.js build logs showing revalidate column"
+    />
+</div>
+</div>
+<FigCaption>Note how the `age` header is 336, which exceeds the revalidation period of 60 seconds.</FigCaption>
+
+* **Path-based Validation**: If the route uses path-based validation, the first request after the revalidation event is served from the origin server by re-rendering the route. The response is then brought into the Edge Cache. These responses have `x-vercel-cache` header value `REVALIDATED`.
+
+<div className="my-8">
+<div className="flex justify-center w-4/5 mx-auto">
+  <Image 
+    src={Revalidated}
+    alt="Next.js build logs showing revalidate column"
+    />
+</div>
+</div>
+<FigCaption>Image Credit: https://vercel.com/docs/headers/response-headers#revalidated</FigCaption>
+
+<div className="my-8">
+<div className="flex justify-center w-4/5 mx-auto">
+  <Image 
+    src={RevalidatedScreenshot}
+    alt="Next.js build logs showing revalidate column"
+    />
+</div>
+</div>
+
+## Vercel Logs
+
+You can also use the Vercel Logs to get some information about where a route is in its ISR lifecycle.
+
+
+* **Initial Request**: The logs for the initial request to a static route will show the route being served from the `PRERENDER` ISR Cache (origin server).
+
+<div className="my-8">
+<div className="flex justify-center w-4/5 mx-auto">
+  <Image 
+    src={PrerenderLogs}
+    alt="Vercel logs showing route being served from PRERENDER ISR Cache"
+    />
+</div>
+</div>
+
+* **Within Revalidation Period**: If the route uses time-based validation and the request is within the revalidation period, the logs will show that **the route was served from the Edge Cache**.
+
+<div className="my-8">
+<div className="flex justify-center w-4/5 mx-auto">
+  <Image 
+    src={EdgeCacheHit}
+    alt="Vercel logs showing route being served from Edge Cache"
+    />
+</div>
+</div>
+
+* **Outside Revalidation Period**: If the route uses time-based validation and the request is also outside of the revalidation period, the logs will show **that a Background Revalidation was made to update the content in the ISR Cache**.
+
+<div className="my-8">
+<div className="flex justify-center w-4/5 mx-auto">
+  <Image 
+    src={PrerenderBackground}
+    alt="Vercel logs showing background revalidation"
+    />
+</div>
+</div>

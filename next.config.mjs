@@ -24,6 +24,19 @@ const withMDX = createMDX({
 const nextConfig = {
   pageExtensions: ["ts", "tsx", "js", "jsx", "md", "mdx"],
   reactStrictMode: true,
+  async headers() {
+    return [
+      {
+        source: '/cache',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'max-age=60, public',
+          },
+        ],
+      },
+    ];
+  },
 };
 
 export default process.env.ANALYZE === "true" ? withBundleAnalyzer(withMDX(nextConfig)) : withMDX(nextConfig);
