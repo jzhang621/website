@@ -1,16 +1,20 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
-import ReactFlow, { 
-  Controls, 
+import React, { useState, useCallback, useMemo } from "react";
+import ReactFlow, {
+  Controls,
   Background,
   useNodesState,
   useEdgesState,
   MarkerType,
   Handle,
-  Position
-} from 'reactflow';
+  Position,
+} from "reactflow";
 import 'reactflow/dist/style.css';
+import { subarraySum } from "./algorithm";
+import SimpleArray from "./SimpleArray";
+import CodeSnippet from "./CodeSnippet";
+import { subarraySumCode } from "./codeTemplates";
 
 // Custom Node Component for circular nodes
 const CircleNode = ({ data }) => {
@@ -114,205 +118,282 @@ const nodeTypes = {
   counter: IterationCounter
 };
 
+// Variable Table Component
+const VariableTable = ({ state, variableSchema }) => {
+  if (!state || !variableSchema) return null;
+
+  // Sort variables: defined values first (by schema order), then undefined at bottom
+  const sortedVariables = [...variableSchema].sort((a, b) => {
+    const aValue = state[a.name];
+    const bValue = state[b.name];
+
+    // If both defined or both undefined, use schema order
+    if ((aValue === undefined) === (bValue === undefined)) {
+      return a.order - b.order;
+    }
+    // Defined values come first
+    return aValue === undefined ? 1 : -1;
+  });
+
+  return (
+    <div className="bg-slate-50 rounded-lg shadow-lg p-4 text-purple-800">
+      <table className="w-full border-collapse">
+        <thead>
+          <tr className="bg-gray-100">
+            <th className="border border-gray-300 px-2 py-1 text-left font-semibold text-sm">Variable</th>
+            <th className="border border-gray-300 px-2 py-1 text-left font-semibold text-sm">Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          {sortedVariables.map(({ name }) => {
+            const value = state[name];
+            const isUndefined = value === undefined;
+
+            return (
+              <tr key={name} className="hover:bg-gray-50">
+                <td className="border border-gray-300 px-2 py-1 font-mono text-xs font-semibold text-purple-600">
+                  {name}
+                </td>
+                <td className={`border border-gray-300 px-2 py-1 font-mono text-xs ${isUndefined ? 'text-gray-400 italic' : ''}`}>
+                  {isUndefined ? '-' : JSON.stringify(value)}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
 export default function ReactFlowSample() {
+  const input = [2, 1, 3];
+  const target = 2;
+
   const [currentStep, setCurrentStep] = useState(0);
   const [iteration, setIteration] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [inputArray, setInputArray] = useState(input);
+  const [targetK, setTargetK] = useState(target);
 
-  // Define the flow steps with iteration awareness
-  const steps = [
-    { node: 'initialize', iteration: 0, message: 'Initialize variables' },
-    { node: 'add_curr', iteration: 0, message: 'Add current element to sum' },
-    { node: 'found_target', iteration: 0, message: 'Check if target found' },
-    { node: 'increment_count', iteration: 0, message: 'Increment count (target found)' },
-    { node: 'update_hashmap', iteration: 0, message: 'Update hashmap' },
-    // Second iteration
-    { node: 'add_curr', iteration: 1, message: 'Add current element to sum' },
-    { node: 'found_target', iteration: 1, message: 'Check if target found' },
-    { node: 'update_hashmap', iteration: 1, message: 'Update hashmap (no target)' },
-    // Third iteration
-    { node: 'add_curr', iteration: 2, message: 'Add current element to sum' },
-    { node: 'found_target', iteration: 2, message: 'Check if target found' },
-    { node: 'increment_count', iteration: 2, message: 'Increment count (target found)' },
-    { node: 'update_hashmap', iteration: 2, message: 'Update hashmap' },
-    { node: 'return_count', iteration: 2, message: 'Return final count' }
-  ];
+  // Generate steps dynamically from algorithm
+  const { steps, result, variableSchema } = useMemo(() => {
+    const algorithmResult = subarraySum(inputArray, targetK);
+    return {
+      steps: algorithmResult.steps,
+      result: algorithmResult.result,
+      variableSchema: algorithmResult.variableSchema,
+    };
+  }, [inputArray, targetK]);
 
   const currentStepData = steps[currentStep] || steps[0];
 
   const initialNodes = [
     {
-      id: 'initialize',
-      type: 'circle',
+      id: "initialize",
+      type: "circle",
       position: { x: 200, y: 200 },
-      data: { 
-        number: '1', 
-        label: 'initialize',
-        detail: 'sum = 0, count = 0, map = {0: 1}',
-        color: '#00CEFF',
-        isActive: currentStepData.node === 'initialize'
-      }
+      data: {
+        number: "1",
+        label: "initialize",
+        detail: "sum = 0, count = 0, map = {0: 1}",
+        color: "#00CEFF",
+        isActive: currentStepData.node === "initialize",
+      },
     },
     {
-      id: 'add_curr',
-      type: 'circle',
+      id: "add_curr",
+      type: "circle",
       position: { x: 400, y: 200 },
-      data: { 
-        number: '2', 
-        label: 'add curr to sum',
-        detail: 'sum += current',
-        color: '#00D084',
-        isActive: currentStepData.node === 'add_curr'
-      }
+      data: {
+        number: "2",
+        label: "add curr to sum",
+        detail: "sum += current",
+        color: "#00D084",
+        isActive: currentStepData.node === "add_curr",
+      },
     },
     {
-      id: 'found_target',
-      type: 'diamond',
+      id: "found_target",
+      type: "diamond",
       position: { x: 600, y: 200 },
-      data: { 
-        number: '3', 
-        label: 'found target?',
-        detail: 'target = sum - k, target in map?',
-        color: '#00D084',
-        isActive: currentStepData.node === 'found_target'
-      }
+      data: {
+        number: "3",
+        label: "found target?",
+        detail: "target = sum - k, target in map?",
+        color: "#00D084",
+        isActive: currentStepData.node === "found_target",
+      },
     },
     {
-      id: 'increment_count',
-      type: 'circle',
+      id: "increment_count",
+      type: "circle",
       position: { x: 800, y: 100 },
-      data: { 
-        number: '4', 
-        label: 'increment count',
-        detail: 'count += map[target]',
-        color: '#00D084',
-        isActive: currentStepData.node === 'increment_count'
-      }
+      data: {
+        number: "4",
+        label: "increment count",
+        detail: "count += map[target]",
+        color: "#00D084",
+        isActive: currentStepData.node === "increment_count",
+      },
     },
     {
-      id: 'update_hashmap',
-      type: 'circle',
+      id: "update_hashmap",
+      type: "circle",
       position: { x: 800, y: 300 },
-      data: { 
-        number: '5', 
-        label: 'update hashmap',
-        detail: 'map[sum] += 1',
-        color: '#00D084',
-        isActive: currentStepData.node === 'update_hashmap'
-      }
+      data: {
+        number: "5",
+        label: "update hashmap",
+        detail: "map[sum] += 1",
+        color: "#00D084",
+        isActive: currentStepData.node === "update_hashmap",
+      },
     },
     {
-      id: 'return_count',
-      type: 'circle',
+      id: "return_count",
+      type: "circle",
       position: { x: 1000, y: 200 },
-      data: { 
-        number: '6', 
-        label: 'return count',
-        detail: 'Return result',
-        color: '#00CEFF',
-        isActive: currentStepData.node === 'return_count'
-      }
-    }
+      data: {
+        number: "6",
+        label: "return count",
+        detail: "Return result",
+        color: "#00CEFF",
+        isActive: currentStepData.node === "return_count",
+      },
+    },
   ];
 
   const initialEdges = [
-    { 
-      id: 'e-init-add', 
-      source: 'initialize', 
-      target: 'add_curr',
-      label: 'iterate',
-      sourceHandle: 'right',
-      targetHandle: 'left',
-      animated: currentStepData.node === 'initialize',
-      style: { stroke: currentStepData.node === 'initialize' ? '#00CEFF' : '#999', strokeWidth: 3 },
+    {
+      id: "e-init-add",
+      source: "initialize",
+      target: "add_curr",
+      label: "iterate",
+      sourceHandle: "right",
+      targetHandle: "left",
+      animated: currentStepData.node === "initialize",
+      style: { stroke: currentStepData.node === "initialize" ? "#00CEFF" : "#999", strokeWidth: 3 },
       markerEnd: {
         type: MarkerType.ArrowClosed,
-        color: currentStepData.node === 'initialize' ? '#00CEFF' : '#999'
-      }
+        color: currentStepData.node === "initialize" ? "#00CEFF" : "#999",
+      },
     },
-    { 
-      id: 'e-add-found', 
-      source: 'add_curr', 
-      target: 'found_target',
-      sourceHandle: 'right',
-      targetHandle: 'left',
-      animated: currentStepData.node === 'add_curr',
-      style: { stroke: currentStepData.node === 'add_curr' ? '#00D084' : '#999', strokeWidth: 3 },
+    {
+      id: "e-add-found",
+      source: "add_curr",
+      target: "found_target",
+      sourceHandle: "right",
+      targetHandle: "left",
+      animated: currentStepData.node === "add_curr",
+      style: { stroke: currentStepData.node === "add_curr" ? "#00D084" : "#999", strokeWidth: 3 },
       markerEnd: {
         type: MarkerType.ArrowClosed,
-        color: currentStepData.node === 'update_hashmap' && currentStep < steps.length - 2 ? '#00D084' : '#999'
-      }
+        color:
+          currentStepData.node === "update_hashmap" && currentStep < steps.length - 2
+            ? "#00D084"
+            : "#999",
+      },
     },
-    { 
-      id: 'e-found-increment', 
-      source: 'found_target', 
-      target: 'increment_count',
-      label: 'True',
-      sourceHandle: 'right',
-      targetHandle: 'left',
-      animated: currentStepData.node === 'found_target' && currentStep < 15,
-      style: { stroke: currentStepData.node === 'found_target' && currentStep < 15 ? '#00D084' : '#999', strokeWidth: 3 },
-      markerEnd: {
-        type: MarkerType.ArrowClosed,
-        color: currentStepData.node === 'update_hashmap' && currentStep < steps.length - 2 ? '#FCB900' : '#999'
-      }
-    },
-    { 
-      id: 'e-found-update', 
-      source: 'found_target', 
-      target: 'update_hashmap',
-      label: 'False',
-      sourceHandle: 'right',
-      targetHandle: 'top',
-      animated: currentStepData.node === 'found_target' && currentStep >= 15,
-      style: { stroke: currentStepData.node === 'found_target' && currentStep >= 15 ? '#FCB900' : '#999', strokeWidth: 3 }
-    },
-    { 
-      id: 'e-increment-update', 
-      source: 'increment_count', 
-      target: 'update_hashmap',
-      sourceHandle: 'bottom',
-      targetHandle: 'top',
-      animated: currentStepData.node === 'increment_count',
-      style: { stroke: currentStepData.node === 'increment_count' ? '#00D084' : '#999', strokeWidth: 3 },
-      markerEnd: {
-        type: MarkerType.ArrowClosed,
-        color: currentStepData.node === 'update_hashmap' && currentStep < steps.length - 2 ? '#FCB900' : '#999'
-      }
-    },
-    { 
-      id: 'e-update-add', 
-      source: 'update_hashmap', 
-      target: 'add_curr',
-      label: 'loop',
-      type: 'straight',
-      sourceHandle: 'left',
-      targetHandle: 'left',
-      animated: currentStepData.node === 'update_hashmap' && currentStep < steps.length - 2,
-      style: { 
-        stroke: currentStepData.node === 'update_hashmap' && currentStep < steps.length - 2 ? '#FCB900' : '#999', 
+    {
+      id: "e-found-increment",
+      source: "found_target",
+      target: "increment_count",
+      label: "True",
+      sourceHandle: "right",
+      targetHandle: "left",
+      animated: currentStepData.node === "found_target" && currentStep < 15,
+      style: {
+        stroke: currentStepData.node === "found_target" && currentStep < 15 ? "#00D084" : "#999",
         strokeWidth: 3,
-        strokeDasharray: '5,5'
       },
       markerEnd: {
         type: MarkerType.ArrowClosed,
-        color: currentStepData.node === 'update_hashmap' && currentStep < steps.length - 2 ? '#FCB900' : '#999'
-      }
+        color:
+          currentStepData.node === "update_hashmap" && currentStep < steps.length - 2
+            ? "#FCB900"
+            : "#999",
+      },
     },
-    { 
-      id: 'e-update-return', 
-      source: 'update_hashmap', 
-      target: 'return_count',
-      label: 'exit',
-      sourceHandle: 'right',
-      targetHandle: 'left',
-      animated: currentStepData.node === 'update_hashmap' && currentStep >= steps.length - 2,
-      style: { stroke: currentStepData.node === 'update_hashmap' && currentStep >= steps.length - 2 ? '#00CEFF' : '#999', strokeWidth: 3 },
+    {
+      id: "e-found-update",
+      source: "found_target",
+      target: "update_hashmap",
+      label: "False",
+      sourceHandle: "right",
+      targetHandle: "top",
+      animated: currentStepData.node === "found_target" && currentStep >= 15,
+      style: {
+        stroke: currentStepData.node === "found_target" && currentStep >= 15 ? "#FCB900" : "#999",
+        strokeWidth: 3,
+      },
+    },
+    {
+      id: "e-increment-update",
+      source: "increment_count",
+      target: "update_hashmap",
+      sourceHandle: "bottom",
+      targetHandle: "top",
+      animated: currentStepData.node === "increment_count",
+      style: {
+        stroke: currentStepData.node === "increment_count" ? "#00D084" : "#999",
+        strokeWidth: 3,
+      },
       markerEnd: {
         type: MarkerType.ArrowClosed,
-        color: currentStepData.node === 'update_hashmap' && currentStep >= steps.length - 2 ? '#00CEFF' : '#999'
-      }
-    }
+        color:
+          currentStepData.node === "update_hashmap" && currentStep < steps.length - 2
+            ? "#FCB900"
+            : "#999",
+      },
+    },
+    {
+      id: "e-update-add",
+      source: "update_hashmap",
+      target: "add_curr",
+      label: "loop",
+      type: "straight",
+      sourceHandle: "left",
+      targetHandle: "left",
+      animated: currentStepData.node === "update_hashmap" && currentStep < steps.length - 2,
+      style: {
+        stroke:
+          currentStepData.node === "update_hashmap" && currentStep < steps.length - 2
+            ? "#FCB900"
+            : "#999",
+        strokeWidth: 3,
+        strokeDasharray: "5,5",
+      },
+      markerEnd: {
+        type: MarkerType.ArrowClosed,
+        color:
+          currentStepData.node === "update_hashmap" && currentStep < steps.length - 2
+            ? "#FCB900"
+            : "#999",
+      },
+    },
+    {
+      id: "e-update-return",
+      source: "update_hashmap",
+      target: "return_count",
+      label: "exit",
+      sourceHandle: "right",
+      targetHandle: "left",
+      animated: currentStepData.node === "update_hashmap" && currentStep >= steps.length - 2,
+      style: {
+        stroke:
+          currentStepData.node === "update_hashmap" && currentStep >= steps.length - 2
+            ? "#00CEFF"
+            : "#999",
+        strokeWidth: 3,
+      },
+      markerEnd: {
+        type: MarkerType.ArrowClosed,
+        color:
+          currentStepData.node === "update_hashmap" && currentStep >= steps.length - 2
+            ? "#00CEFF"
+            : "#999",
+      },
+    },
   ];
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
@@ -327,26 +408,33 @@ export default function ReactFlowSample() {
         data: {
           ...node.data,
           isActive: node.id === stepData.node,
-          iteration: node.id === 'counter' ? stepData.iteration : node.data.iteration,
-          detail: node.id === 'counter' 
-            ? `Step ${currentStep + 1}/${steps.length}`
-            : node.id === 'process'
-            ? `arr[${stepData.iteration}]`
-            : node.data.detail
-        }
+          iteration: node.id === "counter" ? stepData.iteration : node.data.iteration,
+          detail:
+            node.id === "counter"
+              ? `Step ${currentStep + 1}/${steps.length}`
+              : node.id === "process"
+              ? `arr[${stepData.iteration}]`
+              : node.data.detail,
+        },
       }))
     );
 
     setEdges((eds) =>
       eds.map((edge) => {
-        const isActive = 
-          (edge.id === 'e-init-add' && stepData.node === 'initialize') ||
-          (edge.id === 'e-add-found' && stepData.node === 'add_curr') ||
-          (edge.id === 'e-found-increment' && stepData.node === 'found_target' && currentStep < 8) ||
-          (edge.id === 'e-found-update' && stepData.node === 'found_target' && currentStep >= 8) ||
-          (edge.id === 'e-increment-update' && stepData.node === 'increment_count') ||
-          (edge.id === 'e-update-add' && stepData.node === 'update_hashmap' && currentStep < steps.length - 2) ||
-          (edge.id === 'e-update-return' && stepData.node === 'update_hashmap' && currentStep >= steps.length - 2);
+        const isActive =
+          (edge.id === "e-init-add" && stepData.node === "initialize") ||
+          (edge.id === "e-add-found" && stepData.node === "add_curr") ||
+          (edge.id === "e-found-increment" &&
+            stepData.node === "found_target" &&
+            currentStep < 8) ||
+          (edge.id === "e-found-update" && stepData.node === "found_target" && currentStep >= 8) ||
+          (edge.id === "e-increment-update" && stepData.node === "increment_count") ||
+          (edge.id === "e-update-add" &&
+            stepData.node === "update_hashmap" &&
+            currentStep < steps.length - 2) ||
+          (edge.id === "e-update-return" &&
+            stepData.node === "update_hashmap" &&
+            currentStep >= steps.length - 2);
 
         return {
           ...edge,
@@ -354,12 +442,36 @@ export default function ReactFlowSample() {
           animated: false,
           style: {
             ...edge.style,
-            stroke: isActive ? (edge.id.includes('update-add') ? '#FCB900' : edge.id.includes('found-increment') ? '#00D084' : edge.id.includes('found-update') ? '#FCB900' : edge.id.includes('update-return') ? '#00CEFF' : edge.id.includes('add-found') ? '#00D084' : '#00CEFF') : '#999'
+            stroke: isActive
+              ? edge.id.includes("update-add")
+                ? "#FCB900"
+                : edge.id.includes("found-increment")
+                ? "#00D084"
+                : edge.id.includes("found-update")
+                ? "#FCB900"
+                : edge.id.includes("update-return")
+                ? "#00CEFF"
+                : edge.id.includes("add-found")
+                ? "#00D084"
+                : "#00CEFF"
+              : "#999",
           },
           markerEnd: {
             ...edge.markerEnd,
-            color: isActive ? (edge.id.includes('update-add') ? '#FCB900' : edge.id.includes('found-increment') ? '#00D084' : edge.id.includes('found-update') ? '#FCB900' : edge.id.includes('update-return') ? '#00CEFF' : edge.id.includes('add-found') ? '#00D084' : '#00CEFF') : '#999'
-          }
+            color: isActive
+              ? edge.id.includes("update-add")
+                ? "#FCB900"
+                : edge.id.includes("found-increment")
+                ? "#00D084"
+                : edge.id.includes("found-update")
+                ? "#FCB900"
+                : edge.id.includes("update-return")
+                ? "#00CEFF"
+                : edge.id.includes("add-found")
+                ? "#00D084"
+                : "#00CEFF"
+              : "#999",
+          },
         };
       })
     );
@@ -395,8 +507,8 @@ export default function ReactFlowSample() {
   }, [isPlaying, currentStep]);
 
   return (
-    <div className="w-full h-screen flex flex-col bg-gradient-to-br from-purple-100 to-blue-100">
-      <div className="bg-white shadow-lg p-4 z-10">
+    <div className="w-full min-h-screen flex flex-col bg-gradient-to-br from-purple-100 to-blue-100">
+      <div className="bg-white shadow-lg p-4 z-10 sticky top-0">
         <div className="flex gap-4 justify-center items-center">
           <button
             onClick={() => setIsPlaying(!isPlaying)}
@@ -425,9 +537,24 @@ export default function ReactFlowSample() {
             🔄 Reset
           </button>
         </div>
+
+        {/* <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 mt-4 rounded">
+          <p className="font-semibold text-gray-800">{currentStepData.message}</p>
+        </div> */}
       </div>
 
-      <div className="flex-1">
+      <div className="p-4 space-y-4">
+        <SimpleArray data={input} currentIndex={currentStepData.state?.i} />
+        <div className="grid grid-cols-2 gap-4">
+          <VariableTable state={currentStepData.state} variableSchema={variableSchema} />
+          <CodeSnippet
+            code={subarraySumCode.code}
+            highlightedLines={currentStepData.node ? subarraySumCode.lineMap[currentStepData.node] : []}
+          />
+        </div>
+      </div>
+
+      <div className="h-[800px] mb-8">
         <ReactFlow
           nodes={nodes}
           edges={edges}
@@ -436,7 +563,10 @@ export default function ReactFlowSample() {
           nodeTypes={nodeTypes}
           fitView
           attributionPosition="bottom-left"
-        />
+        >
+          <Background color="#ddd" gap={16} />
+          <Controls />
+        </ReactFlow>
       </div>
     </div>
   );

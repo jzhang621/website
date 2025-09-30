@@ -35,19 +35,19 @@ const ArrayWithAnimation: React.FC = () => {
     } = useAnimation<DataItem>(data, stepDuration, resetKey, indexTransition, isStarted);
 
     return (
-        <div className="mt-12 relative">
-            <PlayButton
-                onClick={restartAnimation}
-                restartKey={resetKey}
-                progress={progress}
-                disabled={isStarted && (!variableFinished || !dataFinished)}
-            />
-            <Array data={dataEvents} variables={interpolatedEvents} boxSize={40} margin={10} />
+      <div className="mt-12 relative">
+        <PlayButton
+          onClick={restartAnimation}
+          restartKey={resetKey}
+          progress={progress}
+          disabled={isStarted && (!variableFinished || !dataFinished)}
+        />
+        <Array data={dataEvents} variables={interpolatedEvents} boxSize={20} margin={10} />
 
-            <div className="absolute bottom-2 right-4 text-xs text-[#A9778Daa]">
-                {progressText(currentStep - 1, data.length - 1)}
-            </div>
+        <div className="absolute bottom-2 right-4 text-xs text-[#A9778Daa]">
+          {progressText(currentStep - 1, data.length - 1)}
         </div>
+      </div>
     );
 };
 
