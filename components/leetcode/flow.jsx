@@ -122,18 +122,8 @@ const nodeTypes = {
 const VariableTable = ({ state, variableSchema }) => {
   if (!state || !variableSchema) return null;
 
-  // Sort variables: defined values first (by schema order), then undefined at bottom
-  const sortedVariables = [...variableSchema].sort((a, b) => {
-    const aValue = state[a.name];
-    const bValue = state[b.name];
-
-    // If both defined or both undefined, use schema order
-    if ((aValue === undefined) === (bValue === undefined)) {
-      return a.order - b.order;
-    }
-    // Defined values come first
-    return aValue === undefined ? 1 : -1;
-  });
+  // Keep variables in consistent schema order
+  const sortedVariables = [...variableSchema].sort((a, b) => a.order - b.order);
 
   return (
     <div className="bg-slate-50 rounded-lg shadow-lg p-4 text-purple-800">
@@ -509,30 +499,30 @@ export default function ReactFlowSample() {
   return (
     <div className="w-full min-h-screen flex flex-col bg-gradient-to-br from-purple-100 to-blue-100">
       <div className="bg-white shadow-lg p-4 z-10 sticky top-0">
-        <div className="flex gap-4 justify-center items-center">
+        <div className="flex gap-3 justify-center items-center">
           <button
             onClick={() => setIsPlaying(!isPlaying)}
-            className="bg-purple-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-purple-700 transition"
+            className="bg-purple-600 text-white px-4 py-1.5 rounded-md text-sm font-semibold hover:bg-purple-700 transition"
           >
             {isPlaying ? "⏸ Pause" : "▶ Play"}
           </button>
           <button
             onClick={prevStep}
             disabled={currentStep === 0}
-            className="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition disabled:bg-gray-400"
+            className="bg-blue-600 text-white px-4 py-1.5 rounded-md text-sm font-semibold hover:bg-blue-700 transition disabled:bg-gray-400"
           >
             ← Previous
           </button>
           <button
             onClick={nextStep}
             disabled={currentStep === steps.length - 1}
-            className="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition disabled:bg-gray-400"
+            className="bg-blue-600 text-white px-4 py-1.5 rounded-md text-sm font-semibold hover:bg-blue-700 transition disabled:bg-gray-400"
           >
             Next →
           </button>
           <button
             onClick={reset}
-            className="bg-gray-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-gray-700 transition"
+            className="bg-gray-600 text-white px-4 py-1.5 rounded-md text-sm font-semibold hover:bg-gray-700 transition"
           >
             🔄 Reset
           </button>
@@ -549,7 +539,9 @@ export default function ReactFlowSample() {
           <VariableTable state={currentStepData.state} variableSchema={variableSchema} />
           <CodeSnippet
             code={subarraySumCode.code}
-            highlightedLines={currentStepData.node ? subarraySumCode.lineMap[currentStepData.node] : []}
+            highlightedLines={
+              currentStepData.node ? subarraySumCode.lineMap[currentStepData.node] : []
+            }
           />
         </div>
       </div>
