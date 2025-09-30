@@ -397,18 +397,12 @@ export default function ReactFlowSample() {
   return (
     <div className="w-full h-screen flex flex-col bg-gradient-to-br from-purple-100 to-blue-100">
       <div className="bg-white shadow-lg p-4 z-10">
-       
-        
-        <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-4 rounded">
-          <p className="font-semibold text-gray-800">{currentStepData.message}</p>
-        </div>
-
         <div className="flex gap-4 justify-center items-center">
           <button
             onClick={() => setIsPlaying(!isPlaying)}
             className="bg-purple-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-purple-700 transition"
           >
-            {isPlaying ? '⏸ Pause' : '▶ Play'}
+            {isPlaying ? "⏸ Pause" : "▶ Play"}
           </button>
           <button
             onClick={prevStep}
@@ -430,9 +424,6 @@ export default function ReactFlowSample() {
           >
             🔄 Reset
           </button>
-          <div className="bg-white px-4 py-2 rounded-lg border-2 border-gray-300 font-mono">
-            Step: {currentStep + 1} / {steps.length}
-          </div>
         </div>
       </div>
 
@@ -445,10 +436,7 @@ export default function ReactFlowSample() {
           nodeTypes={nodeTypes}
           fitView
           attributionPosition="bottom-left"
-        >
-          <Background color="#ddd" gap={16} />
-          <Controls />
-        </ReactFlow>
+        />
       </div>
     </div>
   );
