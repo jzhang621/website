@@ -477,7 +477,7 @@ export default function ReactFlowSample() {
     );
 
     setIteration(stepData.iteration);
-  }, [currentStep, setNodes, setEdges]);
+  }, [currentStep, setNodes, setEdges, steps]);
 
   const nextStep = () => {
     if (currentStep < steps.length - 1) {
@@ -504,7 +504,7 @@ export default function ReactFlowSample() {
       const timer = setTimeout(nextStep, 800);
       return () => clearTimeout(timer);
     }
-  }, [isPlaying, currentStep]);
+  }, [isPlaying, currentStep, nextStep]);
 
   return (
     <div className="w-full min-h-screen flex flex-col bg-gradient-to-br from-purple-100 to-blue-100">

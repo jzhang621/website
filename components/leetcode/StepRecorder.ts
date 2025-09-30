@@ -5,7 +5,7 @@ export interface StepState {
   map?: Record<number, number>;
   currentElement?: number;
   target?: number;
-  [key: string]: any; // Allow additional properties
+  [key: string]: unknown; // Allow additional properties
 }
 
 export interface Step {
