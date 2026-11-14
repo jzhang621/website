@@ -1,0 +1,934 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="icon" href="/favicon.ico"><style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Sliding Window</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@500;600;700;800&display=swap">
+<style>
+:root{
+  --bg:#F5F6FA;--card:#FFFFFF;--line:#E0E4EE;--ink:#151A2D;--mut:#6C7390;
+  --ok:#3F5BD9;--onok:#FFFFFF;--tile:#F6F7FB;--fn:#CBD0E3;--loopbg:#EEF0F8;--fnt:#2C3352;--fa:#7A5BDD;--fat:#FFFFFF;--under:#4C68DF;--over:#DC3E42;--hit:#13986A;--gold:#D99A00;
+  --font:'Figtree',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --ease:cubic-bezier(.3,.8,.3,1);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0E1120;--card:#171B30;--line:#2A3050;--ink:#ECEEF8;--mut:#98A0BF;
+  --ok:#8EA2FF;--onok:#0E1120;--tile:#1F2440;--fn:#3A4262;--loopbg:#1F2542;--fnt:#DDE1F3;--fa:#B09CFF;--fat:#171433;--under:#8EA2FF;--over:#FF7276;--hit:#4ED6A0;--gold:#FFC24D;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E1120;--card:#171B30;--line:#2A3050;--ink:#ECEEF8;--mut:#98A0BF;
+  --ok:#8EA2FF;--onok:#0E1120;--tile:#1F2440;--fn:#3A4262;--loopbg:#1F2542;--fnt:#DDE1F3;--fa:#B09CFF;--fat:#171433;--under:#8EA2FF;--over:#FF7276;--hit:#4ED6A0;--gold:#FFC24D;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:500 16px/1.4 var(--font);min-height:100vh}
+.wrap{max-width:600px;margin:0 auto;padding-block:32px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:20px}
+
+/* one colour tells the state: blue = valid, red = over, green = match */
+#app{--st:var(--ok);--pc:var(--under)}
+#app.over{--st:var(--over);--pc:var(--over)}
+#app.match{--st:var(--hit);--pc:var(--hit)}
+
+h1{margin:0;font:800 22px var(--font);letter-spacing:-.01em}
+
+/* the array, with the window sliding over it */
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:14px}
+.ch{display:flex;justify-content:flex-start;align-items:center;gap:12px}
+.ch h2{margin:0;font:800 19px var(--font);letter-spacing:-.01em}
+.pill{padding:4px 13px;border-radius:99px;font:700 14px var(--font);white-space:nowrap;background:color-mix(in srgb,var(--pc) 16%,transparent);color:var(--pc);transition:background .3s,color .3s}
+.row{position:relative}
+.cells{position:relative;display:grid;grid-template-columns:repeat(var(--n),1fr)}
+.cell{position:relative;isolation:isolate;height:64px;display:grid;place-items:center;font:700 22px var(--font);font-variant-numeric:tabular-nums;transition:color .3s,opacity .3s}
+.cell::before{content:"";position:absolute;inset:7px 5px;z-index:-1;border-radius:11px;background:var(--tile);border:1px solid var(--line);box-shadow:0 2px 0 var(--line)}
+.cell.out{color:var(--mut);opacity:.55}
+.win{position:absolute;top:0;height:64px;left:calc(var(--l)/var(--n)*100% + 2px);width:calc((var(--r) - var(--l) + 1)/var(--n)*100% - 4px);
+  border:2.5px solid var(--st);border-radius:13px;background:color-mix(in srgb,var(--st) 14%,transparent);
+  transition:left .35s var(--ease),width .35s var(--ease),border-color .3s,background .3s;}
+#app.match .win{animation:pop .45s var(--ease)}
+@keyframes pop{40%{transform:scale(1.04)}}
+
+button{all:unset;box-sizing:border-box;cursor:pointer;text-align:center;padding:12px 20px;border-radius:12px;background:var(--card);border:1px solid var(--line);font:700 15px var(--font);color:var(--ink);transition:transform .12s,opacity .2s,border-color .2s}
+button:hover:not(:disabled){border-color:var(--mut)}
+button:active:not(:disabled){transform:scale(.96)}
+button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+button:disabled{opacity:.35;cursor:default}
+
+/* capacity: how full the window is against the target */
+.trk{position:relative;height:14px;border-radius:99px;background:color-mix(in srgb,var(--mut) 20%,transparent);margin-top:0}
+.fill{position:absolute;left:0;top:0;bottom:0;border-radius:99px;background:var(--st);width:var(--sp);transition:width .35s var(--ease),background .3s}
+.tick{position:absolute;top:-6px;bottom:-6px;width:3px;margin-left:-1.5px;border-radius:2px;background:var(--ink);left:var(--tp)}
+
+.ask{display:flex;flex-direction:column;gap:6px}
+.fr{display:flex;flex-wrap:nowrap;justify-content:space-between;align-items:center;gap:8px;padding-top:12px;border-top:1px solid var(--line)}
+.facts{margin:0;font:500 15px/1.4 var(--font);white-space:nowrap}
+.facts .sep{color:var(--mut);margin:0 6px}
+.fr .pill{font-size:12.5px;padding:4px 11px}
+.facts b{font-weight:800;font-variant-numeric:tabular-nums}
+.what{margin:8px 0 10px;font:700 18px/1.4 var(--font);color:var(--st);transition:color .3s}
+.slot{position:relative}
+.opts.off,.what.off{visibility:hidden}
+#st{position:absolute;top:0;left:0;right:0;padding:14px 16px;font-size:16px;border-radius:14px;background:var(--ok);color:var(--onok);border-color:var(--ok)}
+#st:hover:not(:disabled){border-color:var(--ok);filter:brightness(1.06)}
+#st[hidden]{display:none}
+/* before we start there is no window yet: hide (not remove) the stats, so nothing jumps when we do */
+#app:is([data-view="2"],[data-view="3"]).empty :is(.fr,.trk){visibility:hidden}
+#app.empty{--pc:var(--mut)}
+#app.empty .win{opacity:0}
+#app.empty .mk{display:none!important}
+.win{transition:left .35s var(--ease),width .35s var(--ease),border-color .3s,background .3s,opacity .3s}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opts[hidden]{display:none}
+.opts button{padding:14px 16px;font-size:16px;text-align:left;border-radius:14px}
+.note{margin:2px 0 0;min-height:21px;font:500 14px/1.5 var(--font);color:var(--mut)}
+/* header buttons */
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.acts{display:flex;gap:8px}
+
+/* flowchart: neutral nodes, the step we are on lights up in the accent */
+.sr{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:22px}
+.seg{display:inline-flex;gap:2px;padding:3px;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+.seg button{border:0;background:none;padding:7px 16px;border-radius:9px;font:700 14px var(--font);color:var(--mut);white-space:nowrap}
+.seg button[aria-pressed=true]{background:var(--ink);color:var(--card)}
+#app:not([data-view="2"]):not([data-view="3"]) .ch{display:none}
+#pvz2 .card{padding:10px 12px}
+.achs{display:none;grid-template-columns:1fr 1fr;gap:8px}
+#app[data-view="5"] .achs{display:grid}
+#app[data-view="4"] #fcard{display:none}
+#app[data-view="4"] #cap{display:none}
+.nxd{display:none;margin-top:8px}#app[data-view="5"] .nxd{display:block}
+.nxd button{padding:12px 28px;font-size:14.5px;border-radius:12px;color:var(--ok);border-color:color-mix(in srgb,var(--ok) 45%,var(--line))}
+.okc{color:var(--ok);font-weight:800;margin-right:2px}
+.ap{display:none}#app[data-view="4"] .ap{display:block}
+.ap button{padding:12px 28px;font-size:14.5px;border-radius:12px;color:var(--ok);border-color:color-mix(in srgb,var(--ok) 45%,var(--line))}.ap button:disabled{color:var(--mut);border-color:var(--line)}
+.achs button{padding:12px 8px;font-size:14.5px;border-radius:12px;color:var(--ok);border-color:color-mix(in srgb,var(--ok) 45%,var(--line))}
+.achs button:disabled{color:var(--mut);border-color:var(--line)}
+.achs button.ok:disabled{color:var(--hit);border-color:var(--hit);background:color-mix(in srgb,var(--hit) 12%,var(--card));opacity:1}
+.achs button.ok::before{content:'\2713';margin-right:6px;font-weight:800}
+.ld{margin:0;font:600 14.5px/1.45 var(--font);text-wrap:pretty;display:none}
+#app[data-view="4"] #ld4,#app[data-view="6"] #ld6{display:block}
+#app[data-view="5"].ask #ldT,#app[data-view="5"].editing #ldT,#app[data-view="5"]:not(.ask) #ldS{display:block}
+.ptx .cap{text-align:left;min-height:0}
+@media (min-width:820px){.ld{font-size:19px;line-height:1.5}.ptx .cap{font-size:17px;line-height:1.5;font-weight:500}}
+/* third view: variables */
+.vars{display:none;grid-template-columns:1fr 1fr 1.35fr 1fr;gap:8px}
+#app[data-view="6"] .fr{display:none}
+.v{min-width:0;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:6px 10px 5px}
+.v.t{background:none;border-style:dashed}
+.vn{display:block;font:600 10.5px ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--mut)}
+.v b{display:block;font:800 22px/1.15 var(--font);font-variant-numeric:tabular-nums}
+.v.t b{color:var(--mut)}
+code{font:600 .86em ui-monospace,SFMono-Regular,Menlo,monospace;background:color-mix(in srgb,var(--mut) 16%,transparent);padding:1px 5px;border-radius:5px}
+.mk{position:absolute;left:calc((var(--l) + .5)/var(--n)*100%);display:none;align-items:center;transform:translateX(-50%);transition:left .35s var(--ease);pointer-events:none;z-index:2}
+.mk span{font:600 10.5px ui-monospace,SFMono-Regular,Menlo,monospace;padding:2px 7px;border-radius:7px;background:var(--ink);color:var(--card)}
+.mk::after{content:"";border:5px solid transparent}
+.mkl{top:-24px;flex-direction:column}
+.mkl::after{border-top-color:var(--ink);border-bottom-width:0}
+.mkr{left:calc((var(--r) + .5)/var(--n)*100%);bottom:-24px;flex-direction:column-reverse}
+.mkr::after{border-bottom-color:var(--ink);border-top-width:0}
+#app[data-view="6"] .mk{display:flex}
+#app[data-view="6"] .row{padding-block:25px}
+#app[data-view="6"] .trk{display:none}
+#flow .code{display:none;fill:var(--mut);font:500 9.5px ui-monospace,SFMono-Regular,Menlo,monospace;text-anchor:middle}
+/* fourth view: the flowchart as python */
+.code{display:none;margin:0;padding:8px 4px;font:500 clamp(8.5px,calc((100vw - 88px)/29),11px)/1.55 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--ink);white-space:pre;overflow-x:auto;background:var(--loopbg);border-radius:12px}
+#app[data-view="6"] pre.code{display:block}
+#app[data-view="6"] #cap{display:none}
+#app[data-view="6"]:not([data-crun]) :is(#wcard,#vars){display:none}
+#app[data-view="6"][data-crun] #vars{display:grid}
+#app[data-view="6"][data-crun] :is(#wcard,#vars){animation:cin .5s var(--ease) both}
+#app[data-view="6"][data-crun] #vars{animation-delay:.12s}
+@keyframes cin{from{opacity:0;transform:translateY(14px)}}
+.fslot,.cdo,.cfb{display:none}
+#app[data-view="6"] :is(.fslot,.cdo,.cfb){display:block}
+.fslot{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:10px 12px}
+.cfb{margin:0;font:500 14.5px/1.45 var(--font);min-height:1.45em;text-wrap:pretty}
+.cdo button{padding:12px 28px;font-size:14.5px;color:var(--ok);border-color:color-mix(in srgb,var(--ok) 45%,var(--line))}
+.cdo button:disabled{color:var(--mut);border-color:var(--line)}
+#app[data-view="6"] .pg{display:none}
+#app[data-view="6"] .code{font-size:12px;line-height:2.2}
+.bk{all:unset;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;min-width:4.4ch;height:1.8em;line-height:1;padding:0 .6ch;margin:0 .2ch;vertical-align:middle;text-align:center;border:1.5px dashed color-mix(in srgb,var(--mut) 65%,transparent);border-radius:6px;background:var(--card);color:var(--fa);font:inherit;font-weight:700;cursor:pointer;transition:border-color .2s,background .2s,box-shadow .2s}
+.bk.fill{border-style:solid;border-color:var(--line)}
+.bk.sel,.bk.hov{border-style:solid;border-color:var(--fa);box-shadow:0 0 0 3px color-mix(in srgb,var(--fa) 22%,transparent)}
+.bk.ok{border-style:solid;border-color:var(--hit);color:var(--hit);background:color-mix(in srgb,var(--hit) 10%,var(--card));cursor:default;box-shadow:none}
+.bk.bad{border-style:solid;border-color:var(--over);color:var(--over);animation:shk .3s}
+.cl.pk{background:color-mix(in srgb,var(--fa) 12%,transparent);border-left-color:var(--fa)}
+.ctray{display:none;flex-wrap:wrap;gap:8px;justify-content:center;padding:12px 0 4px}
+#app[data-view="6"] .ctray{display:flex}
+#app[data-view="6"] .ctray.done{display:none}
+.chip{all:unset;box-sizing:border-box;min-width:46px;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--card);font:700 13px ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--fa);text-align:center;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;box-shadow:0 1px 0 var(--line)}
+.chip:focus-visible{outline:2px solid var(--fa);outline-offset:2px}
+.chip.used{visibility:hidden}
+.chip.ghost{position:fixed;left:0;top:0;z-index:50;pointer-events:none;cursor:grabbing;box-shadow:0 8px 20px rgba(0,0,0,.18)}
+#flow .chs.hl .lb{fill:var(--fa);font-weight:700}
+.cl{display:block;padding:0 8px;border-left:3px solid transparent;border-radius:3px;transition:background .25s,border-color .25s}
+.cl .cm{color:var(--mut);transition:color .25s}
+.cl .k{color:var(--fa);font-weight:700}
+.cl.cx{background:color-mix(in srgb,var(--fa) 9%,transparent)}
+.cl.on{background:color-mix(in srgb,var(--fa) 24%,transparent);border-left-color:var(--fa)}
+.cl.cx .cm{color:var(--ink)}
+.cl.on .cm{color:var(--fa);font-weight:700}
+.car{overflow:hidden;margin:-6px;padding:6px;transition:height .35s var(--ease);touch-action:pan-y}
+.track{display:flex;align-items:flex-start;transition:transform .38s var(--ease)}
+.slide{flex:0 0 100%;min-width:0;display:flex;flex-direction:column;gap:20px}
+.slide[inert]{visibility:hidden;transition:visibility 0s .4s}
+/* the flowchart becomes the code */
+.cl .cm{transition:color .25s,opacity .3s}
+.ct{transition:opacity .3s}
+/* section header: where you are, and a way to move */
+.sec{display:flex;flex-direction:column;gap:14px;margin-top:22px}
+.shd{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.shd>div:first-child{display:flex;flex-direction:column;gap:2px;min-width:0}
+.stt{font:800 20px/1.2 var(--font);letter-spacing:-.005em}
+.sa{display:flex;gap:8px;flex:none}
+.segs{display:flex;gap:4px}
+.segs button{position:relative;flex:1;height:5px;padding:0;border:0;border-radius:99px;background:var(--line);transition:background .25s}
+.segs button::before{content:"";position:absolute;inset:-10px 0}
+.segs button.past{background:var(--mut);opacity:.55}
+.segs button[aria-current=true]{background:var(--ink)}
+.sr{display:none}
+#app:is([data-view="4"],[data-view="5"]) .sr{display:flex}
+#pvz2 .sr{margin:0;justify-content:flex-start}
+/* first view: the problem, with worked examples drawn like the window below */
+#app[data-view="0"] #wcard,#app[data-view="0"] #rs,#app[data-view="0"] .seg,#app[data-view="1"] #wcard,#app[data-view="1"] #rs,#app[data-view="1"] .seg,#app[data-view="2"] .seg,#app[data-view="2"] .sr,#app[data-view="3"] .seg,#app[data-view="3"] .sr{display:none}
+#s0{gap:10px}
+.pq{margin:0;font:500 16px/1.45 var(--font)}
+.pq b{font-weight:800}
+.pq.sub{font-size:14px;color:var(--mut)}
+/* the sample problem: drag across the numbers, then check */
+.pz{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px 14px 14px;display:flex;flex-direction:column;gap:14px}
+.pzf{margin:0;font:500 15px/1.4 var(--font);text-align:center;font-variant-numeric:tabular-nums}
+.pzf b{font-weight:800}.pzf .sep{color:var(--mut);margin:0 6px}
+.pzr{display:grid;grid-template-columns:repeat(var(--n),1fr);gap:6px;touch-action:none;user-select:none;-webkit-user-select:none}
+.pzr .tl{height:54px;display:grid;place-items:center;border-radius:12px;background:var(--tile);border:2px solid transparent;font:800 20px var(--font);font-variant-numeric:tabular-nums;cursor:pointer;transition:background .15s,border-color .15s}
+.pzr .tl:focus{outline:none}.pzr .tl:focus-visible{border-color:var(--ink)}
+.pzr .tl.on{background:color-mix(in srgb,var(--ok) 16%,var(--card));border-color:var(--ok)}
+.pzr.good .tl.on{background:color-mix(in srgb,var(--hit) 18%,var(--card));border-color:var(--hit)}
+.pzr.lock .tl{cursor:default}
+.pzr.no{animation:shk2 .3s}
+@keyframes shk2{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.pza{display:grid;grid-template-columns:1fr 1fr;gap:10px;position:relative}
+.pza button{padding:12px 10px}
+#pc{background:var(--ok);color:var(--onok);border-color:var(--ok)}
+.pzx{position:absolute;inset:0;visibility:hidden;background:var(--ok);color:var(--onok);border-color:var(--ok)}
+.pz.done .pzx{visibility:visible}.pz.done :is(#pc,#pn){visibility:hidden}
+.exh{margin:6px 0 -2px;font:700 11px var(--font);letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
+.exs{display:flex;flex-direction:column;gap:10px}
+.exs .hr{padding:12px 14px 14px 8px;row-gap:6px}
+.hr .exc{grid-column:1/-1;margin-left:4px;font:600 12px var(--font);letter-spacing:.02em;color:var(--mut)}
+.hr .exc b{color:var(--ink);font-weight:800}
+#cp{font-size:22px;line-height:1;padding:2px 8px}
+.cap{margin:0;min-height:46px;font:600 15px/1.45 var(--font);text-align:center}
+.cap b{font-weight:800;font-variant-numeric:tabular-nums}
+/* flowchart: a shaded loop region, neutral nodes, the current step lights up */
+#flow{display:block;width:100%;height:auto}
+#flow .region{fill:var(--loopbg)}
+#flow .lp{fill:var(--mut);font:600 10px var(--font);text-anchor:middle;letter-spacing:.03em}
+#flow .e{fill:none;stroke:var(--mut);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+#flow .lb{fill:var(--mut);font:500 8.5px var(--font);text-anchor:middle;dominant-baseline:central;paint-order:stroke;stroke:var(--loopbg);stroke-width:5;stroke-linejoin:round}
+#flow .lb.o{stroke:var(--card)}
+#flow .t{fill:var(--ink);font:600 11px var(--font);text-anchor:middle}
+#flow .dt{fill:var(--fnt);font:600 11px var(--font);text-anchor:middle;transition:fill .25s}
+#flow .pt{fill:var(--fnt);font:700 11.5px var(--font);text-anchor:middle;dominant-baseline:central;transition:fill .25s}
+#flow .d,#flow .dia,#flow .pill{fill:var(--fn);transition:fill .25s}
+#flow .halo{fill:none;stroke:var(--fa);stroke-width:2;opacity:0;transition:opacity .25s}
+#flow .n.on .d,#flow .n.on .dia,#flow .n.on .pill{fill:var(--fa)}
+#flow .n.on .dt,#flow .n.on .pt{fill:var(--fat)}
+#flow .n.on .halo{opacity:.22}
+#flow .n.on .t{fill:var(--fa)}
+.pg{display:flex;align-items:center;gap:10px;margin:0 2px}
+.pt{flex:1;height:6px;border-radius:99px;background:var(--line);overflow:hidden}
+.pt i{display:block;height:100%;width:0;border-radius:99px;background:var(--fa);transition:width .35s var(--ease)}
+#plab{font:600 11px var(--font);color:var(--mut);font-variant-numeric:tabular-nums;min-width:38px;text-align:center}
+.rb{flex:none;width:36px;height:36px;padding:0;border-radius:50%;display:grid;place-items:center;border:1.5px solid var(--mut);background:var(--card)}
+.rb svg{width:18px;height:18px;fill:none;stroke:var(--mut);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.rb.nx{background:var(--fa);border-color:var(--fa)}
+.rb.nx svg{stroke:var(--fat)}
+.rb:disabled{opacity:.3;cursor:default}
+/* try it yourself: every window brute force checks; the pointer leaps over the ones that can be skipped */
+#app:is([data-view="2"],[data-view="3"],[data-view="4"],[data-view="5"],[data-view="6"]){--st:var(--under);--pc:var(--under)}
+#app:is([data-view="2"],[data-view="3"]) #pill{display:none}
+#app:is([data-view="2"],[data-view="3"],[data-view="4"],[data-view="5"],[data-view="6"]).over{--st:var(--over);--pc:var(--over)}
+#app:is([data-view="2"],[data-view="3"],[data-view="4"],[data-view="5"],[data-view="6"]).match{--st:var(--hit);--pc:var(--hit)}
+.tcall{display:flex;gap:10px;align-items:flex-start;margin:0;padding:12px 14px;border-radius:12px;border-left:4px solid var(--ok);background:color-mix(in srgb,var(--ok) 10%,transparent);font:600 14.5px/1.45 var(--font);animation:tcin .4s var(--ease)}
+.tcall::before{content:'';flex:none;width:22px;height:22px;margin-top:1px;border-radius:50%;background:var(--hit) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4 8-9'/%3E%3C/svg%3E") center/16px no-repeat;animation:tpop .5s var(--ease)}
+@keyframes tpop{0%{transform:scale(0)}60%{transform:scale(1.2)}100%{transform:none}}
+.tbtn button.ok{opacity:1!important;border-color:var(--hit);box-shadow:0 0 0 3px color-mix(in srgb,var(--hit) 28%,transparent);animation:tring .9s ease-out}
+@keyframes tring{from{box-shadow:0 0 0 0 color-mix(in srgb,var(--hit) 55%,transparent)}}
+@keyframes tcin{from{opacity:0;transform:translateY(6px)}}
+.tsk.hl{border:2px solid var(--ok);background:color-mix(in srgb,var(--ok) 6%,transparent)}
+#app.editing [data-ek]{outline:1.5px dashed var(--ok);outline-offset:5px;border-radius:4px;cursor:text;user-select:text;-webkit-user-select:text}
+#app.editing p[data-ek][hidden]{display:block!important}
+#app.editing [data-ek]:focus{outline-style:solid}
+#ed{margin-right:8px}
+#s1[data-ts="2"] .ta,#s1:not([data-ts="2"]) .tb{display:none!important}
+#app.editing #s1.slide .tb,#app.editing #s1.slide .ta{display:block!important}#app.editing #s1.slide .tin.ta{display:flex!important}
+.tin3{margin:0;font:600 14.5px/1.45 var(--font);text-wrap:pretty}
+@media (min-width:820px){.tin3{font-size:19px;line-height:1.5}}
+.tnx{padding:12px 6px;font-size:14.5px;border-radius:12px;background:var(--ok);color:var(--onok);border-color:var(--ok)}
+.tctl.nx .tbtn{display:none}
+.tin{display:flex;flex-direction:column;gap:8px}.tin p{margin:0;font:600 14.5px/1.45 var(--font);text-wrap:pretty}
+/* two panels: the words on the left, the thing to look at and play with on the right */
+.slide.two{display:flex;flex-direction:column;gap:20px}
+.pvz{display:flex;flex-direction:column;gap:20px;min-width:0}
+.ptx{display:flex;flex-direction:column;gap:12px;min-width:0}
+.ptx .wintro{text-align:left;text-wrap:pretty}
+.wrap{transition:max-width .35s var(--ease)}
+@media (min-width:820px){
+  #app{max-width:1040px}
+  .slide.two{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);column-gap:0;align-items:stretch}
+  .ptx{padding:4px 44px 4px 0}
+  .pvz{padding-left:44px;border-left:1px solid var(--line)}
+  .ptx .pq,.ptx .wintro,.ptx .tin p{font:600 19px/1.5 var(--font)}
+  .tcall{font-size:17px;line-height:1.5;padding:14px 16px}
+  .ptx .pq{font-weight:500}.ptx .pq b{font-weight:800}
+  .tin{gap:14px}
+}
+.tctl{display:flex;flex-direction:column;gap:6px}
+.tbtn{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tbtn button{padding:12px 6px;font-size:14.5px;border-radius:12px;white-space:nowrap}
+.tlist{position:relative;padding-top:2px;--p:11px}
+.tr{position:relative;height:8px;margin-bottom:3px;border-radius:4px;background:color-mix(in srgb,var(--mut) 13%,transparent)}
+.tr i{position:absolute;top:0;bottom:0;left:calc(var(--a)/var(--n)*100%);width:calc((var(--b) - var(--a) + 1)/var(--n)*100%);border-radius:4px;background:var(--c);opacity:.34;transition:opacity .9s ease}
+.tlist.nt .tr i{transition:none!important}
+.tr.under{--c:var(--under)}.tr.over{--c:var(--over)}.tr.match{--c:var(--hit)}
+.tr.match::after{content:'\2605';position:absolute;right:4px;top:50%;transform:translateY(-52%);font-size:12px;line-height:1;color:var(--hit)}
+.tr.match i,.tr.vis i{opacity:1}
+.tr.skip{background:color-mix(in srgb,var(--mut) 30%,transparent)}
+.tr.skip i{opacity:.6;background:repeating-linear-gradient(135deg,var(--c) 0 2px,transparent 2px 5px)}.tr.match.skip i{opacity:.55;background:var(--c)}
+.tsk{position:absolute;left:-3px;right:-3px;border:1.5px dashed var(--mut);border-radius:8px;background:color-mix(in srgb,var(--mut) 9%,transparent);pointer-events:none;transform-origin:top;animation:tskin var(--d,.4s) cubic-bezier(.5,0,.2,1) both}
+@keyframes tskin{from{opacity:0;transform:scaleY(.15)}to{opacity:1;transform:none}}
+.tcr{position:absolute;left:-3px;right:-3px;top:0;height:14px;border:2px solid var(--ink);border-radius:7px;pointer-events:none;opacity:0;transform:translateY(calc(var(--i,0)*var(--p) - 1px));transition:transform var(--d,.3s) cubic-bezier(.5,0,.2,1),opacity .2s}
+.tcr.on{opacity:1}
+@media (prefers-reduced-motion:reduce){.tcr,.tr i{transition:none}.tsk{animation:none}}
+button{padding:8px 14px;font-size:14px}
+button[aria-expanded=true]{border-color:var(--mut)}
+#rs{color:var(--mut)}
+.hr{--st:var(--ok);display:grid;grid-template-columns:1fr 38px;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:4px 10px 4px 6px;opacity:0;animation:hin .35s var(--ease) forwards;animation-delay:calc(var(--i)*110ms)}
+.hr.over{--st:var(--over)}.hr.match{--st:var(--hit)}
+@keyframes hin{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.hc{position:relative;display:grid;grid-template-columns:repeat(var(--n),1fr)}
+.hc span{height:34px;display:grid;place-items:center;font:700 14px var(--font);font-variant-numeric:tabular-nums;color:var(--mut);opacity:.55}
+.hc span.in{color:var(--ink);opacity:1}
+.hw{position:absolute;top:2px;bottom:2px;left:calc(var(--l)/var(--n)*100% + 1px);width:calc((var(--r) - var(--l) + 1)/var(--n)*100% - 2px);border:2px solid var(--st);border-radius:9px;background:color-mix(in srgb,var(--st) 14%,transparent)}
+.hs{text-align:right;font:800 16px var(--font);color:var(--st);font-variant-numeric:tabular-nums}
+
+/* algorithm view: at the diamond the learner picks the branch, so nothing on screen may give it away */
+#app.np #pill{visibility:hidden}
+#flow .chs .lbx{fill:none;stroke:none}
+#flow .chs .hit{fill:transparent}
+#app.ask #flow .chs.no .lb{fill:var(--over)}
+#flow .chs.no{animation:shk .3s;transform-box:fill-box;transform-origin:center}
+@keyframes askp{50%{stroke-opacity:.35}}
+@keyframes shk{25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
+#app:is([data-view="4"],[data-view="5"]) .pg .rb{display:none}
+/* why view: both strategies, one play button */
+.wy{display:flex;flex-direction:column;gap:12px}
+.wyc{--st:var(--ok);--l:0;--r:0;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px 14px;display:flex;flex-direction:column;gap:6px}
+.wyh{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.wyh b{font:800 14px var(--font)}
+.wyn{font:700 13px var(--font);color:var(--mut);font-variant-numeric:tabular-nums;transition:color .25s}
+.wyc.done .wyn{color:var(--ink)}
+.wyd{margin:0 0 4px;font:500 12.5px/1.4 var(--font);color:var(--mut)}
+.wyc .hc span{transition:color .2s,opacity .2s}
+.wyc .hw{transition:left .12s var(--ease),width .12s var(--ease),border-color .2s,background .2s,opacity .2s}
+.wyc.idle .hw{opacity:0}
+.wyb{display:flex;justify-content:center}
+#wp{padding:12px 30px;border-radius:14px;background:var(--ok);color:var(--onok);border-color:var(--ok)}
+#wp:hover:not(:disabled){border-color:var(--ok);filter:brightness(1.06)}
+#wp:disabled{opacity:.55}
+/* why view, part two: spot the wasted checks, then make the call */
+.bfx{display:flex;flex-direction:column;gap:12px;margin-top:6px}
+.bfc{--st:var(--ok)}.bfc .tr.under,.bfc .tr.over{--c:var(--ok)}
+.bfc .tr.match:not(.vis){--c:var(--ok)}.bfc .tr.match:not(.vis)::after{display:none}.bfc .tr.match:not(.vis) i{opacity:.34}
+.tlist.sm{--p:9px;padding-top:6px}.tlist.sm .tr{height:6px;margin-bottom:3px;border-radius:3px}.tlist.sm .tr i{border-radius:3px}
+.tlist.sm .tr.match::after{font-size:11px;right:3px}.tlist.sm .tcr{height:12px;border-radius:6px;top:6px}
+.wintro{margin:0;font:600 15px/1.45 var(--font);text-align:center;text-wrap:balance}
+.wtab{display:inline-flex;gap:2px;padding:3px;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+.wtab button{border:0;background:none;padding:7px 16px;border-radius:9px;font:700 14px var(--font);color:var(--mut);white-space:nowrap}
+.wtab button[aria-pressed=true]{background:var(--ink);color:var(--card)}
+#sy:not([data-st="2"]) .wz,#sy[data-st="2"] :is(.wy,.wyb){display:none}
+.wz{display:flex;flex-direction:column;gap:12px}
+.wzc{gap:12px}
+.wzl{display:flex;flex-direction:column;gap:4px}
+.wzl .hr{--st:var(--hit);padding:2px 10px 2px 6px;border-radius:10px;animation-delay:0s}
+.wzl .hr.over{--st:var(--over)}
+.wzl .hc span{height:24px;font-size:13px}
+.wzl .hw{top:1px;bottom:1px;border-radius:7px}
+.wzl .hs{font-size:14px}
+.wzl .hr.wst{border-style:dashed;opacity:.75}
+.wzl .hr.gh{animation:hing .35s var(--ease) forwards;animation-delay:calc(var(--i)*90ms);border-style:dashed}
+@keyframes hing{from{opacity:0}to{opacity:.5}}
+.cmpv{display:none;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+.wzc.cm .cmpv{display:grid}.wzc.cm .wzl{display:none}
+.mc{display:flex;flex-direction:column;gap:3px}
+.mh{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:4px;font:700 12px var(--font);color:var(--mut)}
+.mh b{color:var(--ink);font-weight:800;font-size:13px}
+.mr{--st:var(--hit);position:relative;height:7px;border-radius:3px;background:var(--line)}
+.mr.over{--st:var(--over)}
+.mb{position:absolute;top:0;bottom:0;left:calc(var(--l)/var(--n)*100%);width:calc((var(--r) - var(--l) + 1)/var(--n)*100%);border-radius:3px;background:var(--st)}
+.wzx{position:absolute;inset:0;display:grid;grid-template-columns:1fr 1fr;gap:10px;visibility:hidden}
+.wzx button{padding:12px 10px}
+#wzk{background:var(--ok);color:var(--onok);border-color:var(--ok)}
+.wzc.done .wzx{visibility:visible}.wzc.done :is(#wze,#wzd){visibility:hidden}
+.wzc.bad .wyn{color:var(--over)}
+@media (max-width:480px){
+  .cell{font-size:19px;height:54px}.win{height:54px}
+}
+</style>
+</head><body>
+
+<div class="wrap" id="app">
+  <header>
+    <div class="top"><h1>Sliding window</h1><div class="acts"><button id="ed" hidden>Edit text</button><button id="rs">Reset</button></div></div>
+<nav class="sec" aria-label="Sections"><div class="shd"><div><b class="stt" id="stt">The problem</b></div><div class="sa"><button id="cp" class="rb" aria-label="Previous section" disabled><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button><button id="cx" class="rb" aria-label="Next section"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button></div></div><div class="segs"><button id="v0" aria-label="The problem" aria-current="true"></button><button id="v1" aria-label="Why Sliding Window" aria-current="false"></button><button id="v2" aria-label="Try it yourself" aria-current="false"></button><button id="v3" aria-label="Try it yourself, part two" aria-current="false"></button><button id="v4" aria-label="Algorithm" aria-current="false"></button><button id="v5" aria-label="Try it yourself, algorithm" aria-current="false"></button><button id="v6" aria-label="Code" aria-current="false"></button></div></nav>
+    <div class="sr"><div class="seg" role="group" aria-label="Example"><button id="e1" aria-pressed="true">Match</button><button id="e2" aria-pressed="false">No match</button></div></div>
+  </header>
+
+  <section class="card" id="wcard" aria-label="Current window" aria-live="polite">
+    <div class="row"><div class="cells" id="cells"><div class="win" id="win"></div><div class="mk mkl" id="mkl"><span>left</span></div><div class="mk mkr" id="mkr"><span>right</span></div></div></div>
+    <div class="trk"><div class="fill"></div><div class="tick"></div></div>
+    <div class="fr"><p class="facts" id="facts"></p><span class="pill" id="pill">Too small</span></div>
+  </section>
+
+  <div class="vars" id="vars" aria-label="Variables" aria-live="polite">
+    <div class="v" id="vl"><span class="vn">left</span><b>0</b></div>
+    <div class="v" id="vr"><span class="vn">right</span><b>0</b></div>
+    <div class="v wide" id="vs"><span class="vn">curr_sum</span><b>0</b></div>
+    <div class="v t" id="vt"><span class="vn">target</span><b>0</b></div>
+  </div>
+
+  <div class="car" id="car"><div class="track" id="track">
+    <div class="slide two" id="s0">
+      <div class="ptx"><p class="pq" data-ek="pq">Given a list of positive numbers and a <b>target</b>, find a <b>continuous subarray</b> that adds up to the target.</p>
+      <p class="exh">Examples</p>
+      <div class="exs" id="exs"></div></div>
+      <div class="pvz">
+      <p class="exh">Your turn</p>
+      <section class="pz" id="pz" aria-label="Sample problem">
+        <p class="pzf" id="pf"></p>
+        <div class="pzr" id="pr" role="group" aria-label="Numbers"></div>
+        <div class="pza"><button id="pc" disabled>Check</button><button id="pn">No match</button><button id="pa" class="pzx">Another one</button></div>
+      </section>
+      <p class="cap" id="pm" aria-live="polite">Drag across the numbers to pick a subarray.</p>
+      </div>
+    </div>
+    <div class="slide two" id="sy" inert data-st="1">
+      <div class="ptx"><p class="wintro" data-ek="wi1">The sliding window is a much faster method for finding if a subarray exists compared to the brute force:</p>
+        <p class="wintro" id="bft" data-ek="bft" hidden>This is because the brute force solution blindly considers all possible subarrays.</p></div>
+      <div class="pvz">
+      <div class="wy" id="wy"></div>
+      <div class="wyb"><button id="wp">Play</button></div>
+      <div class="bfx" id="bfx" hidden>
+        <div class="wyc bfc idle" id="bfc"><div class="hc" id="bfh"><div class="hw" id="bfw"></div></div>
+          <div class="tlist sm" id="bfl" aria-hidden="true"><div class="tcr" id="bfr"></div></div></div>
+      </div>
+      <div class="wz" id="wz">
+        <div class="wyc wzc" id="wzc">
+          <div class="wyh"><b id="wzt">Brute-Force</b><span class="wyn" id="wzn">1 check</span></div>
+          <div class="wzl" id="wzv"></div>
+          <div class="cmpv" id="cmp"></div>
+          <div class="pza"><button id="wze">Extend right</button><button id="wzd">Drop left</button><div class="wzx"><button id="wzp">Try again</button><button id="wzk">Compare</button></div></div>
+        </div>
+        <p class="cap" id="wzm" aria-live="polite"></p>
+      </div>
+      </div>
+    </div>
+    <div class="slide two" id="s1">
+      <div class="ptx"><div class="tin ta"><p data-ek="tin1">A sliding window improves on the brute-force solution by keeping track of the current sum in the window, and using it to decide whether to shrink the window from the left or to expand the window from the right.</p><p data-ek="tin2">See if you can work out which choice to make when the current sum exceeds the target below:</p></div>
+        <p class="tb tin3" data-ek="tin3">Now the sum is under the target. See if you can work out which choice to make:</p>
+        <div class="tctl">
+        <div class="tbtn"><button id="sl">Shrink from left</button><button id="gr">Extend from right</button></div>
+        <p class="note" id="note" aria-live="polite"></p>
+      </div>
+        <p class="tcall ta" id="tcall" data-ek="tcall" hidden>By choosing to shrink the window here, we skipped a bunch of unnecessary subarray checks.</p>
+        <p class="tcall tb" id="tcall2" data-ek="tcall2" hidden>By choosing to extend the window here, we skipped a bunch of unnecessary subarray checks.</p></div>
+      <div class="pvz" id="pvz1">
+      <div class="tlist" id="tlist" aria-hidden="true"><div class="tcr" id="tcr"></div></div>
+      </div>
+    </div>
+    <div class="slide two" id="s2" inert>
+      <div class="ptx">
+        <p class="ld" id="ld4" data-ek="ld4">Repeat the same decision until the window matches or the numbers run out.</p>
+        <p class="ld" id="ldT" data-ek="ldT">What's the next step in the algorithm?</p>
+        <p class="ld" id="ldS"></p>
+        <p class="ld" id="ld5" data-ek="ld5">Each move changes one variable, and the sum follows.</p>
+        <p class="ld" id="ld6" data-ek="ld6">Fill in the blanks. Each line of code is one step of the flowchart.</p>
+        <div class="fslot" id="fslot"></div>
+        <div class="cdo"><button id="crb" disabled>Check</button></div>
+        <p class="cfb" id="cfb" aria-live="polite"></p>
+        <p class="cap" id="cap" aria-live="polite"></p>
+        <div class="ap"><button id="apb">Play</button></div>
+        <div class="achs" id="achs"><button data-k="small">Expand right</button><button data-k="big">Shrink left</button><button data-k="match">Found it</button><button data-k="none">No match</button></div>
+        <div class="nxd"><button id="nbtn">Next</button></div>
+      </div>
+      <div class="pvz" id="pvz2">
+    <section class="card" id="fcard" aria-label="The algorithm as a flowchart">
+      <svg id="flow" viewBox="0 -24 360 250" role="img" aria-label="Flowchart: update the sum, compare it with the target. Too small: expand the right edge. Too big: shrink the left edge. Both loop back while numbers remain. A match leaves the loop to Found it. Running out of numbers leaves the loop to No match.">
+        <defs><marker id="fm" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M1 1 9 5 1 9z" fill="var(--mut)"/></marker></defs>
+        <rect class="region" x="6" y="-20" width="348" height="178" rx="16"/>
+        <text class="lp" x="180" y="-6">while numbers remain</text>
+
+        <path class="e" d="M180 47 V72" marker-end="url(#fm)"/>
+        <path class="e" d="M128 108 H58" marker-end="url(#fm)"/>
+        <path class="e" d="M232 108 H302" marker-end="url(#fm)"/>
+        <path class="e" d="M40 95 V34 H164" marker-end="url(#fm)"/>
+        <path class="e" d="M320 95 V34 H196" marker-end="url(#fm)"/>
+        <path class="e" d="M180 144 V151 H250 V189" marker-end="url(#fm)"/>
+        <path class="e" d="M110 158 V189" marker-end="url(#fm)"/>
+        <text class="lb" x="93" y="108">too small</text>
+        <text class="lb" x="267" y="108">too big</text>
+        <text class="lb o" x="250" y="174">match</text>
+        <text class="lb o" x="110" y="174">no numbers left</text>
+
+        <g class="n" id="f1"><circle class="halo" cx="180" cy="34" r="20"/><circle class="d" cx="180" cy="34" r="13"/>
+          <text class="t" x="180" y="11">Update the sum</text></g>
+        <g class="n" id="f2"><path class="dia" d="M180 72 L232 108 L180 144 L128 108Z"/>
+          <text class="dt" x="180" y="105">sum vs</text><text class="dt" x="180" y="118">target?</text></g>
+        <g class="n" id="f3"><circle class="halo" cx="40" cy="108" r="20"/><circle class="d" cx="40" cy="108" r="13"/>
+          <text class="t" x="40" y="136">Expand right</text><text class="code" x="40" y="149">right += 1</text></g>
+        <g class="n" id="f4"><circle class="halo" cx="320" cy="108" r="20"/><circle class="d" cx="320" cy="108" r="13"/>
+          <text class="t" x="320" y="136">Shrink left</text><text class="code" x="320" y="149">left += 1</text></g>
+        <g class="n" id="f5"><rect class="halo" x="208" y="184" width="84" height="38" rx="19"/><rect class="pill" x="212" y="190" width="76" height="26" rx="13"/><text class="pt" x="250" y="203">Found it</text></g>
+        <g class="n" id="f6"><rect class="halo" x="68" y="184" width="84" height="38" rx="19"/><rect class="pill" x="72" y="190" width="76" height="26" rx="13"/><text class="pt" x="110" y="203">No match</text></g>
+      </svg>
+      <pre class="code" id="code" aria-label="Python code, one step per flowchart node"></pre>
+      <div class="ctray" id="ctray" aria-label="Code pieces"></div>
+      <div class="pg"><button class="rb" id="bkb" aria-label="Back one step"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button><div class="pt" role="progressbar" aria-label="Algorithm progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="pbar"><i id="pfill"></i></div><span id="plab">0 / 0</span><button class="rb nx" id="nxb" aria-label="Next step"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button></div>
+    </section>
+      </div>
+    </div>
+  </div></div>
+</div>
+
+<script>
+(function(){
+var $=function(i){return document.getElementById(i)},app=$('app');
+var A=[2,1,4,3,5,4],T=12,n=A.length,l=0,r=0,A0=A.slice();
+var cells=$('cells'),win=$('win');
+var E={started:false};function resetE(){E={started:false}}
+function build(){
+  Array.prototype.slice.call(cells.querySelectorAll('.cell')).forEach(function(c){cells.removeChild(c)});
+  n=A.length;app.style.setProperty('--n',n);
+  A.forEach(function(v){var d=document.createElement('div');d.className='cell';d.textContent=v;cells.appendChild(d)});
+  }
+function render(){
+  var emp=view>=4?F.empty:!E.started,sum=emp?0:(view>=4?F.S:curSum()),i;
+  var st=emp?'under':sum>T?'over':sum===T?'match':'under';
+  app.className='wrap '+st+(emp?' empty':'');
+  app.style.setProperty('--l',l);app.style.setProperty('--r',r);
+  var kids=cells.querySelectorAll('.cell');for(i=0;i<n;i++)kids[i].classList.toggle('out',emp||i<l||i>r);
+  /* fixed scale 0 .. 1.8 x target, so the target tick never moves */
+  var scale=T*1.8;
+  app.style.setProperty('--tp',T/scale*100+'%');app.style.setProperty('--sp',Math.min(sum/scale,1)*100+'%');
+  $('pill').textContent=emp?'Empty':st==='match'?'Match!':st==='over'?'Too big':'Too small';
+  /* the question that drives the next move */
+  var stuck=!emp&&((st==='under'&&r===n-1)||(st==='over'&&l===r&&r===n-1));
+  $('facts').innerHTML='Sum <b>'+sum+'</b><span class="sep">·</span>Target <b>'+T+'</b>';
+  $('note').textContent='';
+  var dsh=emp&&view>=6;setV('vl',dsh?'-':l);setV('vr',dsh?'-':r);setV('vs',dsh?'-':sum);setV('vt',T);
+}
+/* variables panel: a value that changes flashes, so you see which variable each step touched */
+function setV(id,val){var e=$(id).querySelector('b');
+  if(e.textContent!==String(val)){var first=e.textContent===''||e.textContent==='0'&&id==='vt';e.textContent=val;
+    if(view>=6&&e.parentNode.animate&&id!=='vt')e.parentNode.animate([{backgroundColor:'color-mix(in srgb,var(--fa) 30%,var(--card))',borderColor:'var(--fa)'},{backgroundColor:'var(--card)',borderColor:'var(--line)'}],{duration:900,easing:'ease-out'})}}
+function curSum(){var sm=0,i;for(i=l;i<=r;i++)sm+=A[i];return sm}
+/* the hint replays the sliding window: too small -> expand right, too big -> shrink left, until it matches */
+function seq(){var a=0,b=0,sm=A[0],out=[[0,0,sm]];
+  while(sm!==T){
+    if(sm<T){if(b===n-1)break;b++;sm+=A[b]}
+    else if(a===b){if(b===n-1)break;a++;b++;sm=A[a]}
+    else{sm-=A[a];a++}
+    out.push([a,b,sm])}
+  return out}
+/* each time an edge moves: the number it crossed pops, and a phone gives a small buzz */
+function tick(cell){var c=cells.querySelectorAll('.cell')[cell];
+  if(c&&c.animate)c.animate([{transform:'scale(1.35)'},{transform:'none'}],{duration:300,easing:'cubic-bezier(.3,.8,.3,1)'});
+  try{if(navigator.vibrate)navigator.vibrate(6)}catch(e){}}
+function setL(v){v=Math.max(0,Math.min(r,v));if(v!==l){var o=l;l=v;render();tick(v<o?v:o)}}
+function setR(v){v=Math.max(l,Math.min(n-1,v));if(v!==r){var o=r;r=v;render();tick(v>o?v:o)}}
+/* the two choices: the right one moves the window, the wrong one explains itself and does nothing */
+function wrong(btn,msg){$('note').textContent=msg;
+  if(btn.animate)btn.animate([{transform:'translateX(0)'},{transform:'translateX(-6px)'},{transform:'translateX(6px)'},{transform:'translateX(-3px)'},{transform:'none'}],{duration:320})}
+/* ---- Try it yourself: every window brute force checks; the pointer leaps over the ones we can skip ---- */
+var tst=1,TW=[],tix={},tcur=null,tdone=false,tbusy=true,ttm=[],tlist=$('tlist'),tcr=$('tcr');
+function tat(ms,f){ttm.push(setTimeout(f,ms))}
+function tclear(){ttm.forEach(clearTimeout);ttm=[]}
+function wsum(a,b){var q=0,i;for(i=a;i<=b;i++)q+=A[i];return q}
+function tsync(){var off=tbusy||tdone;$('gr').disabled=off||r>=n-1;$('sl').disabled=off||l>=n-1}
+function tbuild(ord){tclear();Array.prototype.slice.call(tlist.querySelectorAll('.tr,.tsk')).forEach(function(e){tlist.removeChild(e)});
+  TW=[];tix={};var a,b,q,o;
+  var P=[];for(a=0;a<n;a++)for(b=a;b<n;b++)P.push([a,b]);
+  if(ord===2)P.sort(function(x,y){return x[1]-y[1]||x[0]-y[0]});
+  outer:for(var pi2=0;pi2<P.length;pi2++){a=P[pi2][0];b=P[pi2][1];q=wsum(a,b);o={a:a,b:b,i:TW.length,vis:false,skip:false,el:document.createElement('div')};
+    o.el.className='tr '+(q<T?'under':q>T?'over':'match');o.el.style.setProperty('--a',a);o.el.style.setProperty('--b',b);o.el.style.setProperty('--n',n);o.el.innerHTML='<i></i>';
+    tlist.insertBefore(o.el,tcr);TW.push(o);tix[a+','+b]=o;if(q===T)break outer}
+  tcalled=false;$('tcall').hidden=true;$('tcall2').hidden=true;
+  tcur=null;tdone=false;tbusy=true;tcr.classList.remove('on');tcr.style.setProperty('--d','0s');tcr.style.setProperty('--i',0)}
+var tcalled=false;
+/* every move rules windows out: past an under-target window, all its sub-windows are too small; past an over-target one, everything around it is too big */
+function tprune(cur,dur,mark,nxt){var sm=wsum(cur.a,cur.b),out=[];if(!mark||sm===T)return 0;
+  TW.forEach(function(o){if(o===cur||o.vis||o.skip||o.i<cur.i)return;if((nxt&&o.i<nxt.i)||(sm<T?(o.a>=cur.a&&o.b<=cur.b):(o.a<=cur.a&&o.b>=cur.b)))out.push(o)});
+  out.forEach(function(o,k){o.skip=true;o.el.querySelector('i').style.transitionDelay=(dur?.2+k/(out.length+1)*dur:0)+'s';o.el.classList.add('skip')});
+  return out.length}
+function tleap(o,mark,instant){var d=tcur?Math.abs(o.i-tcur.i):0,dur=(instant||!tcur)?0:Math.min(.3+.02*d,.85),cnt=0,pl=l,pr=r;
+  if(tcur)cnt=tprune(tcur,dur,mark,o);
+  tcr.style.setProperty('--d',dur+'s');tcr.style.setProperty('--i',o.i);tcr.classList.add('on');
+  o.vis=true;o.el.classList.add('vis');tcur=o;l=o.a;r=o.b;E.started=true;render();if(!instant&&(pl!==l||pr!==r))tick(r!==pr?r:pl);return cnt}
+function tstartB(){tst=2;$('s1').dataset.ts=2;tbuild();tlist.classList.add('nt');[[0,0],[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],[1,6]].forEach(function(w){tleap(tix[w[0]+','+w[1]],false,true)});void tlist.offsetWidth;tlist.classList.remove('nt');tsync();$('note').textContent='';tat(500,function(){tbusy=false;tsync()});fitCar()}
+function tstart(){tst=1;$('s1').dataset.ts=1;tbuild();l=0;r=0;E.started=true;tleap(tix['0,0']);tsync();
+  var q=[],rr=0,sm=A[0];while(sm<T&&rr<n-1){rr++;sm+=A[rr];q.push(rr)}
+  q.forEach(function(rv,i){tat(700+i*420,function(){tleap(tix['0,'+rv])})});
+  tat(700+q.length*420+450,function(){tbusy=false;if(curSum()===T)tdone=true;tsync()})}
+function tgo(k,btn){if(tbusy||tdone)return;var sm=curSum(),t;
+  if(k==='ext'&&sm>T){wrong(btn,'Over '+T+': adding a number only makes it bigger.');return}
+  if(k==='shr'&&sm<T){wrong(btn,'Under '+T+': dropping a number only makes it smaller.');return}
+  t=k==='ext'?tix[l+','+(r+1)]:(l===r?tix[(r+1)+','+(r+1)]:tix[(l+1)+','+r]);if(!t)return;
+  /* the right call: move to the next window, fading everything it let us skip */
+  tbusy=true;tsync();var dur=Math.min(.3+.02*Math.abs(t.i-tcur.i),.85);
+  tleap(t,true);tcalled=true;
+  $('note').textContent='';(tst===1?$('tcall'):$('tcall2')).hidden=false;fitCar();
+  btn.classList.add('ok');tat(1000,function(){btn.classList.remove('ok')});
+  tat(dur*1000+250,function(){tbusy=false;tdone=true;tsync()})}
+$('gr').onclick=function(){tgo('ext',this)};$('sl').onclick=function(){tgo('shr',this)};
+/* ---- Algorithm view: the flowchart drives. One press = one node. ---- */
+var Q=[],qi=0,qt=[];
+var view=0,H=[],F={node:0,done:false,empty:true,S:0,pend:null,cap:'',capV:'',hl:{m:[],c:[]}};
+function at(k){for(var i=1;i<=6;i++)$('f'+i).classList.toggle('on',i===k)}
+function sumTxt(){return A.slice(l,r+1).join(' + ')+(r>l?' = '+curSum():'')}
+/* total node-steps for this puzzle, from replaying the algorithm: 1 compare, then 3 steps per window move, +1 if it ends on a match */
+function totalSteps(){var q=seq();return 2+3*(q.length-1)+1}
+/* ---- Code view: python that mirrors the flowchart node for node ---- */
+var CODE=[
+ ['def find_subarray(nums, target):',''],
+ ['  left = right = 0',''],
+ ['  curr_sum = nums[0]','Update the sum'],
+ ['  while True:','while numbers remain'],
+ ['    if curr_sum {{==}} target:','match'],
+ ['      return nums[left:right+1]','Found it'],
+ ['    elif curr_sum {{<}} target:','too small'],
+ ['      if right == len(nums)-1:','no numbers left'],
+ ['        return None','No match'],
+ ['      {{right}} += 1','Expand right'],
+ ['      curr_sum {{+=}} nums[right]','Update the sum'],
+ ['    else:','too big'],
+ ['      {{left}} += 1','Shrink left'],
+ ['      curr_sum {{-=}} nums[left-1]','Update the sum']];
+var codeEl=$('code'),codeRows=[];
+function esc(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+(function(){CODE.forEach(function(ln){var d=document.createElement('span');d.className='cl';
+  d.style.paddingLeft='calc(8px + '+(ln[0].match(/^ */)[0].length*.6)+'ch)';d.innerHTML=esc(ln[0].replace(/^ +/,'')).replace(/\b(def|while|if|elif|else|return|True|None)\b/g,'<span class="k">$1</span>').replace(/\{\{(.+?)\}\}/g,function(m,a){return '<button class="bk" data-a="'+a+'" aria-label="Blank"></button>'})+(ln[1]?'  <span class="cm"># '+esc(ln[1])+'</span>':'');
+  var cm0=d.querySelector('.cm'),ct0=document.createElement('span');ct0.className='ct';while(d.firstChild&&d.firstChild!==cm0)ct0.appendChild(d.firstChild);d.insertBefore(ct0,cm0);
+  codeEl.appendChild(d);codeRows.push(d)})})();
+/* which lines run at each step: m = the lines doing the work, c = conditions checked on the way */
+function renderCode(){var h=F.hl||{m:[],c:[]};codeRows.forEach(function(d,i){var k=i+1;d.classList.toggle('on',h.m.indexOf(k)>-1);d.classList.toggle('cx',h.m.indexOf(k)<0&&h.c.indexOf(k)>-1)})}
+function showProg(){var tt,d,pc;if(view===5){tt=Q.length;d=qi+(F.done?1:0)}else{tt=totalSteps();d=Math.min(H.length,tt)}pc=Math.round(d/tt*100);
+  $('pfill').style.width=pc+'%';$('pbar').setAttribute('aria-valuenow',pc);$('plab').textContent=d+' / '+tt}
+function showF(){showProg();at(F.node);$('cap').innerHTML=view>=6?F.capV:F.cap;renderCode();$('nxb').disabled=F.done;$('bkb').disabled=!H.length;if(typeof askSync==='function')askSync();apSync()}
+function flowReset(){qClear();l=0;r=0;H=[];F={node:0,done:false,empty:true,S:0,pend:null,cap:'We start with an empty window.',capV:'',hl:{m:[],c:[]}};apOn=false;if(view===5){buildQ();qShow();return}render();showF()}
+/* ---- the learner picks the branch at the diamond (Algorithm view only) ---- */
+var CHS={'too small':'small','too big':'big','match':'match','no numbers left':'none'},chs=[];
+Array.prototype.forEach.call($('flow').querySelectorAll('text.lb'),function(t){var k=CHS[t.textContent];if(!k)return;
+  var g=document.createElementNS('http://www.w3.org/2000/svg','g');g.setAttribute('class','chs');g.dataset.k=k;
+  var hit=document.createElementNS('http://www.w3.org/2000/svg','rect'),bx=document.createElementNS('http://www.w3.org/2000/svg','rect');
+  hit.setAttribute('class','hit');bx.setAttribute('class','lbx');bx.setAttribute('rx','9');
+  t.parentNode.insertBefore(g,t);g.appendChild(hit);g.appendChild(bx);g.appendChild(t);
+  chs.push(g)});
+function asking(){return view===5&&F.node===2&&!F.done}
+function want(){var sm=F.S;if(sm===T)return 'match';if((sm<T&&r===n-1)||(sm>T&&l===r&&r===n-1))return 'none';return sm<T?'small':'big'}
+function sizeChs(){chs.forEach(function(g){var b=g.querySelector('text').getBBox(),bx=g.querySelector('.lbx'),hit=g.querySelector('.hit');
+  bx.setAttribute('x',b.x-7);bx.setAttribute('y',b.y-5);bx.setAttribute('width',b.width+14);bx.setAttribute('height',b.height+10);
+  hit.setAttribute('x',b.x-12);hit.setAttribute('y',b.y-11);hit.setAttribute('width',b.width+24);hit.setAttribute('height',b.height+22)})}
+var LS={3:'Expand right: the window takes in the next number.',4:'Shrink left: the window lets go of its first number.',1:'Update the sum to match the window.',5:'Found it: the window adds up to the target.',6:'No match: no window adds up to the target.'};
+function askSync(){var a=asking();app.classList.toggle('ask',a);if(view===5){var ls=$('ldS'),t=LS[F.node]||'';if(ls.textContent!==t)ls.textContent=t}app.classList.toggle('np',view>=4&&F.node!==2);if(a||F.node===1)Array.prototype.forEach.call($('achs').children,function(b){b.classList.remove('ok')});
+  chs.forEach(function(g){g.classList.remove('no')});
+  var nw=view===5&&!F.done&&(F.node===3||F.node===4||F.node===1);$('nbtn').style.visibility=nw?'visible':'hidden';$('nbtn').disabled=!nw;if(a)sizeChs();$('nxb').disabled=F.done||a;Array.prototype.forEach.call($('achs').children,function(b){b.disabled=!a})}
+function choose(k,g){if(!asking())return;var w=want(),sm=F.S;
+  if(k===w){decide(k);return}
+  g.classList.remove('no');void g.getBBox();g.classList.add('no');
+  $('cap').innerHTML=w==='none'?(sm<T?'The right edge is already at the end.':'Nothing is left to try.')
+    :k==='none'?'There are still numbers to try.'
+    :'<b>'+sm+'</b> is '+(sm<T?'less than':sm>T?'more than':'exactly')+' <b>'+T+'</b>.'}
+/* ---- Algorithm view: the learner makes the call at the checkpoints; runs of the same call are skipped ---- */
+function qClear(){qt.forEach(clearTimeout);qt=[]}
+function dec(w){var sm=w[2];if(sm===T)return 'match';if((sm<T&&w[1]===n-1)||(sm>T&&w[0]===w[1]&&w[1]===n-1))return 'none';return sm<T?'small':'big'}
+function buildQ(){var s=seq(),d=s.map(dec),i;Q=[];qi=0;
+  for(i=0;i<s.length;i++)if(i===0||i===s.length-1||d[i]!==d[i-1])Q.push({w:s[i],i:i})}
+function qShow(){var q=Q[qi].w;l=q[0];r=q[1];F.empty=false;F.done=false;F.node=2;F.S=q[2];F.pend=null;F.hl={m:[],c:[]};
+  var sm=q[2];F.cap='';render();showF()}
+function decide(k){
+  if(k==='match'||k==='none'){F.done=true;F.pend=null;
+    if(k==='match'){F.node=5;F.cap=''}
+    else{F.node=6;F.cap=(F.S<T?'No numbers left to add, and the window is still too small.':'This number alone is too big, and nothing is left to try.')}
+    render();showF();return}
+  var small=k==='small',nx={w:seq()[Q[qi].i+1]},ol=l;
+  F.node=small?3:4;
+  F.cap='';var cb=document.querySelector('#achs button[data-k="'+k+'"]');if(cb)cb.classList.add('ok');
+  l=nx.w[0];r=nx.w[1];render();tick(small?r:ol);showF()}
+(function(){var byK={};chs.forEach(function(g){byK[g.dataset.k]=g});
+  Array.prototype.forEach.call($('achs').children,function(b){b.onclick=function(){var ok=asking()&&want()===b.dataset.k;choose(b.dataset.k,byK[b.dataset.k]);if(!ok&&b.animate)b.animate([{transform:'translateX(0)'},{transform:'translateX(-6px)'},{transform:'translateX(6px)'},{transform:'translateX(-3px)'},{transform:'none'}],{duration:320})}});
+  })();
+/* Algorithm view: press Play and the flowchart runs itself, one decision at a time */
+var apOn=false;
+function apNext(){qt.push(setTimeout(function(){if(view!==4||!apOn)return;do{step()}while(!F.done&&F.node!==2);if(!F.done)apNext()},700))}
+function apSync(){var b=$('apb');if(!b)return;b.textContent=F.done?'Replay':'Play';b.disabled=apOn&&!F.done}
+$('apb').onclick=function(){if(view!==4)return;if(F.done)flowReset();apOn=true;apSync();apNext()};
+/* ---- Code view: fill in the blanks; each blank points at its flowchart step ---- */
+var LMAP={5:{n:2,lb:'match'},7:{n:2,lb:'small'},10:{n:3},11:{n:1},13:{n:4},14:{n:1}};
+var B=[],sel=-1,solved=false,cRun=false,cT=[];
+[].forEach.call(codeEl.querySelectorAll('.bk'),function(el,i){var row=el.closest('.cl');el.dataset.i=i;
+  B.push({el:el,a:el.dataset.a,v:'',chip:null,ok:false,line:codeRows.indexOf(row)+1})});
+var CHIPS=['+=','left','<','==','-=','right','>'],ctray=$('ctray');
+CHIPS.forEach(function(t){var c=document.createElement('button');c.className='chip';c.textContent=t;ctray.appendChild(c);
+  c.addEventListener('pointerdown',chipDown);
+  c.addEventListener('click',function(e){if(e.detail!==0)return;placeChip(c)})});
+function nextEmpty(from){for(var k=0;k<B.length;k++){var j=(from+k)%B.length;if(!B[j].v&&!B[j].ok)return j}return -1}
+function cSel(i){sel=i;B.forEach(function(b,k){b.el.classList.toggle('sel',k===i)});
+  codeRows.forEach(function(d){d.classList.remove('pk')});chs.forEach(function(g){g.classList.remove('hl')});
+  if(i<0){if(view===6&&!cRun)at(0);return}
+  var b=B[i],m=LMAP[b.line];codeRows[b.line-1].classList.add('pk');
+  if(m){at(m.n);if(m.lb)chs.forEach(function(g){g.classList.toggle('hl',g.dataset.k===m.lb)})}}
+function cPut(i,chip){var b=B[i];if(b.ok)return;if(b.chip)b.chip.classList.remove('used');
+  b.v=chip.textContent;b.chip=chip;chip.classList.add('used');b.el.textContent=b.v;b.el.classList.add('fill');b.el.classList.remove('bad');
+  $('cfb').textContent='';cSel(nextEmpty(i+1));cSync()}
+function cTake(i){var b=B[i];if(b.ok||!b.v)return;b.chip.classList.remove('used');b.v='';b.chip=null;b.el.textContent='';b.el.classList.remove('fill','bad')}
+function placeChip(c){if(cRun||solved)return;var i=sel>=0&&!B[sel].ok?sel:nextEmpty(0);if(i>=0)cPut(i,c)}
+function chipDown(e){var c=e.currentTarget;if(cRun||solved||e.button>0)return;e.stopPropagation();e.preventDefault();
+  var x0=e.clientX,y0=e.clientY,g=null,over=null;try{c.setPointerCapture(e.pointerId)}catch(_){}
+  function mv(ev){if(!g&&Math.hypot(ev.clientX-x0,ev.clientY-y0)>6){g=c.cloneNode(true);g.classList.add('ghost');document.body.appendChild(g);c.classList.add('used')}
+    if(!g)return;g.style.transform='translate('+(ev.clientX-g.offsetWidth/2)+'px,'+(ev.clientY-g.offsetHeight/2)+'px)';
+    var el=document.elementFromPoint(ev.clientX,ev.clientY),bk=el&&el.closest?el.closest('.bk'):null;if(bk&&B[+bk.dataset.i].ok)bk=null;
+    if(bk!==over){if(over)over.classList.remove('hov');over=bk;if(over)over.classList.add('hov')}}
+  function up(ev){c.removeEventListener('pointermove',mv);c.removeEventListener('pointerup',up);c.removeEventListener('pointercancel',up);ev.stopPropagation();
+    if(g){g.remove();c.classList.remove('used');if(over){over.classList.remove('hov');if(ev.type==='pointerup')cPut(+over.dataset.i,c)}}
+    else if(ev.type==='pointerup')placeChip(c)}
+  c.addEventListener('pointermove',mv);c.addEventListener('pointerup',up);c.addEventListener('pointercancel',up)}
+B.forEach(function(b,i){b.el.addEventListener('pointerdown',function(e){e.stopPropagation()});
+  b.el.onclick=function(){if(b.ok||cRun||solved)return;if(b.v)cTake(i);cSel(i);$('cfb').textContent='';cSync()}});
+function cSync(){var bt=$('crb');if(solved){bt.textContent=F.done?'Replay':'Run';bt.disabled=cRun}else{bt.textContent='Check';bt.disabled=!B.every(function(b){return b.v})}}
+function cCheck(){var bad=0;B.forEach(function(b){if(b.v===b.a){b.ok=true;b.el.classList.add('ok');b.el.classList.remove('bad')}else{bad++;b.el.classList.remove('bad');void b.el.offsetWidth;b.el.classList.add('bad')}});
+  if(!bad){solved=true;ctray.classList.add('done');cSel(-1);$('cfb').textContent='Correct. Press Run to watch the code work through the example.'}
+  else{$('cfb').textContent='Not quite. Fix the blanks in red.';cSel(B.findIndex(function(b){return !b.ok}))}
+  cSync();fitCar()}
+function cStop(){cT.forEach(clearTimeout);cT=[];cRun=false}
+function cShowRun(){fitCar();setTimeout(function(){try{wcd.scrollIntoView({block:'nearest',behavior:'smooth'})}catch(_){}},60)}
+function cGo(){cStop();app.removeAttribute('data-crun');void app.offsetWidth;app.setAttribute('data-crun','1');flowReset();cRun=true;cSel(-1);cSync();$('cfb').textContent='';cShowRun();
+  (function tick(){cT.push(setTimeout(function(){if(view!==6){cStop();return}step();if(F.done){cRun=false;cSync();return}tick()},560))})()}
+$('crb').onclick=function(){if(!solved)cCheck();else cGo()};
+function cReset(){cStop();app.removeAttribute('data-crun');solved=false;ctray.classList.remove('done');
+  B.forEach(function(b,i){b.ok=false;b.el.classList.remove('ok','bad');cTake(i)});$('cfb').textContent='';flowReset();cSel(0);cSync();fitCar()}
+function cEnter(v){cStop();app.removeAttribute('data-crun');if(v!==6){cSel(-1);return}pvz2.appendChild(wcd);pvz2.appendChild(varsEl);cSel(solved?-1:nextEmpty(0));cSync()}
+$('nbtn').onclick=function(){if(view!==5||F.done)return;if(F.node===3||F.node===4){F.node=1;F.S=seq()[Q[qi].i+1][2];render();showF();return}qi++;qShow()};
+function step(){
+  if(F.done)return;
+  H.push({l:l,r:r,node:F.node,done:F.done,empty:F.empty,S:F.S,pend:F.pend,cap:F.cap,capV:F.capV,hl:F.hl});
+  var sm=F.S,k=F.node;
+  if(k===0){F.node=1;F.empty=false;F.S=A[0];
+    F.cap='Start with the first number.';
+    F.capV='<code>left = right = 0</code>, <code>curr_sum = nums[0]</code> → <b>'+A[0]+'</b>';F.hl={m:[2,3],c:[]};render()}
+  else if(k===1){F.node=2;
+    F.cap='Compare the sum to the target.';
+    F.capV='<code>curr_sum</code> (<b>'+sm+'</b>) '+(sm===T?'==':sm<T?'&lt;':'&gt;')+' <code>target</code> (<b>'+T+'</b>): '+(sm===T?'a match.':sm<T?'too small.':'too big.');
+    F.hl=sm===T?{m:[5],c:[4]}:sm<T?{m:[7],c:[4,5]}:{m:[12],c:[4,5,7]}}
+  else if(k===2){
+    var stuck=(sm<T&&r===n-1)||(sm>T&&l===r&&r===n-1);
+    if(sm===T){F.node=5;F.done=true;F.cap='Found it! The sum matches the target.';F.capV='Found it! <code>nums['+l+'..'+r+']</code> adds up to <b>'+T+'</b>.';F.hl={m:[6],c:[]}}
+    else if(stuck){F.node=6;F.done=true;F.cap=(sm<T?'No numbers left to add, and the window is still too small.':'This number alone is too big, and nothing is left to try.')+' No subarray adds up to <b>'+T+'</b>.';
+      F.capV=(sm<T?'<code>right</code> is at the end and <code>curr_sum</code> is still too small.':'<code>left</code> and <code>right</code> are on the last number, and it is too big.')+' No match for <b>'+T+'</b>.';F.hl={m:[9],c:[8]}}
+    else if(sm<T){F.node=3;setR(r+1);F.pend={op:'+',v:A[r]};F.cap='Expand: the right edge takes in <b>'+A[r]+'</b>.';F.capV='<code>right += 1</code> → <b>right = '+r+'</b>';F.hl={m:[10],c:[8]}}
+    else{F.node=4;
+      if(l<r){var d=A[l];setL(l+1);F.pend={op:'-',v:d};F.cap='Shrink: the left edge lets go of <b>'+d+'</b>.';F.capV='<code>left += 1</code> → <b>left = '+l+'</b>';F.hl={m:[13],c:[12]}}
+      else{var d2=A[l];l=r=r+1;render();tick(r);F.pend={op:'=',v:A[r]};F.cap='Shrink: <b>'+d2+'</b> alone is too big, so skip past it.';F.capV='<code>left += 1</code> and <code>right += 1</code>: <b>'+d2+'</b> alone is too big.';F.hl={m:[13],c:[12]}}}}
+  else{var p=F.pend,old=F.S;F.node=1;
+    if(p.op==='+'){F.S=old+p.v;F.cap='Update the sum.';F.capV='<code>curr_sum += '+p.v+'</code>: <b>'+old+' + '+p.v+' = '+F.S+'</b>';F.hl={m:[11],c:[]}}
+    else if(p.op==='-'){F.S=old-p.v;F.cap='Update the sum.';F.capV='<code>curr_sum -= '+p.v+'</code>: <b>'+old+' \u2212 '+p.v+' = '+F.S+'</b>';F.hl={m:[14],c:[]}}
+    else{F.S=p.v;F.cap='Update the sum.';F.capV='<code>curr_sum = '+F.S+'</code>: start over from this number.';F.hl={m:[14],c:[]}}
+    F.pend=null;render()}
+  showF()}
+function back(){var h=H.pop();if(!h)return;l=h.l;r=h.r;F.node=h.node;F.done=h.done;F.empty=h.empty;F.S=h.S;F.pend=h.pend;F.cap=h.cap;F.capV=h.capV;F.hl=h.hl;render();showF()}
+var exNo=false;/* one example choice drives both slides: Match (target 12) or No match (target 14) */
+function setT(v){T=v}
+function setExample(no){if(typeof cStop==='function'&&view===6){cStop();setTimeout(cSync)}exNo=no;setT(no?19:WG);$('e1').setAttribute('aria-pressed',!no);$('e2').setAttribute('aria-pressed',no);
+  resetE();flowReset();if(view===2)tstart();if(view===3)tstartB()}
+var s0=$('s0'),s1=$('s1'),sy=$('sy'),s2=$('s2'),car=$('car'),track=$('track');
+function fitCar(){var a=[s0,sy,s1,s1,s2,s2,s2][view];car.style.height=(a.offsetHeight+12)+'px'}
+car.addEventListener('scroll',function(){if(car.scrollLeft||car.scrollTop){car.scrollLeft=0;car.scrollTop=0}});
+if(window.ResizeObserver){var ro=new ResizeObserver(fitCar);ro.observe(s0);ro.observe(s1);ro.observe(sy);ro.observe(s2)}
+var TT=['The problem','Why Sliding Window','','','Algorithm','Try it yourself','Code'];
+var wcd=$('wcard'),pvz1=$('pvz1'),varsEl=$('vars');
+/* the two try-it sections reuse the race's numbers (and its target); everything after goes back to the short example */
+function useData(){A=WX.slice();n=A.length;T=exNo?19:WG;build()}
+var pvz2=$('pvz2');
+var srEl=document.querySelector('.sr'),srHome=srEl.parentNode;
+function placeCard(v){var host=(v===2||v===3)?pvz1:v>=4?pvz2:null;
+  if(v>=4){pvz2.insertBefore(srEl,pvz2.firstChild)}else srHome.appendChild(srEl);
+  if(host){host.insertBefore(wcd,host===pvz2?srEl.nextSibling:host.firstChild);if(host===pvz2)host.insertBefore(varsEl,wcd.nextSibling);else app.insertBefore(varsEl,car)}
+  else{app.insertBefore(wcd,car);app.insertBefore(varsEl,car)}}
+var flowEl=$('flow'),fcardEl=$('fcard');
+function setView(v){if((v<4||v===6)&&exNo){exNo=false;$('e1').setAttribute('aria-pressed',true);$('e2').setAttribute('aria-pressed',false)}useData();placeCard(v);whyStop();qClear();tclear();app.classList.remove('ask');app.classList.remove('np');view=v;app.dataset.view=v;
+  track.style.transform='translateX('+(-100*(v<=2?v:v===3?2:3))+'%)';
+  s0.inert=v!==0;sy.inert=v!==1;s1.inert=v!==2&&v!==3;s2.inert=v<4;
+  for(var i=0;i<=6;i++){$('v'+i).setAttribute('aria-current',i===v);$('v'+i).classList.toggle('past',i<v)}
+  $('cp').disabled=v===0;$('cx').disabled=v===6;$('stt').innerHTML=TT[v];
+  if(v===0)pzReset();if(v===0||v===2||v===3){l=0;r=0;resetE();render()}else if(v===1)whyReset();else flowReset();
+  if(v===2)tstart();if(v===3)tstartB();
+  if(v===6)$('fslot').appendChild(flowEl);else if(flowEl.parentNode!==fcardEl)fcardEl.insertBefore(flowEl,fcardEl.firstChild);
+  cEnter(v);
+  car.scrollLeft=0;fitCar()}
+window.addEventListener('resize',function(){fitCar()});
+[0,1,2,3,4,5,6].forEach(function(i){$('v'+i).onclick=function(){if(view!==i)setView(i)}});
+$('cp').onclick=function(){if(view>0)setView(view-1)};
+$('cx').onclick=function(){if(view<6)setView(view+1)};
+$('e1').onclick=function(){setExample(false)};$('e2').onclick=function(){setExample(true)};
+/* swipe between the two slides */
+(function(){var x0=null,y0=0;
+  car.addEventListener('pointerdown',function(e){x0=e.clientX;y0=e.clientY});
+  car.addEventListener('pointerup',function(e){if(x0===null)return;var dx=e.clientX-x0,dy=e.clientY-y0;x0=null;
+    if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.5){if(dx<0&&view<6)setView(view+1);else if(dx>0&&view>0)setView(view-1)}});
+  car.addEventListener('pointercancel',function(){x0=null})})();
+$('nxb').onclick=step;$('bkb').onclick=back;
+$('rs').onclick=function(){if(view===6){cReset();return}if(view>=4)flowReset();else{if(view===0)pzReset();l=0;r=0;resetE();render();if(view===2)tstart();if(view===3)tstartB()}};
+/* ---- Why view: both strategies race on one clock, one check per tick ---- */
+var wy=$('wy'),wp=$('wp'),wtm=null,wi=0,WR=[];
+var WT=['Sliding window','Brute-Force'],WD=['Try every start and every end.','Move each edge forward. Never go back.'];
+var WX=[3,1,4,2,5,1,2,6,1,3],WG=17;
+var WTR=(function(){var n=WX.length,B=[],S=[],i,j,s,l=0,r=0;
+  outer:for(i=0;i<n;i++){s=0;for(j=i;j<n;j++){s+=WX[j];B.push([i,j,s]);if(s===WG)break outer}}
+  s=WX[0];
+  for(;;){S.push([l,r,s]);if(s===WG)break;
+    if(s<WG){if(r===n-1)break;r++;s+=WX[r]}
+    else if(l<r){s-=WX[l];l++}
+    else{if(r===n-1)break;l=r=r+1;s=WX[r]}}
+  return [B,S]})();
+function whyFinal(){return null}
+function whyColor(w){return w[2]===WG?'var(--hit)':'var(--ok)'}
+function whyEnd(){return 'No window adds up to <b>'+WG+'</b>, either way. Brute force checked <b>'+WB.length+'</b> windows; the sliding window, <b>'+WS.length+'</b>.<br>The gap grows fast as the list gets longer.'}
+var WB=WTR[0],WS=WTR[1];
+function whyBuild(){wy.textContent='';WR=[];[WS,WB].forEach(function(t,k){
+  var c=document.createElement('div');c.className='wyc idle';c.style.setProperty('--n',WX.length);
+  c.innerHTML='<div class="wyh"><b>'+WT[k]+'</b><span class="wyn">0 checks</span></div>';
+  var hc=document.createElement('div');hc.className='hc';
+  WX.forEach(function(v){var s=document.createElement('span');s.textContent=v;hc.appendChild(s)});
+  var w=document.createElement('div');w.className='hw';hc.appendChild(w);c.appendChild(hc);wy.appendChild(c);
+  WR.push({c:c,hc:hc,n:c.querySelector('.wyn'),t:t})})}
+function whyPaint(){WR.forEach(function(R){var i=Math.min(wi,R.t.length),w=R.t[i-1],sp=R.hc.children,fin=i>0&&i===R.t.length?whyFinal(R.t):null;if(fin)w=fin;
+  R.c.classList.toggle('idle',i===0);R.c.classList.toggle('done',i>0&&i===R.t.length);
+  if(i>0){R.c.style.setProperty('--l',w[0]);R.c.style.setProperty('--r',w[1]);R.c.style.setProperty('--st',fin?'var(--hit)':whyColor(w))}
+  for(var j=0;j<WX.length;j++)sp[j].classList.toggle('in',i>0&&j>=w[0]&&j<=w[1]);
+  R.n.textContent=i+(i===1?' check':' checks')})}
+function whyStop(){if(wtm){clearInterval(wtm);wtm=null}bfStop()}
+function whyReset(){whyStop();bfReset();setStage(1,true);wi=0;wp.textContent='Play';wp.disabled=false;whyPaint()}
+wp.onclick=function(){whyReset();wp.disabled=true;
+  wtm=setInterval(function(){wi++;whyPaint();
+    if(wi>=Math.max(WB.length,WS.length)){whyStop();wp.disabled=false;wp.textContent='Replay';bfPlay()}},130)};
+whyBuild();
+/* after the race: the same brute-force windows, listed in order, with a pointer showing where we are */
+var bfx=$('bfx'),bfc=$('bfc'),bfh=$('bfh'),bfw=$('bfw'),bfl=$('bfl'),bfr=$('bfr'),bft=null,BR=[];
+(function(){bfh.style.setProperty('--n',WX.length);WX.forEach(function(v){var e=document.createElement('span');e.textContent=v;bfh.insertBefore(e,bfw)});
+  WB.forEach(function(w,i){var d=document.createElement('div');d.className='tr '+(w[2]<WG?'under':w[2]>WG?'over':'match');
+    d.style.setProperty('--a',w[0]);d.style.setProperty('--b',w[1]);d.style.setProperty('--n',WX.length);d.innerHTML='<i></i>';bfl.insertBefore(d,bfr);BR.push(d)})})();
+function bfStop(){if(bft){clearInterval(bft);bft=null}}
+function bfShow(i){var w=WB[i];bfc.classList.remove('idle');bfc.style.setProperty('--l',w[0]);bfc.style.setProperty('--r',w[1]);
+  bfc.style.setProperty('--st',w[2]===WG?'var(--hit)':'var(--ok)');
+  Array.prototype.forEach.call(bfh.children,function(e,j){if(e!==bfw)e.classList.toggle('in',j>=w[0]&&j<=w[1])});
+  bfr.style.setProperty('--i',i);bfr.classList.add('on');BR[i].classList.add('vis')}
+function bfReset(){bfStop();bfx.hidden=true;$('bft').hidden=true;bfc.classList.add('idle');bfr.classList.remove('on');bfr.style.setProperty('--i',0);BR.forEach(function(d){d.classList.remove('vis')})}
+function bfPlay(){bfReset();bfx.hidden=false;$('bft').hidden=false;fitCar();var i=0;bfr.style.setProperty('--d','0s');bfShow(0);
+  try{bfx.scrollIntoView({block:'nearest',behavior:'smooth'})}catch(e){}
+  bfr.style.setProperty('--d','.06s');
+  bft=setInterval(function(){i++;if(i>=WB.length){bfStop();return}bfShow(i)},75)}
+whyPaint();
+/* part two: start right at the decision (already past the target); every move is the learner's */
+var wzc=$('wzc'),vl=$('wzv'),cmp=$('cmp'),wl=0,wr=0,wk=0,ww=0,wdone=false,W0=WB.filter(function(w){return w[0]===0}),WM=[],
+  WF=(function(){for(var i=0;i<W0.length;i++)if(W0[i][2]>WG)return i;return W0.length-1})();
+(function(){var i,j,t;for(i=0;i<WX.length;i++){t=0;for(j=i;j<WX.length;j++){t+=WX[j];if(t===WG)WM.push([i,j])}}})();
+function vRow(w,gh,i){var r=document.createElement('div'),hc='';
+  r.className='hr '+(w[2]>WG?'over':w[2]===WG?'match':'under')+(gh?' gh':'');r.style.setProperty('--i',i||0);r.style.setProperty('--n',WX.length);r.style.setProperty('--l',w[0]);r.style.setProperty('--r',w[1]);
+  WX.forEach(function(v,j){hc+='<span'+(j>=w[0]&&j<=w[1]?' class="in"':'')+'>'+v+'</span>'});
+  r.innerHTML='<div class="hc">'+hc+'<div class="hw"></div></div><div class="hs">'+w[2]+'</div>';return r}
+function wzSum(l,r){var t=0,i;for(i=l;i<=r;i++)t+=WX[i];return [l,r,t]}
+function wzMsg(t){$('wzm').innerHTML=t}
+function wzAsk(){var t=wzSum(wl,wr)[2];return '<b>'+t+'</b> is '+(t>WG?'over':'under')+' <b>'+WG+'</b>. What next?'}
+function wzDraw(){$('wzn').textContent=wk+(wk===1?' check':' checks')+(ww?' \u00b7 '+ww+' wasted':'');wzc.classList.toggle('bad',ww>0);
+  $('wze').disabled=wdone||wr>=WX.length-1;$('wzd').disabled=wdone||wl>=WX.length-1}
+function wzReset(){var i;wdone=false;vl.textContent='';ww=0;wl=0;wr=WF;wk=WF+1;wzc.classList.remove('done','cm','bad');$('wzk').disabled=false;$('wzt').textContent='Window checks';
+  for(i=0;i<=WF;i++){var r=vRow(W0[i]);r.style.animationDelay=(i*70)+'ms';vl.appendChild(r)}
+  wzDraw();wzMsg('Brute force would extend next.<br>'+wzAsk())}
+function wzMove(k){if(wdone)return;var cur=wzSum(wl,wr),over=cur[2]>WG,pl=wl,nl=wl,nr=wr,waste,res,w,row,skip=k==='drop'&&wl===wr;
+  if(k==='ext'){if(wr>=WX.length-1)return;nr=wr+1;waste=over}
+  else{if(wl>=WX.length-1)return;if(wl===wr)nl=nr=wr+1;else nl=wl+1;waste=!over}
+  w=wzSum(nl,nr);wl=nl;wr=nr;wk++;if(waste)ww++;
+  row=vRow(w);if(waste)row.classList.add('wst');vl.appendChild(row);
+  if(waste)res=k==='ext'?'Wasted: numbers are positive, so extending only adds.':'Wasted: dropping a number only subtracts.';
+  else res=k==='ext'?'<b>'+cur[2]+' + '+WX[nr]+' = '+w[2]+'</b>.':(skip?'Skip past <b>'+WX[pl]+'</b>.':'<b>'+cur[2]+' \u2212 '+WX[pl]+' = '+w[2]+'</b>.');
+  if(w[2]===WG){wdone=true;wzc.classList.add('done');wzDraw();
+    wzMsg('Found it: <b>'+WX.slice(wl,wr+1).join(' + ')+' = '+WG+'</b>.<br><b>'+wk+'</b> checks, <b>'+ww+'</b> wasted.'+(ww?'':' That is the sliding window.'));return}
+  if(!WM.some(function(m){return m[0]>=wl&&m[1]>=wr})){wdone=true;wzc.classList.add('done');$('wzk').disabled=true;wzDraw();
+    wzMsg(res+'<br>'+(WM.every(function(m){return m[1]<wr})?'The right edge passed the match.':'The left edge passed the match.'));return}
+  wzDraw();wzMsg(res+'<br>'+wzAsk())}
+$('wze').onclick=function(){wzMove('ext')};$('wzd').onclick=function(){wzMove('drop')};
+$('wzp').onclick=wzReset;
+$('wzk').onclick=function(){cmp.textContent='';
+  [[WB,'Brute-Force'],[WS,'Sliding window']].forEach(function(q){var c=document.createElement('div');c.className='mc';c.innerHTML='<div class="mh"><b>'+q[1]+'</b><span>'+q[0].length+' checks</span></div>';
+    q[0].forEach(function(w){var r=document.createElement('div');r.className='mr '+(w[2]>WG?'over':w[2]===WG?'match':'under');r.style.setProperty('--n',WX.length);r.style.setProperty('--l',w[0]);r.style.setProperty('--r',w[1]);r.innerHTML='<i class="mb"></i>';c.appendChild(r)});cmp.appendChild(c)});
+  wzc.classList.add('cm');this.disabled=true;$('wzt').textContent='Every check, in order';$('wzn').textContent='';
+  wzMsg('Brute force wades through every red streak. The sliding window drops left at the first red.')};
+function setStage(n,quiet){sy.dataset.st=n;if(!quiet){if(n===2)wzReset();else whyReset()}}
+/* the problem view: worked examples drawn with the same numbers-and-window visual */
+var PZ=[[[3,1,4,2,5,1],11],[[4,1,5,2,6],15]],pi=0,pa=-1,pb=-1,panc=-1,pprev=-1,pmv=false,plock=false,pdrag=false,pr=$('pr'),ptl=[];
+function pfind(a){var N=a[0],t=a[1],i,j,s;for(i=0;i<N.length;i++){s=0;for(j=i;j<N.length;j++){s+=N[j];if(s===t)return[i,j]}}return null}
+function psum(){var s=0,i;if(pa<0)return null;for(i=pa;i<=pb;i++)s+=PZ[pi][0][i];return s}
+function ppaint(){var sm=psum();ptl.forEach(function(t,i){t.classList.toggle('on',pa>=0&&i>=pa&&i<=pb)});
+  $('pf').innerHTML='Sum <b>'+(sm===null?'\u2013':sm)+'</b><span class="sep">\u00b7</span>Target <b>'+PZ[pi][1]+'</b>';$('pc').disabled=pa<0||plock}
+function pmsg(t){$('pm').innerHTML=t}
+function pbuild(){var N=PZ[pi][0];pr.textContent='';ptl=[];pr.style.setProperty('--n',N.length);pr.className='pzr';
+  N.forEach(function(v,i){var d=document.createElement('div');d.className='tl';d.textContent=v;d.setAttribute('role','button');d.tabIndex=0;
+    d.onkeydown=function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();pdn(i);pup(i)}};pr.appendChild(d);ptl.push(d)});
+  pa=pb=panc=-1;plock=false;$('pz').classList.remove('done');pmsg('Drag across the numbers to pick a subarray.');ppaint()}
+function pat(e){var b=pr.getBoundingClientRect(),n=PZ[pi][0].length;return Math.max(0,Math.min(n-1,Math.floor((e.clientX-b.left)/b.width*n)))}
+function pdn(i){if(plock)return;pprev=pa>=0&&pa===pb?pa:-1;pmv=false;panc=i;
+  if(pprev>=0&&i!==pprev){pa=Math.min(pprev,i);pb=Math.max(pprev,i)}else{pa=pb=i}ppaint()}
+function pup(i){if(plock)return;if(!pmv&&pprev===i&&pa===pb){pa=pb=-1}ppaint();panc=-1;if(pa>=0&&psum()===PZ[pi][1])pcorrect()}
+pr.addEventListener('pointerdown',function(e){e.stopPropagation();if(plock)return;pdrag=true;try{pr.setPointerCapture(e.pointerId)}catch(x){}pdn(pat(e))});
+pr.addEventListener('pointermove',function(e){if(!pdrag||plock)return;var j=pat(e);if(j!==panc||pmv){if(j!==panc)pmv=true;pa=Math.min(panc,j);pb=Math.max(panc,j);ppaint()}});
+pr.addEventListener('pointerup',function(e){e.stopPropagation();if(!pdrag)return;pdrag=false;pup(pat(e))});
+pr.addEventListener('pointercancel',function(){pdrag=false});
+function pwrong(m){pr.classList.remove('no');void pr.offsetWidth;pr.classList.add('no');pmsg(m)}
+function pwin(m){plock=true;pr.classList.add('good','lock');$('pz').classList.add('done');pmsg(m);ppaint();$('pc').disabled=true}
+function pcorrect(){var t=PZ[pi][1];pwin('Yes! <b>'+PZ[pi][0].slice(pa,pb+1).join(' + ')+(pb>pa?' = '+t:'')+'</b>.')}
+$('pc').onclick=function(){if(pa<0||plock)return;var sm=psum(),t=PZ[pi][1];
+  if(sm===t)pcorrect();
+  else pwrong('That adds up to <b>'+sm+'</b>, not <b>'+t+'</b>.')};
+$('pn').onclick=function(){if(plock)return;var a=PZ[pi];
+  if(pfind(a)){pa=pb=-1;ppaint();pwrong('There is a match. Keep looking.')}
+  else{pa=pb=-1;pwin('Right. No subarray adds up to <b>'+a[1]+'</b>.')}};
+$('pa').onclick=function(){pi=(pi+1)%PZ.length;pbuild()};
+function pzReset(){pi=0;pbuild()}
+var EXS=[[[2,1,4,3,5,4],12,2,4],[[2,7,3,1,4],10,1,2],[[5,1,3],10,-1,-1]];
+EXS.forEach(function(x,i){var row=document.createElement('div'),hc='';
+  row.className='hr '+(x[2]<0?'over':'match');row.style.setProperty('--i',i);row.style.setProperty('--n',x[0].length);row.style.setProperty('--l',x[2]);row.style.setProperty('--r',x[3]);
+  x[0].forEach(function(v,j){hc+='<span'+(x[2]>=0&&j>=x[2]&&j<=x[3]?' class="in"':'')+'>'+v+'</span>'});
+  row.innerHTML='<div class="exc">Target <b>'+x[1]+'</b></div><div class="hc">'+hc+(x[2]>=0?'<div class="hw"></div>':'')+'</div><div class="hs">'+(x[2]>=0?'\u2713':'\u2715')+'</div>';
+  $('exs').appendChild(row)});
+build();setView(0);
+
+/* editable copy: the owner or an editor can reword the left-hand text in place; it is kept in the shared db */
+(function(){
+var els=[].slice.call(document.querySelectorAll('[data-ek]')),DEF={},cur={},editing=false,ref=null,eb=$('ed');
+function esc(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function toHTML(t){return esc(t).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>')}
+els.forEach(function(el){var k=el.dataset.ek;DEF[k]=el.innerHTML.replace(/<b>(.*?)<\/b>/g,'**$1**').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&');cur[k]=DEF[k];
+  el.addEventListener('pointerdown',function(e){if(editing)e.stopPropagation()});
+  el.addEventListener('keydown',function(e){if(editing&&e.key==='Enter'){e.preventDefault()}});
+  el.addEventListener('paste',function(e){if(!editing)return;e.preventDefault();var t=((e.clipboardData||window.clipboardData).getData('text')||'').replace(/\s+/g,' ');document.execCommand('insertText',false,t)})});
+function apply(){els.forEach(function(el){if(!editing)el.innerHTML=toHTML(cur[el.dataset.ek])});fitCar()}
+function setEdit(on){editing=on;app.classList.toggle('editing',on);eb.textContent=on?'Done':'Edit text';
+  els.forEach(function(el){if(on){el.textContent=cur[el.dataset.ek];el.contentEditable='plaintext-only';if(el.contentEditable!=='plaintext-only')el.contentEditable='true';el.spellcheck=true}
+    else{el.removeAttribute('contenteditable')}});
+  if(!on){els.forEach(function(el){var k=el.dataset.ek,t=el.textContent.replace(/\s+/g,' ').trim().slice(0,600);cur[k]=t||DEF[k]});apply();
+    if(ref)ref.set(JSON.parse(JSON.stringify(cur))).catch(function(){eb.textContent='Not saved'})}
+  else{fitCar();els[0].focus()}}
+eb.onclick=function(){setEdit(!editing)};
+if(window.claude&&claude.use)Promise.all([claude.use('db'),claude.use('user')]).then(function(r){var db=r[0],u=r[1];if(!db)return;
+  (u&&u.canEdit?u.canEdit():Promise.resolve(false)).then(function(ok){if(ok)eb.hidden=false});
+  ref=db.doc('copy/text');
+  ref.onSnapshot(function(snap){var d=snap.exists?snap.data():null;Object.keys(DEF).forEach(function(k){cur[k]=d&&typeof d[k]==='string'&&d[k]?d[k].slice(0,600):DEF[k]});if(!editing)apply()},function(){})}).catch(function(){});
+})();
+})();
+</script>
+
+</body></html>
