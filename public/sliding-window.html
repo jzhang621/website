@@ -5,16 +5,16 @@
 <style>
 :root{
   --bg:#F5F6FA;--card:#FFFFFF;--line:#E0E4EE;--ink:#151A2D;--mut:#6C7390;
-  --ok:#3F5BD9;--onok:#FFFFFF;--tile:#F6F7FB;--fn:#CBD0E3;--loopbg:#EEF0F8;--fnt:#2C3352;--fa:#7A5BDD;--fat:#FFFFFF;--under:#4C68DF;--over:#DC3E42;--hit:#13986A;--gold:#D99A00;
+  --ok:#3F5BD9;--onok:#FFFFFF;--tile:#F6F7FB;--fn:#CBD0E3;--loopbg:#EEF0F8;--fnt:#2C3352;--fa:#7A5BDD;--fat:#FFFFFF;--under:#4C68DF;--small:#59627F;--over:#DC3E42;--hit:#13986A;--gold:#D99A00;
   --font:'Figtree',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
   --ease:cubic-bezier(.3,.8,.3,1);
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --bg:#0E1120;--card:#171B30;--line:#2A3050;--ink:#ECEEF8;--mut:#98A0BF;
-  --ok:#8EA2FF;--onok:#0E1120;--tile:#1F2440;--fn:#3A4262;--loopbg:#1F2542;--fnt:#DDE1F3;--fa:#B09CFF;--fat:#171433;--under:#8EA2FF;--over:#FF7276;--hit:#4ED6A0;--gold:#FFC24D;color-scheme:dark}}
+  --ok:#8EA2FF;--onok:#0E1120;--tile:#1F2440;--fn:#3A4262;--loopbg:#1F2542;--fnt:#DDE1F3;--fa:#B09CFF;--fat:#171433;--under:#8EA2FF;--small:#AEB7D4;--over:#FF7276;--hit:#4ED6A0;--gold:#FFC24D;color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0E1120;--card:#171B30;--line:#2A3050;--ink:#ECEEF8;--mut:#98A0BF;
-  --ok:#8EA2FF;--onok:#0E1120;--tile:#1F2440;--fn:#3A4262;--loopbg:#1F2542;--fnt:#DDE1F3;--fa:#B09CFF;--fat:#171433;--under:#8EA2FF;--over:#FF7276;--hit:#4ED6A0;--gold:#FFC24D;color-scheme:dark}
+  --ok:#8EA2FF;--onok:#0E1120;--tile:#1F2440;--fn:#3A4262;--loopbg:#1F2542;--fnt:#DDE1F3;--fa:#B09CFF;--fat:#171433;--under:#8EA2FF;--small:#AEB7D4;--over:#FF7276;--hit:#4ED6A0;--gold:#FFC24D;color-scheme:dark}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:500 16px/1.4 var(--font);min-height:100vh}
 .wrap{max-width:600px;margin:0 auto;padding-block:32px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:20px}
@@ -37,7 +37,7 @@ h1{margin:0;font:800 22px var(--font);letter-spacing:-.01em}
 .cell::before{content:"";position:absolute;inset:7px 5px;z-index:-1;border-radius:11px;background:var(--tile);border:1px solid var(--line);box-shadow:0 2px 0 var(--line)}
 .cell.out{color:var(--mut);opacity:.55}
 .win{position:absolute;top:0;height:64px;left:calc(var(--l)/var(--n)*100% + 2px);width:calc((var(--r) - var(--l) + 1)/var(--n)*100% - 4px);
-  border:2.5px solid var(--st);border-radius:13px;background:color-mix(in srgb,var(--st) 14%,transparent);
+  border:2.5px solid var(--wc,var(--st));border-radius:13px;background:color-mix(in srgb,var(--wc,var(--st)) 14%,transparent);
   transition:left .35s var(--ease),width .35s var(--ease),border-color .3s,background .3s;}
 #app.match .win{animation:pop .45s var(--ease)}
 @keyframes pop{40%{transform:scale(1.04)}}
@@ -243,12 +243,12 @@ code{font:600 .86em ui-monospace,SFMono-Regular,Menlo,monospace;background:color
 .rb.nx svg{stroke:var(--fat)}
 .rb:disabled{opacity:.3;cursor:default}
 /* try it yourself: every window brute force checks; the pointer leaps over the ones that can be skipped */
-#app:is([data-view="2"],[data-view="3"],[data-view="4"],[data-view="5"],[data-view="6"]){--st:var(--under);--pc:var(--under)}
+#app:is([data-view="2"],[data-view="3"],[data-view="4"],[data-view="5"],[data-view="6"]){--st:var(--small);--pc:var(--small);--wc:var(--under)}
 #app:is([data-view="2"],[data-view="3"]) #pill{display:none}
-#app:is([data-view="4"],[data-view="5"],[data-view="6"]).over{--st:var(--over);--pc:var(--over)}
-#app:is([data-view="2"],[data-view="3"],[data-view="4"],[data-view="5"],[data-view="6"]).match{--st:var(--hit);--pc:var(--hit)}
-.tcall{display:flex;gap:10px;align-items:flex-start;margin:0;padding:12px 14px;border-radius:12px;border-left:4px solid var(--ok);background:color-mix(in srgb,var(--ok) 10%,transparent);font:600 14.5px/1.45 var(--font);animation:tcin .4s var(--ease)}
-.tcall::before{content:'';flex:none;width:22px;height:22px;margin-top:1px;border-radius:50%;background:var(--hit) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4 8-9'/%3E%3C/svg%3E") center/16px no-repeat;animation:tpop .5s var(--ease)}
+#app:is([data-view="4"],[data-view="5"],[data-view="6"]).over{--st:var(--over);--pc:var(--over);--wc:var(--over)}
+#app:is([data-view="2"],[data-view="3"],[data-view="4"],[data-view="5"],[data-view="6"]).match{--st:var(--hit);--pc:var(--hit);--wc:var(--hit)}
+.tcall{display:block;position:relative;margin:0;padding:12px 14px 12px 50px;border-radius:12px;border-left:4px solid var(--ok);background:color-mix(in srgb,var(--ok) 10%,transparent);font:600 14.5px/1.45 var(--font);animation:tcin .4s var(--ease)}
+.tcall::before{content:'';position:absolute;left:14px;top:13px;width:22px;height:22px;border-radius:50%;background:var(--hit) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4 8-9'/%3E%3C/svg%3E") center/16px no-repeat;animation:tpop .5s var(--ease)}
 @keyframes tpop{0%{transform:scale(0)}60%{transform:scale(1.2)}100%{transform:none}}
 .tbtn button.ok{opacity:1!important;border-color:var(--hit);box-shadow:0 0 0 3px color-mix(in srgb,var(--hit) 28%,transparent);animation:tring .9s ease-out}
 @keyframes tring{from{box-shadow:0 0 0 0 color-mix(in srgb,var(--hit) 55%,transparent)}}
@@ -278,10 +278,12 @@ code{font:600 .86em ui-monospace,SFMono-Regular,Menlo,monospace;background:color
   .ptx{padding:4px 44px 4px 0}
   .pvz{padding-left:44px;border-left:1px solid var(--line)}
   .ptx .pq,.ptx .wintro,.ptx .tin p{font:600 19px/1.5 var(--font)}
-  .tcall{font-size:17px;line-height:1.5;padding:14px 16px}
+  .tcall{font-size:17px;line-height:1.5;padding:14px 16px 14px 52px}.tcall::before{left:16px;top:15px}
   .ptx .pq{font-weight:500}.ptx .pq b{font-weight:800}
   .tin{gap:14px}
 }
+.skp{color:inherit;background:repeating-linear-gradient(135deg,color-mix(in srgb,var(--under) 50%,transparent) 0 2px,transparent 2px 5px),color-mix(in srgb,var(--mut) 28%,transparent);border-radius:4px;padding:1px 3px;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.swin{color:inherit;background:color-mix(in srgb,var(--under) 15%,transparent);box-shadow:0 0 0 2px var(--under);border-radius:8px;padding:1px 4px;margin:0 2px;-webkit-box-decoration-break:clone;box-decoration-break:clone}
 .tctl{display:flex;flex-direction:column;gap:6px}
 .tbtn{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .tbtn button{padding:12px 6px;font-size:14.5px;border-radius:12px;white-space:nowrap}
@@ -289,6 +291,7 @@ code{font:600 .86em ui-monospace,SFMono-Regular,Menlo,monospace;background:color
 .tr{position:relative;height:8px;margin-bottom:3px;border-radius:4px;background:color-mix(in srgb,var(--mut) 13%,transparent)}
 .tr i{position:absolute;top:0;bottom:0;left:calc(var(--a)/var(--n)*100%);width:calc((var(--b) - var(--a) + 1)/var(--n)*100%);border-radius:4px;background:var(--c);opacity:.34;transition:opacity .9s ease}
 .tlist.nt .tr i{transition:none!important}
+#tlist .tr.cur i,#tlist .tr.match i{opacity:1}
 .tr.under{--c:var(--under)}.tr.over{--c:var(--over)}.tr.match{--c:var(--hit)}
 #s1 .tr.over{--c:var(--under)}
 .tr.match::after{content:'\2605';position:absolute;right:4px;top:50%;transform:translateY(-52%);font-size:12px;line-height:1;color:var(--hit)}
@@ -297,7 +300,7 @@ code{font:600 .86em ui-monospace,SFMono-Regular,Menlo,monospace;background:color
 .tr.skip i{opacity:.6;background:repeating-linear-gradient(135deg,var(--c) 0 2px,transparent 2px 5px)}.tr.match.skip i{opacity:.55;background:var(--c)}
 .tsk{position:absolute;left:-3px;right:-3px;border:1.5px dashed var(--mut);border-radius:8px;background:color-mix(in srgb,var(--mut) 9%,transparent);pointer-events:none;transform-origin:top;animation:tskin var(--d,.4s) cubic-bezier(.5,0,.2,1) both}
 @keyframes tskin{from{opacity:0;transform:scaleY(.15)}to{opacity:1;transform:none}}
-.tcr{position:absolute;left:-3px;right:-3px;top:0;height:14px;border:2px solid var(--ink);border-radius:7px;pointer-events:none;opacity:0;transform:translateY(calc(var(--i,0)*var(--p) - 1px));transition:transform var(--d,.3s) cubic-bezier(.5,0,.2,1),opacity .2s}
+.tcr{position:absolute;left:-3px;right:-3px;top:0;height:14px;border:2px solid color-mix(in srgb,var(--under) 45%,transparent);background:color-mix(in srgb,var(--under) 13%,transparent);border-radius:7px;pointer-events:none;opacity:0;transform:translateY(calc(var(--i,0)*var(--p) - 1px));transition:transform var(--d,.3s) cubic-bezier(.5,0,.2,1),opacity .2s}
 .tcr.on{opacity:1}
 @media (prefers-reduced-motion:reduce){.tcr,.tr i{transition:none}.tsk{animation:none}}
 button{padding:8px 14px;font-size:14px}
@@ -332,10 +335,10 @@ button[aria-expanded=true]{border-color:var(--mut)}
 .wyc .hc span{transition:color .2s,opacity .2s}
 .wyc .hw{transition:left .12s var(--ease),width .12s var(--ease),border-color .2s,background .2s,opacity .2s}
 .wyc.idle .hw{opacity:0}
-.wyb{display:flex;justify-content:center}.ptx .wyb{justify-content:flex-start}
-#wp{padding:12px 30px;border-radius:14px;background:var(--ok);color:var(--onok);border-color:var(--ok)}
-#wp:hover:not(:disabled){border-color:var(--ok);filter:brightness(1.06)}
-#wp:disabled{opacity:.55}
+.wyb{display:flex;justify-content:center}.ptx .wyb{justify-content:flex-start}.wyb2{display:none;justify-content:flex-start}#sy[data-st="3"] .wyb2{display:flex}
+#wp,#wp2{padding:12px 30px;border-radius:14px;background:var(--ok);color:var(--onok);border-color:var(--ok)}
+#wp:hover:not(:disabled),#wp2:hover:not(:disabled){border-color:var(--ok);filter:brightness(1.06)}
+#wp:disabled,#wp2:disabled{opacity:.55}
 /* why view, part two: spot the wasted checks, then make the call */
 .bfx{display:flex;flex-direction:column;gap:12px;margin-top:6px}
 .bfc{--st:var(--ok)}.bfc .tr.under,.bfc .tr.over{--c:var(--ok)}
@@ -413,7 +416,7 @@ button[aria-expanded=true]{border-color:var(--mut)}
 
   <section class="card" id="wcard" aria-label="Current window" aria-live="polite">
     <div class="row"><div class="cells" id="cells"><div class="win" id="win"></div><div class="mk mkl" id="mkl"><span>left</span></div><div class="mk mkr" id="mkr"><span>right</span></div></div></div>
-    <div class="trk"><div class="fill"></div><div class="tick"></div></div>
+    
     <div class="fr"><p class="facts" id="facts"></p><span class="pill" id="pill">Too small</span></div>
   </section>
 
@@ -442,7 +445,8 @@ button[aria-expanded=true]{border-color:var(--mut)}
     <div class="slide two" id="sy" inert data-st="1">
       <div class="ptx"><p class="wintro" id="wi1p" data-ek="wi1">The sliding window is a much faster method for finding if a subarray exists compared to the brute-force solution:</p>
         <p class="wintro" id="bft" data-ek="bft">This is because the brute force solution blindly considers all possible subarrays.</p>
-        <div class="wyb"><button id="wp">Play</button></div></div>
+        <div class="wyb"><button id="wp">Play</button></div>
+        <div class="wyb2"><button id="wp2">Play</button></div></div>
       <div class="pvz">
       <div class="wy" id="wy"></div>
       <div class="bfx" id="bfx" hidden>
@@ -461,7 +465,7 @@ button[aria-expanded=true]{border-color:var(--mut)}
       </div>
     </div>
     <div class="slide two" id="s1">
-      <div class="ptx"><div class="tin ta"><p data-ek="tin1">A sliding window tracks the sum in the current subarray. The sum is then used to decide whether to shrink the subarray from the left or to expand it from the right.</p><p data-ek="tin2">See if you can work out which choice to make to the subarray on the right when the current sum exceeds the target:</p></div>
+      <div class="ptx"><div class="tin ta"><p data-ek="tin1">A sliding window tracks the sum in the current subarray. The sum is then used either shrink the subarray from the left or to expand it from the right.</p><p data-ek="tin2">See if you can work out which choice to make to the subarray on the right when the current sum exceeds the target:</p></div>
         <p class="tb tin3" data-ek="tin3">Now the sum is under the target. See if you can work out which choice to make:</p>
         <div class="tctl">
         <div class="tbtn"><button id="sl">Shrink from left</button><button id="gr">Extend from right</button></div>
@@ -475,7 +479,7 @@ button[aria-expanded=true]{border-color:var(--mut)}
     </div>
     <div class="slide two" id="s2" inert>
       <div class="ptx">
-        <p class="ld" id="ld4" data-ek="ld4">Here’s what the sliding window algorithm looks like in action. Notice how comparing the sum and the target always tells us whether to grow or shrink the window.</p>
+        <p class="ld" id="ld4" data-ek="ld4">Here’s what the sliding window algorithm looks like in action. Notice how comparing the sum and the target always tells us whether to expand or shrink the window.</p>
         <p class="ld" id="ldT" data-ek="ldT">What’s the next step in the algorithm after comparing the sum to the target?</p>
         <p class="ld" id="ldS"></p>
         <p class="ld" id="ldN">Are there any numbers left to add?</p>
@@ -604,12 +608,12 @@ function tprune(cur,dur,mark,nxt){var sm=wsum(cur.a,cur.b),out=[];if(!mark||sm==
 function tleap(o,mark,instant){var d=tcur?Math.abs(o.i-tcur.i):0,dur=(instant||!tcur)?0:Math.min(.3+.02*d,.85),cnt=0,pl=l,pr=r;
   if(tcur)cnt=tprune(tcur,dur,mark,o);
   tcr.style.setProperty('--d',dur+'s');tcr.style.setProperty('--i',o.i);tcr.classList.add('on');
-  o.vis=true;o.el.classList.add('vis');tcur=o;l=o.a;r=o.b;E.started=true;render();if(!instant&&(pl!==l||pr!==r))tick(r!==pr?r:pl);return cnt}
-function tstartB(){tst=2;$('s1').dataset.ts=2;tbuild();tlist.classList.add('nt');[[0,0],[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],[1,6]].forEach(function(w){tleap(tix[w[0]+','+w[1]],false,true)});void tlist.offsetWidth;tlist.classList.remove('nt');tsync();$('note').textContent='';tat(500,function(){tbusy=false;tsync()});fitCar()}
-function tstart(){tst=1;$('s1').dataset.ts=1;tbuild();l=0;r=0;E.started=true;tleap(tix['0,0']);tsync();
-  var q=[],rr=0,sm=A[0];while(sm<T&&rr<n-1){rr++;sm+=A[rr];q.push(rr)}
-  q.forEach(function(rv,i){tat(700+i*420,function(){tleap(tix['0,'+rv])})});
-  tat(700+q.length*420+450,function(){tbusy=false;if(curSum()===T)tdone=true;tsync()})}
+  if(tcur)tcur.el.classList.remove('cur');o.vis=true;o.el.classList.add('vis','cur');tcur=o;l=o.a;r=o.b;E.started=true;render();if(!instant&&(pl!==l||pr!==r))tick(r!==pr?r:pl);return cnt}
+function tstartB(){tst=2;$('s1').dataset.ts=2;tbuild();tlist.classList.add('nt');[[0,0],[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],[1,6]].forEach(function(w){tleap(tix[w[0]+','+w[1]],false,true)});TW.forEach(function(o){if(!o.vis&&o.i<tcur.i){o.skip=true;o.el.classList.add('skip')}});void tlist.offsetWidth;tlist.classList.remove('nt');tsync();$('note').textContent='';tbusy=false;tsync();fitCar()}
+function tstart(){tst=1;$('s1').dataset.ts=1;tbuild();l=0;r=0;E.started=true;tlist.classList.add('nt');
+  var q=[0],rr=0,sm=A[0];while(sm<T&&rr<n-1){rr++;sm+=A[rr];q.push(rr)}
+  q.forEach(function(rv){tleap(tix['0,'+rv],false,true)});void tlist.offsetWidth;tlist.classList.remove('nt');
+  tbusy=false;if(curSum()===T)tdone=true;tsync();fitCar()}
 function tgo(k,btn){if(tbusy||tdone)return;var sm=curSum(),t;
   if(k==='ext'&&sm>T){wrong(btn,'Over '+T+': adding a number only makes it bigger.');return}
   if(k==='shr'&&sm<T){wrong(btn,'Under '+T+': dropping a number only makes it smaller.');return}
@@ -803,7 +807,7 @@ function setView(v){var part=v===7,no8=v===8;sid=v;if(part)v=1;if(no8)v=5;if(exN
   s0.inert=v!==0;sy.inert=v!==1;s1.inert=v!==2&&v!==3;s2.inert=v<4;
   for(var i=0;i<=8;i++){$('v'+i).setAttribute('aria-current',i===sid);$('v'+i).classList.toggle('past',ORDER.indexOf(i)<ORDER.indexOf(sid))}
   $('cp').disabled=sid===0;$('cx').disabled=sid===6;$('stt').innerHTML=TT[sid];
-  if(v===0)pzReset();if(v===0||v===2||v===3){l=0;r=0;resetE();render()}else if(v===1){whyReset();if(part){sy.dataset.st=3;bfPlay()}}else flowReset();
+  if(v===0)pzReset();if(v===0||v===2||v===3){l=0;r=0;resetE();render()}else if(v===1){whyReset();if(part){sy.dataset.st=3;bfReset();bfx.hidden=false;$('wp2').textContent='Play';$('wp2').disabled=false}}else flowReset();
   if(v===2)tstart();if(v===3)tstartB();
   if(v===6)$('fslot').appendChild(flowEl);else if(flowEl.parentNode!==fcardEl)fcardEl.insertBefore(flowEl,fcardEl.firstChild);
   cEnter(v);
@@ -868,10 +872,11 @@ function bfShow(i){var w=WB[i];bfc.classList.remove('idle');bfc.style.setPropert
   Array.prototype.forEach.call(bfh.children,function(e,j){if(e!==bfw)e.classList.toggle('in',j>=w[0]&&j<=w[1])});
   bfr.style.setProperty('--i',i);bfr.classList.add('on');BR[i].classList.add('vis')}
 function bfReset(){bfStop();bfx.hidden=true;bfc.classList.add('idle');bfr.classList.remove('on');bfr.style.setProperty('--i',0);BR.forEach(function(d){d.classList.remove('vis')})}
-function bfPlay(){bfReset();bfx.hidden=false;fitCar();var i=0;bfr.style.setProperty('--d','0s');bfShow(0);
+function bfPlay(){bfReset();bfx.hidden=false;$('wp2').disabled=true;fitCar();var i=0;bfr.style.setProperty('--d','0s');bfShow(0);
   try{bfx.scrollIntoView({block:'nearest',behavior:'smooth'})}catch(e){}
   bfr.style.setProperty('--d','.06s');
-  bft=setInterval(function(){i++;if(i>=WB.length){bfStop();return}bfShow(i)},75)}
+  bft=setInterval(function(){i++;if(i>=WB.length){bfStop();$('wp2').disabled=false;$('wp2').textContent='Replay';return}bfShow(i)},75)}
+$('wp2').onclick=bfPlay;
 whyPaint();
 /* part two: start right at the decision (already past the target); every move is the learner's */
 var wzc=$('wzc'),vl=$('wzv'),cmp=$('cmp'),wl=0,wr=0,wk=0,ww=0,wdone=false,W0=WB.filter(function(w){return w[0]===0}),WM=[],
@@ -951,12 +956,12 @@ build();setView(0);
 (function(){
 var els=[].slice.call(document.querySelectorAll('[data-ek]')),DEF={},cur={},editing=false,ref=null,eb=$('ed');
 function esc(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
-function toHTML(t){return esc(t).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>')}
+function toHTML(t,k){var h=esc(t).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');if(k==='tin1')h=h.replace(/^(A )(sliding window)/i,'$1<mark class="swin">$2</mark>');if(k==='tcall'||k==='tcall2')h=h.replace(/(skip a number)/i,'<mark class="skp">$1</mark>');return h}
 els.forEach(function(el){var k=el.dataset.ek;DEF[k]=el.innerHTML.replace(/<b>(.*?)<\/b>/g,'**$1**').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&');cur[k]=DEF[k];
   el.addEventListener('pointerdown',function(e){if(editing)e.stopPropagation()});
   el.addEventListener('keydown',function(e){if(editing&&e.key==='Enter'){e.preventDefault()}});
   el.addEventListener('paste',function(e){if(!editing)return;e.preventDefault();var t=((e.clipboardData||window.clipboardData).getData('text')||'').replace(/\s+/g,' ');document.execCommand('insertText',false,t)})});
-function apply(){els.forEach(function(el){if(!editing)el.innerHTML=toHTML(cur[el.dataset.ek])});fitCar()}
+function apply(){els.forEach(function(el){if(!editing)el.innerHTML=toHTML(cur[el.dataset.ek],el.dataset.ek)});fitCar()}
 function setEdit(on){editing=on;app.classList.toggle('editing',on);eb.textContent=on?'Done':'Edit text';
   els.forEach(function(el){if(on){el.textContent=cur[el.dataset.ek];el.contentEditable='plaintext-only';if(el.contentEditable!=='plaintext-only')el.contentEditable='true';el.spellcheck=true}
     else{el.removeAttribute('contenteditable')}});
@@ -964,6 +969,7 @@ function setEdit(on){editing=on;app.classList.toggle('editing',on);eb.textConten
     if(ref)ref.set(JSON.parse(JSON.stringify(cur))).catch(function(){eb.textContent='Not saved'})}
   else{fitCar();els[0].focus()}}
 eb.onclick=function(){setEdit(!editing)};
+apply();
 if(window.claude&&claude.use)Promise.all([claude.use('db'),claude.use('user')]).then(function(r){var db=r[0],u=r[1];if(!db)return;
   (u&&u.canEdit?u.canEdit():Promise.resolve(false)).then(function(ok){if(ok)eb.hidden=false});
   ref=db.doc('copy/text');
