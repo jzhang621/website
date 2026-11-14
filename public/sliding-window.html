@@ -245,7 +245,7 @@ code{font:600 .86em ui-monospace,SFMono-Regular,Menlo,monospace;background:color
 /* try it yourself: every window brute force checks; the pointer leaps over the ones that can be skipped */
 #app:is([data-view="2"],[data-view="3"],[data-view="4"],[data-view="5"],[data-view="6"]){--st:var(--under);--pc:var(--under)}
 #app:is([data-view="2"],[data-view="3"]) #pill{display:none}
-#app:is([data-view="2"],[data-view="3"],[data-view="4"],[data-view="5"],[data-view="6"]).over{--st:var(--over);--pc:var(--over)}
+#app:is([data-view="4"],[data-view="5"],[data-view="6"]).over{--st:var(--over);--pc:var(--over)}
 #app:is([data-view="2"],[data-view="3"],[data-view="4"],[data-view="5"],[data-view="6"]).match{--st:var(--hit);--pc:var(--hit)}
 .tcall{display:flex;gap:10px;align-items:flex-start;margin:0;padding:12px 14px;border-radius:12px;border-left:4px solid var(--ok);background:color-mix(in srgb,var(--ok) 10%,transparent);font:600 14.5px/1.45 var(--font);animation:tcin .4s var(--ease)}
 .tcall::before{content:'';flex:none;width:22px;height:22px;margin-top:1px;border-radius:50%;background:var(--hit) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4 8-9'/%3E%3C/svg%3E") center/16px no-repeat;animation:tpop .5s var(--ease)}
@@ -273,6 +273,7 @@ code{font:600 .86em ui-monospace,SFMono-Regular,Menlo,monospace;background:color
 .wrap{transition:max-width .35s var(--ease)}
 @media (min-width:820px){
   #app{max-width:1040px}
+  .sec{margin-bottom:18px}
   .slide.two{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);column-gap:0;align-items:stretch}
   .ptx{padding:4px 44px 4px 0}
   .pvz{padding-left:44px;border-left:1px solid var(--line)}
@@ -289,6 +290,7 @@ code{font:600 .86em ui-monospace,SFMono-Regular,Menlo,monospace;background:color
 .tr i{position:absolute;top:0;bottom:0;left:calc(var(--a)/var(--n)*100%);width:calc((var(--b) - var(--a) + 1)/var(--n)*100%);border-radius:4px;background:var(--c);opacity:.34;transition:opacity .9s ease}
 .tlist.nt .tr i{transition:none!important}
 .tr.under{--c:var(--under)}.tr.over{--c:var(--over)}.tr.match{--c:var(--hit)}
+#s1 .tr.over{--c:var(--under)}
 .tr.match::after{content:'\2605';position:absolute;right:4px;top:50%;transform:translateY(-52%);font-size:12px;line-height:1;color:var(--hit)}
 .tr.match i,.tr.vis i{opacity:1}
 .tr.skip{background:color-mix(in srgb,var(--mut) 30%,transparent)}
@@ -459,7 +461,7 @@ button[aria-expanded=true]{border-color:var(--mut)}
       </div>
     </div>
     <div class="slide two" id="s1">
-      <div class="ptx"><div class="tin ta"><p data-ek="tin1">A sliding window tracks the sum in the current subarray and uses it to decide whether to shrink the subarray from the left or to expand it from the right.</p><p data-ek="tin2">See if you can work out which choice to make to the subarray when the current sum exceeds the target:</p></div>
+      <div class="ptx"><div class="tin ta"><p data-ek="tin1">A sliding window tracks the sum in the current subarray. The sum is then used to decide whether to shrink the subarray from the left or to expand it from the right.</p><p data-ek="tin2">See if you can work out which choice to make to the subarray on the right when the current sum exceeds the target:</p></div>
         <p class="tb tin3" data-ek="tin3">Now the sum is under the target. See if you can work out which choice to make:</p>
         <div class="tctl">
         <div class="tbtn"><button id="sl">Shrink from left</button><button id="gr">Extend from right</button></div>
