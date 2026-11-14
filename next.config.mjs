@@ -24,6 +24,9 @@ const withMDX = createMDX({
 const nextConfig = {
   pageExtensions: ["ts", "tsx", "js", "jsx", "md", "mdx"],
   reactStrictMode: true,
+  async rewrites() {
+    return [{ source: "/sliding-window", destination: "/sliding-window.html" }];
+  },
 };
 
 export default process.env.ANALYZE === "true" ? withBundleAnalyzer(withMDX(nextConfig)) : withMDX(nextConfig);
