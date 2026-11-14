@@ -402,6 +402,9 @@ button[aria-expanded=true]{border-color:var(--mut)}
   .track{transform:none!important;transition:none}
   .slide[inert]{display:none}
   #app:is([data-view="2"],[data-view="3"],[data-view="4"],[data-view="5"],[data-view="6"]){padding-bottom:170px}
+  #app:is([data-view="0"],[data-view="1"]){padding-bottom:110px}
+  #app[data-view="0"] #pz .pza,#app[data-view="1"] :is(.wyb,.wyb2){position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--bg);border-top:1px solid var(--line);padding:12px max(16px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+  #app[data-view="1"] :is(.wyb,.wyb2){justify-content:flex-start}
   #app:is([data-view="2"],[data-view="3"]) .tctl,#app:is([data-view="4"],[data-view="5"],[data-view="6"]) .dock{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;flex-direction:column;gap:8px;background:var(--bg);border-top:1px solid var(--line);padding:12px max(16px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
   .dock .cfb{order:-1}
 }
@@ -791,7 +794,7 @@ var s0=$('s0'),s1=$('s1'),sy=$('sy'),s2=$('s2'),car=$('car'),track=$('track');
 function fitCar(){app.style.setProperty('--ch',wcd.offsetHeight+'px');var a=[s0,sy,s1,s1,s2,s2,s2][view];car.style.height=(a.offsetHeight+12)+'px'}
 car.addEventListener('scroll',function(){if(car.scrollLeft||car.scrollTop){car.scrollLeft=0;car.scrollTop=0}});
 if(window.ResizeObserver){var ro=new ResizeObserver(fitCar);ro.observe(s0);ro.observe(s1);ro.observe(sy);ro.observe(s2)}
-var TT=['The problem','Why Sliding Window','','','Algorithm','Try it yourself','Code','Why Sliding Window (cont.)','Try it yourself: no match'],ORDER=[0,1,7,2,3,4,5,8,6],sid=0;
+var TT=['The problem','Why Sliding Window','','','Algorithm','Try it yourself','Code','Why (cont.)','Try it yourself: no match'],ORDER=[0,1,7,2,3,4,5,8,6],sid=0;
 var wcd=$('wcard'),pvz1=$('pvz1'),varsEl=$('vars');
 /* the two try-it sections reuse the race's numbers (and its target); everything after goes back to the short example */
 function useData(){A=WX.slice();n=A.length;T=exNo?19:WG;build()}
