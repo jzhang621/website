@@ -438,7 +438,7 @@ button[aria-expanded=true]{border-color:var(--mut)}
       </div>
     </div>
     <div class="slide two" id="sy" inert data-st="1">
-      <div class="ptx"><p class="wintro" id="wi1p" data-ek="wi1">The sliding window is a much faster method for finding if a subarray exists compared to the brute force:</p>
+      <div class="ptx"><p class="wintro" id="wi1p" data-ek="wi1">The sliding window is a much faster method for finding if a subarray exists compared to the brute-force solution:</p>
         <p class="wintro" id="bft" data-ek="bft">This is because the brute force solution blindly considers all possible subarrays.</p></div>
       <div class="pvz">
       <div class="wy" id="wy"></div>
@@ -459,26 +459,26 @@ button[aria-expanded=true]{border-color:var(--mut)}
       </div>
     </div>
     <div class="slide two" id="s1">
-      <div class="ptx"><div class="tin ta"><p data-ek="tin1">A sliding window improves on the brute-force solution by keeping track of the current sum in the window, and using it to decide whether to shrink the window from the left or to expand the window from the right.</p><p data-ek="tin2">See if you can work out which choice to make when the current sum exceeds the target below:</p></div>
+      <div class="ptx"><div class="tin ta"><p data-ek="tin1">A sliding window tracks the sum in the current subarray and uses it to decide whether to shrink the subarray from the left or to expand it from the right.</p><p data-ek="tin2">See if you can work out which choice to make to the subarray when the current sum exceeds the target:</p></div>
         <p class="tb tin3" data-ek="tin3">Now the sum is under the target. See if you can work out which choice to make:</p>
         <div class="tctl">
         <div class="tbtn"><button id="sl">Shrink from left</button><button id="gr">Extend from right</button></div>
         <p class="note" id="note" aria-live="polite"></p>
       </div>
-        <p class="tcall ta" id="tcall" data-ek="tcall" hidden>By choosing to shrink the window here, we skipped a bunch of unnecessary subarray checks.</p>
-        <p class="tcall tb" id="tcall2" data-ek="tcall2" hidden>By choosing to extend the window here, we skipped a bunch of unnecessary subarray checks.</p></div>
+        <p class="tcall ta" id="tcall" data-ek="tcall" hidden>By choosing to shrink the subarray here, we skip a number of unnecessary checks.</p>
+        <p class="tcall tb" id="tcall2" data-ek="tcall2" hidden>By choosing to extend the subarray here, we skip a number of unnecessary future checks.</p></div>
       <div class="pvz" id="pvz1">
       <div class="tlist" id="tlist" aria-hidden="true"><div class="tcr" id="tcr"></div></div>
       </div>
     </div>
     <div class="slide two" id="s2" inert>
       <div class="ptx">
-        <p class="ld" id="ld4" data-ek="ld4">Repeat the same decision until the window matches or the numbers run out.</p>
-        <p class="ld" id="ldT" data-ek="ldT">What's the next step in the algorithm?</p>
+        <p class="ld" id="ld4" data-ek="ld4">Here’s what the sliding window algorithm looks like in action. Notice how comparing the sum and the target always tells us whether to grow or shrink the window.</p>
+        <p class="ld" id="ldT" data-ek="ldT">What’s the next step in the algorithm after comparing the sum to the target?</p>
         <p class="ld" id="ldS"></p>
         <p class="ld" id="ldN">Are there any numbers left to add?</p>
         <p class="ld" id="ld5" data-ek="ld5">Each move changes one variable, and the sum follows.</p>
-        <p class="ld" id="ld6" data-ek="ld6">Fill in the blanks. Each line of code is one step of the flowchart.</p>
+        <p class="ld" id="ld6" data-ek="ld6">Every line of code is one step of the flowchart.</p>
         <button class="ftog" id="ftog" aria-expanded="false">Flowchart</button>
         <div class="fslot" id="fslot"></div>
         <div class="dock">
@@ -785,7 +785,7 @@ var s0=$('s0'),s1=$('s1'),sy=$('sy'),s2=$('s2'),car=$('car'),track=$('track');
 function fitCar(){app.style.setProperty('--ch',wcd.offsetHeight+'px');var a=[s0,sy,s1,s1,s2,s2,s2][view];car.style.height=(a.offsetHeight+12)+'px'}
 car.addEventListener('scroll',function(){if(car.scrollLeft||car.scrollTop){car.scrollLeft=0;car.scrollTop=0}});
 if(window.ResizeObserver){var ro=new ResizeObserver(fitCar);ro.observe(s0);ro.observe(s1);ro.observe(sy);ro.observe(s2)}
-var TT=['The problem','Why Sliding Window','','','Algorithm','Try it yourself','Code','Why Sliding Window (cont.)','Try it yourself: no match'],ORDER=[0,1,7,2,3,4,5,8,6],step=0;
+var TT=['The problem','Why Sliding Window','','','Algorithm','Try it yourself','Code','Why Sliding Window (cont.)','Try it yourself: no match'],ORDER=[0,1,7,2,3,4,5,8,6],sid=0;
 var wcd=$('wcard'),pvz1=$('pvz1'),varsEl=$('vars');
 /* the two try-it sections reuse the race's numbers (and its target); everything after goes back to the short example */
 function useData(){A=WX.slice();n=A.length;T=exNo?19:WG;build()}
@@ -796,11 +796,11 @@ function placeCard(v){var host=(v===2||v===3)?pvz1:v>=4?pvz2:null;
   if(host){host.insertBefore(wcd,host===pvz2?srEl.nextSibling:host.firstChild);if(host===pvz2)host.insertBefore(varsEl,wcd.nextSibling);else app.insertBefore(varsEl,car)}
   else{app.insertBefore(wcd,car);app.insertBefore(varsEl,car)}}
 var flowEl=$('flow'),fcardEl=$('fcard');
-function setView(v){var part=v===7,no8=v===8;step=v;if(part)v=1;if(no8)v=5;if(exNo!==no8){exNo=no8;$('e1').setAttribute('aria-pressed',!no8);$('e2').setAttribute('aria-pressed',no8)}useData();placeCard(v);whyStop();qClear();tclear();app.classList.remove('ask');app.classList.remove('np');view=v;app.dataset.view=v;
+function setView(v){var part=v===7,no8=v===8;sid=v;if(part)v=1;if(no8)v=5;if(exNo!==no8){exNo=no8;$('e1').setAttribute('aria-pressed',!no8);$('e2').setAttribute('aria-pressed',no8)}useData();placeCard(v);whyStop();qClear();tclear();app.classList.remove('ask');app.classList.remove('np');view=v;app.dataset.view=v;
   track.style.transform='translateX('+(-100*(v<=2?v:v===3?2:3))+'%)';
   s0.inert=v!==0;sy.inert=v!==1;s1.inert=v!==2&&v!==3;s2.inert=v<4;
-  for(var i=0;i<=8;i++){$('v'+i).setAttribute('aria-current',i===step);$('v'+i).classList.toggle('past',ORDER.indexOf(i)<ORDER.indexOf(step))}
-  $('cp').disabled=step===0;$('cx').disabled=step===6;$('stt').innerHTML=TT[step];
+  for(var i=0;i<=8;i++){$('v'+i).setAttribute('aria-current',i===sid);$('v'+i).classList.toggle('past',ORDER.indexOf(i)<ORDER.indexOf(sid))}
+  $('cp').disabled=sid===0;$('cx').disabled=sid===6;$('stt').innerHTML=TT[sid];
   if(v===0)pzReset();if(v===0||v===2||v===3){l=0;r=0;resetE();render()}else if(v===1){whyReset();if(part){sy.dataset.st=3;bfPlay()}}else flowReset();
   if(v===2)tstart();if(v===3)tstartB();
   if(v===6)$('fslot').appendChild(flowEl);else if(flowEl.parentNode!==fcardEl)fcardEl.insertBefore(flowEl,fcardEl.firstChild);
@@ -809,15 +809,15 @@ function setView(v){var part=v===7,no8=v===8;step=v;if(part)v=1;if(no8)v=5;if(ex
 window.addEventListener('resize',function(){fitCar()});
 $('rs2').onclick=function(){$('rs').click()};
 $('ftog').onclick=function(){var o=app.hasAttribute('data-fopen');if(o)app.removeAttribute('data-fopen');else app.setAttribute('data-fopen','1');this.setAttribute('aria-expanded',!o);fitCar()};
-[0,1,2,3,4,5,6,7,8].forEach(function(i){$('v'+i).onclick=function(){if(step!==i)setView(i)}});
-$('cp').onclick=function(){if(step!==0)setView(ORDER[ORDER.indexOf(step)-1])};
-$('cx').onclick=function(){if(step!==6)setView(ORDER[ORDER.indexOf(step)+1])};
+[0,1,2,3,4,5,6,7,8].forEach(function(i){$('v'+i).onclick=function(){if(sid!==i)setView(i)}});
+$('cp').onclick=function(){if(sid!==0)setView(ORDER[ORDER.indexOf(sid)-1])};
+$('cx').onclick=function(){if(sid!==6)setView(ORDER[ORDER.indexOf(sid)+1])};
 $('e1').onclick=function(){setExample(false)};$('e2').onclick=function(){setExample(true)};
 /* swipe between the two slides */
 (function(){var x0=null,y0=0;
   car.addEventListener('pointerdown',function(e){x0=e.clientX;y0=e.clientY});
   car.addEventListener('pointerup',function(e){if(x0===null)return;var dx=e.clientX-x0,dy=e.clientY-y0;x0=null;
-    if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.5){if(dx<0&&step!==6)setView(ORDER[ORDER.indexOf(step)+1]);else if(dx>0&&step!==0)setView(ORDER[ORDER.indexOf(step)-1])}});
+    if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.5){if(dx<0&&sid!==6)setView(ORDER[ORDER.indexOf(sid)+1]);else if(dx>0&&sid!==0)setView(ORDER[ORDER.indexOf(sid)-1])}});
   car.addEventListener('pointercancel',function(){x0=null})})();
 $('nxb').onclick=step;$('bkb').onclick=back;
 $('rs').onclick=function(){if(view===6){cReset();return}if(view>=4)flowReset();else{if(view===0)pzReset();l=0;r=0;resetE();render();if(view===2)tstart();if(view===3)tstartB()}};
