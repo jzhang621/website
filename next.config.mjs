@@ -25,7 +25,10 @@ const nextConfig = {
   pageExtensions: ["ts", "tsx", "js", "jsx", "md", "mdx"],
   reactStrictMode: true,
   async rewrites() {
-    return [{ source: "/sliding-window", destination: "/sliding-window.html" }];
+    return [
+      { source: "/sliding-window", destination: "/sliding-window.html" },
+      { source: "/basis-vectors", destination: "/basis-vectors.html" },
+    ];
   },
 };
 
