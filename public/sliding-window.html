@@ -86,6 +86,21 @@ button:disabled{opacity:.35;cursor:default}
 .seg button[aria-pressed=true]{background:var(--ink);color:var(--card)}
 #app:not([data-view="2"]):not([data-view="3"]) .ch{display:none}
 #tlist{display:none}
+.tcall{display:none!important}
+.expl{display:none}#s1[data-ex] .expl{display:block}
+#s1[data-ex] :is(.tin,.tin3,.tctl){display:none!important}
+.expl .say{margin:0 0 14px;font:600 14.5px/1.45 var(--font);text-wrap:pretty}
+.xl{display:flex;flex-direction:column;gap:6px}
+.xr{display:grid;grid-template-columns:1fr 34px;align-items:center;gap:8px}
+.xn{position:relative;display:grid;grid-template-columns:repeat(var(--n),1fr);height:28px;align-items:center;text-align:center;font:700 12.5px var(--font);color:var(--mut);border-radius:8px;background:color-mix(in srgb,var(--mut) 10%,transparent)}
+.xn span{position:relative;z-index:1}
+.xn i{position:absolute;top:2px;bottom:2px;left:calc(var(--a)/var(--n)*100% + 1px);width:calc((var(--b) - var(--a) + 1)/var(--n)*100% - 2px);border-radius:7px;border:1.5px solid var(--ok);background:repeating-linear-gradient(135deg,color-mix(in srgb,var(--ok) 30%,transparent) 0 2px,transparent 2px 5px)}
+.xr b{font:700 13px var(--font);color:var(--mut);text-align:right;font-variant-numeric:tabular-nums}
+#wcard.good{animation:xglow .9s var(--ease)}
+#wcard.good .win{border-color:var(--hit);background:color-mix(in srgb,var(--hit) 14%,transparent)}
+#wcard.good .fr::after{content:'';flex:none;width:24px;height:24px;border-radius:50%;background:var(--hit) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4 8-9'/%3E%3C/svg%3E") center/15px no-repeat;animation:tpop .5s var(--ease)}
+@keyframes xglow{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--hit) 55%,transparent)}100%{box-shadow:0 0 0 14px transparent}}
+@media (prefers-reduced-motion:reduce){#wcard.good,#wcard.good .fr::after{animation:none}}
 #pvz2 .card{padding:10px 12px}
 .achs{display:none;grid-template-columns:1fr 1fr;gap:8px}
 #app[data-view="5"] .achs{display:grid}
@@ -399,7 +414,7 @@ button[aria-expanded=true]{border-color:var(--mut)}
   .slide.two{gap:14px}.ptx,.pvz{display:contents}
   /* Try-it 2 and 3: the window card and the two buttons stay pinned while the list scrolls under them */
   #app:is([data-view="2"],[data-view="3"]) #wcard{order:1;position:sticky;top:0;z-index:7;box-shadow:0 0 0 8px var(--bg)}
-  #app:is([data-view="2"],[data-view="3"]) :is(.tcall,.tlist){order:3}
+  #app:is([data-view="2"],[data-view="3"]) :is(.tcall,.tlist,.expl){order:3}
   #app:is([data-view="2"],[data-view="3"]) .tctl{order:2}
   /* Code: code first, flowchart on request, Check pinned to the bottom edge */
   #app[data-view="6"] .ftog{display:flex;align-items:center;gap:6px;align-self:flex-start;padding:7px 12px;font-size:13px;border-radius:99px;color:var(--mut)}
@@ -484,6 +499,7 @@ button[aria-expanded=true]{border-color:var(--mut)}
         <p class="note" id="note" aria-live="polite"></p>
       </div>
         <p class="tcall ta" id="tcall" data-ek="tcall" hidden>By choosing to shrink the subarray here, we skip a number of unnecessary checks.</p>
+        <div class="expl" id="expl"><p class="say" id="xsay"></p><div class="xl" id="xl"></div></div>
         <p class="tcall tb" id="tcall2" data-ek="tcall2" hidden>By choosing to extend the subarray here, we skip a number of unnecessary future checks.</p></div>
       <div class="pvz" id="pvz1">
       <div class="tlist" id="tlist" aria-hidden="true"><div class="tcr" id="tcr"></div></div>
@@ -611,12 +627,23 @@ function tbuild(ord){tclear();Array.prototype.slice.call(tlist.querySelectorAll(
   outer:for(var pi2=0;pi2<P.length;pi2++){a=P[pi2][0];b=P[pi2][1];q=wsum(a,b);o={a:a,b:b,i:TW.length,vis:false,skip:false,el:document.createElement('div')};
     o.el.className='tr '+(q<T?'under':q>T?'over':'match');o.el.style.setProperty('--a',a);o.el.style.setProperty('--b',b);o.el.style.setProperty('--n',n);o.el.innerHTML='<i></i>';
     tlist.insertBefore(o.el,tcr);TW.push(o);tix[a+','+b]=o;if(q===T)break outer}
-  tcalled=false;$('tcall').hidden=true;$('tcall2').hidden=true;
+  exClear();tcalled=false;$('tcall').hidden=true;$('tcall2').hidden=true;
   tcur=null;tdone=false;tbusy=true;tcr.classList.remove('on');tcr.style.setProperty('--d','0s');tcr.style.setProperty('--i',0)}
 var tcalled=false;
+/* after the right call: the windows it let us skip, over one or two short pages */
+var exSt=0,exOut=[],exG=[],XT={1:['The sum is over the target. Shrinking from the left lets us skip these windows, which are guaranteed to be greater than the target because the numbers are all positive:','We skip these too. Each is a smaller version of a window we checked previously and found too small:'],
+  2:['The sum is under the target. Extending to the right lets us skip these windows, which are guaranteed to be less than the target because the numbers are all positive:','We skip this one too. It contains a window we checked previously and found too big:']};
+function exClear(){exSt=0;exOut=[];exG=[];$('s1').removeAttribute('data-ex');$('wcard').classList.remove('good')}
+function exPrep(){var big=function(o){return tst===1?o.s>T:o.s<T},a=exOut.filter(big),b=exOut.filter(function(o){return !big(o)});
+  exG=[];if(a.length)exG.push([XT[tst][0],a]);if(b.length)exG.push([XT[tst][1],b])}
+function exShow(){var g=exG[exSt-1],h='';$('xsay').textContent=g[0];
+  g[1].forEach(function(o){var c='';A.forEach(function(v){c+='<span>'+v+'</span>'});h+='<div class="xr" style="--n:'+A.length+'"><div class="xn" style="--a:'+o.a+';--b:'+o.b+'">'+c+'<i></i></div><b>'+o.s+'</b></div>'});
+  $('xl').innerHTML=h;$('s1').dataset.ex=exSt;fitCar();window.scrollTo(0,0)}
+function exNext(){if(exSt<exG.length){exSt++;exShow()}else nextSec()}
 /* every move rules windows out: past an under-target window, all its sub-windows are too small; past an over-target one, everything around it is too big */
 function tprune(cur,dur,mark,nxt){var sm=wsum(cur.a,cur.b),out=[];if(!mark||sm===T)return 0;
   TW.forEach(function(o){if(o===cur||o.vis||o.skip||o.i<cur.i)return;if((nxt&&o.i<nxt.i)||(sm<T?(o.a>=cur.a&&o.b<=cur.b):(o.a<=cur.a&&o.b>=cur.b)))out.push(o)});
+  exOut=out.map(function(o){return {a:o.a,b:o.b,s:wsum(o.a,o.b)}});
   out.forEach(function(o,k){o.skip=true;o.el.querySelector('i').style.transitionDelay=(dur?.2+k/(out.length+1)*dur:0)+'s';o.el.classList.add('skip')});
   return out.length}
 function tleap(o,mark,instant){var d=tcur?Math.abs(o.i-tcur.i):0,dur=(instant||!tcur)?0:Math.min(.3+.02*d,.85),cnt=0,pl=l,pr=r;
@@ -637,7 +664,8 @@ function tgo(k,btn){if(tbusy||tdone)return;var sm=curSum(),t;
   tleap(t,true);tcalled=true;
   $('note').textContent='';(tst===1?$('tcall'):$('tcall2')).hidden=false;fitCar();
   btn.classList.add('ok');tat(1000,function(){btn.classList.remove('ok')});
-  tat(dur*1000+250,function(){tbusy=false;tdone=true;tsync()})}
+  tat(480,function(){$('wcard').classList.add('good')});
+  tat(dur*1000+250,function(){tbusy=false;tdone=true;exPrep();tsync()})}
 $('gr').onclick=function(){tgo('ext',this)};$('sl').onclick=function(){tgo('shr',this)};
 /* ---- Algorithm view: the flowchart drives. One press = one node. ---- */
 var Q=[],qi=0,qt=[];
@@ -816,7 +844,7 @@ function placeCard(v){var host=(v===2||v===3)?pvz1:v>=4?pvz2:null;
   if(host){host.insertBefore(wcd,host===pvz2?srEl.nextSibling:host.firstChild);if(host===pvz2)host.insertBefore(varsEl,wcd.nextSibling);else app.insertBefore(varsEl,car)}
   else{app.insertBefore(wcd,car);app.insertBefore(varsEl,car)}}
 var flowEl=$('flow'),fcardEl=$('fcard');
-function setView(v){var part=v===7,no8=v===8;sid=v;if(part)v=1;if(no8)v=5;if(exNo!==no8){exNo=no8;$('e1').setAttribute('aria-pressed',!no8);$('e2').setAttribute('aria-pressed',no8)}useData();placeCard(v);whyStop();qClear();tclear();app.classList.remove('ask');app.classList.remove('np');view=v;app.dataset.view=v;
+function setView(v){var part=v===7,no8=v===8;exClear();sid=v;if(part)v=1;if(no8)v=5;if(exNo!==no8){exNo=no8;$('e1').setAttribute('aria-pressed',!no8);$('e2').setAttribute('aria-pressed',no8)}useData();placeCard(v);whyStop();qClear();tclear();app.classList.remove('ask');app.classList.remove('np');view=v;app.dataset.view=v;
   track.style.transform='translateX('+(-100*(v<=2?v:v===3?2:3))+'%)';
   s0.inert=v!==0;sy.inert=v!==1;s1.inert=v!==2&&v!==3;s2.inert=v<4;
   for(var i=0;i<=8;i++){$('v'+i).setAttribute('aria-current',i===sid);$('v'+i).classList.toggle('past',ORDER.indexOf(i)<ORDER.indexOf(sid))}
@@ -838,13 +866,13 @@ function nextSec(){if(sid!==6)setView(ORDER[ORDER.indexOf(sid)+1])}
 function footSync(){var lab='Next',dis=true,act=null,rep=null,bk=false,b;
   if(sid===0){if($('pz').classList.contains('done')){dis=false;act=nextSec}else{lab='Check';dis=$('pc').disabled;act=function(){$('pc').click()}}}
   else if(sid===1||sid===7){b=sid===1?$('wp'):$('wp2');if(b.textContent==='Replay'){if(!b.disabled){dis=false;act=nextSec;rep=function(){b.click()}}}else{lab='Play';dis=b.disabled;act=function(){b.click()}}}
-  else if(sid===2||sid===3){dis=$('s1').dataset.done!=='1';act=nextSec}
+  else if(sid===2||sid===3){dis=$('s1').dataset.done!=='1';act=exNext}
   else if(sid===4){if(F.done){dis=false;act=nextSec}else{lab='Next step';dis=false;act=function(){step()}}rep=H.length?function(){back()}:null;bk=true}
   else if(sid===5||sid===8){b=$('nbtn');if(b.style.visibility==='visible'&&!b.disabled){dis=false;act=function(){b.click()}}else if(F.done){dis=false;act=nextSec}}
   else if(sid===6){b=$('crb');if(b.textContent==='Replay'){lab='Done';rep=b.disabled?null:function(){b.click()}}else if(b.textContent==='Run'){lab='Run';dis=b.disabled;act=function(){b.click()}}else{lab='Check';dis=b.disabled;act=function(){b.click()}}}
   fb.textContent=lab;fb.disabled=dis;fAct=act;rAct=rep;rp.hidden=!rep;rp.setAttribute('aria-label',bk?'Back one step':'Replay');rp.innerHTML=bk?'<svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg>':RPI}
 fb.onclick=function(){if(fAct)fAct()};rp.onclick=function(){if(rAct)rAct()};
-new MutationObserver(footSync).observe(app,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['class','disabled','hidden','style','data-view','data-st','data-done']});
+new MutationObserver(footSync).observe(app,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['class','disabled','hidden','style','data-view','data-st','data-done','data-ex']});
 footSync();
 $('e1').onclick=function(){setExample(false)};$('e2').onclick=function(){setExample(true)};
 /* swipe between the two slides */
