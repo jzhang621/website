@@ -139,9 +139,9 @@ export default function Home() {
           <h2 className="text-xs font-bold uppercase tracking-widest text-[var(--muted)]">Interactive lessons</h2>
           <span className="h-px flex-1 bg-[var(--line)]" aria-hidden />
         </div>
-        <div className="grid gap-8 md:grid-cols-2">
+        <div className="grid gap-8 md:grid-cols-2 md:justify-items-center">
         {lessons.map((l) => (
-          <Link key={l.href} href={l.href} className="lesson-card group flex w-full max-w-[300px] flex-col">
+          <Link key={l.href} href={l.href} className="lesson-card group mx-auto flex w-full max-w-[340px] flex-col p-4">
             <h3 className="px-1 md:min-h-[3.45rem] text-[22px] font-extrabold leading-tight tracking-tight">{l.title}</h3>
             <div className="phone mt-3.5 w-full">
               <Image src={l.preview} alt={l.alt} width={520} height={l.height} className="h-auto w-full" />
