@@ -142,12 +142,15 @@ export default function Home() {
         <div className="grid gap-8 md:grid-cols-2 md:justify-items-center">
         {lessons.map((l) => (
           <Link key={l.href} href={l.href} className="lesson-card group mx-auto flex w-full max-w-[340px] flex-col p-4">
-            <div className="flex items-start justify-between gap-3 px-1">
-              <h3 className="text-xl font-extrabold leading-tight tracking-tight md:min-h-[3.1rem]">{l.title}</h3>
-              <span className="work-cta grid h-9 w-9 shrink-0 place-items-center rounded-full text-base font-bold" aria-hidden>
-                &rarr;
+            <h3 className="px-1 text-xl font-extrabold leading-tight tracking-tight md:min-h-[3.1rem]">
+              {l.title.slice(0, l.title.lastIndexOf(" ") + 1)}
+              <span className="whitespace-nowrap">
+                {l.title.slice(l.title.lastIndexOf(" ") + 1)}
+                <span className="ml-1.5 inline-block transition-transform group-hover:translate-x-1" aria-hidden>
+                  &rarr;
+                </span>
               </span>
-            </div>
+            </h3>
             <div className="phone mt-3.5 w-full">
               <Image src={l.preview} alt={l.alt} width={520} height={l.height} className="h-auto w-full" />
             </div>
