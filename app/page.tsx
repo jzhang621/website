@@ -7,7 +7,7 @@ const lessons = [
   {
     href: "/sliding-window",
     preview: "/sliding-window-preview.webp",
-    alt: "Sliding window lesson on a phone: three worked examples and a row of numbers to drag across",
+    alt: "Sliding window lesson on a phone: a flowchart to step through with Expand, Shrink, Found it and No match buttons",
     title: "Sliding window",
   },
   {
