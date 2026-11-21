@@ -403,6 +403,8 @@ button[aria-expanded=true]{border-color:var(--mut)}
 .foot #fb:disabled{opacity:.4}
 .foot .rp{flex:none;width:48px;height:48px;padding:0;border-radius:50%;display:grid;place-items:center;color:var(--mut)}
 .foot .rp[hidden]{display:none}
+.foot .sk{flex:none;padding:12px 10px;border:0;background:none;color:var(--mut);font:700 15px var(--font)}
+.foot .sk[hidden]{display:none}
 .foot .rp svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 @media (max-width:819px){
   .car{overflow:clip}
@@ -563,7 +565,7 @@ button[aria-expanded=true]{border-color:var(--mut)}
     </div>
   </div></div>
 </div>
-<div class="foot" id="foot"><button class="rp" id="rp" aria-label="Replay" hidden><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.5-5.8M4 4v4.5h4.5"/></svg></button><button id="fb" disabled>Next</button></div>
+<div class="foot" id="foot"><button class="rp" id="rp" aria-label="Replay" hidden><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.5-5.8M4 4v4.5h4.5"/></svg></button><button class="sk" id="sk" hidden>Skip</button><button id="fb" disabled>Next</button></div>
 
 <script>
 (function(){
@@ -863,14 +865,14 @@ $('cx').onclick=function(){if(sid!==6)setView(ORDER[ORDER.indexOf(sid)+1])};
 /* footer: one primary button in a fixed slot, driven by the state of the current section */
 var RPI=$('rp').innerHTML,fb=$('fb'),rp=$('rp'),fAct=null,rAct=null;
 function nextSec(){if(sid!==6)setView(ORDER[ORDER.indexOf(sid)+1])}
-function footSync(){var lab='Next',dis=true,act=null,rep=null,bk=false,b;
+function footSync(){var lab='Next',dis=true,act=null,rep=null,bk=false,skp=null,b;
   if(sid===0){if($('pz').classList.contains('done')){dis=false;act=nextSec}else{lab='Check';dis=$('pc').disabled;act=function(){$('pc').click()}}}
-  else if(sid===1||sid===7){b=sid===1?$('wp'):$('wp2');if(b.textContent==='Replay'){if(!b.disabled){dis=false;act=nextSec;rep=function(){b.click()}}}else{lab='Play';dis=b.disabled;act=function(){b.click()}}}
+  else if(sid===1||sid===7){b=sid===1?$('wp'):$('wp2');if(b.textContent==='Replay'){if(!b.disabled){dis=false;act=nextSec;rep=function(){b.click()}}}else{lab='Play';dis=b.disabled;act=function(){b.click()};skp=sid===1?whySkip:bfSkip}}
   else if(sid===2||sid===3){dis=$('s1').dataset.done!=='1';act=exNext}
   else if(sid===4){if(F.done){dis=false;act=nextSec}else{lab='Next step';dis=false;act=function(){step()}}rep=H.length?function(){back()}:null;bk=true}
   else if(sid===5||sid===8){b=$('nbtn');if(b.style.visibility==='visible'&&!b.disabled){dis=false;act=function(){b.click()}}else if(F.done){dis=false;act=nextSec}}
   else if(sid===6){b=$('crb');if(b.textContent==='Replay'){lab='Done';rep=b.disabled?null:function(){b.click()}}else if(b.textContent==='Run'){lab='Run';dis=b.disabled;act=function(){b.click()}}else{lab='Check';dis=b.disabled;act=function(){b.click()}}}
-  fb.textContent=lab;fb.disabled=dis;fAct=act;rAct=rep;rp.hidden=!rep;rp.setAttribute('aria-label',bk?'Back one step':'Replay');rp.innerHTML=bk?'<svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg>':RPI}
+  $('sk').hidden=!skp;$('sk').onclick=skp;fb.textContent=lab;fb.disabled=dis;fAct=act;rAct=rep;rp.hidden=!rep;rp.setAttribute('aria-label',bk?'Back one step':'Replay');rp.innerHTML=bk?'<svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg>':RPI}
 fb.onclick=function(){if(fAct)fAct()};rp.onclick=function(){if(rAct)rAct()};
 new MutationObserver(footSync).observe(app,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['class','disabled','hidden','style','data-view','data-st','data-done','data-ex']});
 footSync();
@@ -933,6 +935,9 @@ function bfPlay(){bfReset();bfx.hidden=false;$('wp2').disabled=true;fitCar();var
   bfr.style.setProperty('--d','.06s');
   bft=setInterval(function(){i++;if(i>=WB.length){bfStop();$('wp2').disabled=false;$('wp2').textContent='Replay';return}bfShow(i)},75)}
 $('wp2').onclick=bfPlay;
+/* Skip: jump an animation to its finished picture */
+function whySkip(){whyStop();wi=Math.max(WB.length,WS.length);whyPaint();wp.disabled=false;wp.textContent='Replay'}
+function bfSkip(){bfStop();bfx.hidden=false;bfr.style.setProperty('--d','0s');for(var i=0;i<WB.length;i++)bfShow(i);$('wp2').disabled=false;$('wp2').textContent='Replay';fitCar()}
 whyPaint();
 /* part two: start right at the decision (already past the target); every move is the learner's */
 var wzc=$('wzc'),vl=$('wzv'),cmp=$('cmp'),wl=0,wr=0,wk=0,ww=0,wdone=false,W0=WB.filter(function(w){return w[0]===0}),WM=[],
