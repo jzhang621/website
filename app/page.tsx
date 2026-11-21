@@ -18,6 +18,12 @@ const lessons = [
   },
 ];
 
+const stats = [
+  ["16", "patterns"],
+  ["120", "lessons"],
+  ["300+", "interactive visualizations"],
+];
+
 export default function Home() {
   return (
     <main className="mx-auto max-w-5xl px-5 pb-24 pt-8 sm:px-8">
@@ -55,6 +61,17 @@ export default function Home() {
       </section>
 
       <a href={HELLO_INTERVIEW} className="work-card group mt-8 flex flex-col p-5 sm:p-6">
+        <dl className="mb-5 grid grid-cols-3 gap-3 text-center">
+          {stats.map(([n, label]) => (
+            <div key={label} className="rounded-2xl border border-[var(--line)] px-2 py-4">
+              <dt className="text-3xl font-extrabold tracking-tight sm:text-5xl" style={{ color: "var(--accent)" }}>
+                {n}
+              </dt>
+              <dd className="mt-1 text-xs font-semibold text-[var(--muted)] sm:text-sm">{label}</dd>
+            </div>
+          ))}
+        </dl>
+
         <div className="grid items-center gap-4 md:grid-cols-2">
           <div className="phone">
             <Image
