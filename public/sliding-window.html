@@ -207,8 +207,8 @@ code{font:600 .86em ui-monospace,SFMono-Regular,Menlo,monospace;background:color
 .pza{display:grid;grid-template-columns:1fr 1fr;gap:10px;position:relative}
 .pza button{padding:12px 10px}
 #pc{background:var(--btn);color:var(--onbtn);border-color:var(--btn)}
-.pzx{position:absolute;inset:0;visibility:hidden;background:var(--btn);color:var(--onbtn);border-color:var(--btn)}
-.pz.done .pzx{visibility:visible}.pz.done :is(#pc,#pn){visibility:hidden}
+.pz.done .pza{display:none}
+.pzr.good .tl.on{animation:pop .45s var(--ease)}
 .exh{margin:6px 0 -2px;font:700 11px var(--font);letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
 .exs{display:flex;flex-direction:column;gap:10px}
 .exs .hr{padding:12px 14px 14px 8px;row-gap:6px}
@@ -440,7 +440,7 @@ button[aria-expanded=true]{border-color:var(--mut)}
       <section class="pz" id="pz" aria-label="Sample problem">
         <p class="pzf" id="pf"></p>
         <div class="pzr" id="pr" role="group" aria-label="Numbers"></div>
-        <div class="pza"><button id="pc" disabled>Check</button><button id="pn">No match</button><button id="pa" class="pzx">Another one</button></div>
+        <div class="pza"><button id="pc" disabled>Check</button><button id="pn">No match</button></div>
       </section>
       <p class="cap" id="pm" aria-live="polite">Drag across the numbers to pick a subarray.</p>
       </div>
@@ -945,7 +945,6 @@ $('pc').onclick=function(){if(pa<0||plock)return;var sm=psum(),t=PZ[pi][1];
 $('pn').onclick=function(){if(plock)return;var a=PZ[pi];
   if(pfind(a)){pa=pb=-1;ppaint();pwrong('There is a match. Keep looking.')}
   else{pa=pb=-1;pwin('Right. No subarray adds up to <b>'+a[1]+'</b>.')}};
-$('pa').onclick=function(){pi=(pi+1)%PZ.length;pbuild()};
 function pzReset(){pi=0;pbuild()}
 var EXS=[[[2,1,4,3,5,4],12,2,4],[[2,7,3,1,4],10,1,2],[[5,1,3],10,-1,-1]];
 EXS.forEach(function(x,i){var row=document.createElement('div'),hc='';
