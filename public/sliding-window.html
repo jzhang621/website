@@ -85,11 +85,12 @@ button:disabled{opacity:.35;cursor:default}
 .seg button{border:0;background:none;padding:7px 16px;border-radius:999px;font:700 14px var(--font);color:var(--mut);white-space:nowrap}
 .seg button[aria-pressed=true]{background:var(--ink);color:var(--card)}
 #app:not([data-view="2"]):not([data-view="3"]) .ch{display:none}
+#tlist{display:none}
 #pvz2 .card{padding:10px 12px}
 .achs{display:none;grid-template-columns:1fr 1fr;gap:8px}
 #app[data-view="5"] .achs{display:grid}
 #app[data-view="4"] #fcard{display:none}
-#app[data-view="4"] #cap{display:none}
+.stpr{display:none;font:700 13px var(--font);color:var(--mut);font-variant-numeric:tabular-nums}#app[data-view="4"] .stpr{display:block}
 .nxd{display:none;margin-top:8px}#app[data-view="5"] .nxd{display:block}
 .nxd button{padding:12px 28px;font-size:14.5px;border-radius:999px;color:var(--ok);border-color:color-mix(in srgb,var(--ok) 45%,var(--line))}
 .okc{color:var(--ok);font-weight:800;margin-right:2px}
@@ -450,7 +451,7 @@ button[aria-expanded=true]{border-color:var(--mut)}
         <div class="pzr" id="pr" role="group" aria-label="Numbers"></div>
         <div class="pza"><button id="pc" disabled>Check</button><button id="pn">No match</button></div>
       </section>
-      <p class="cap" id="pm" aria-live="polite">Tap the first and last number of a subarray.</p>
+      <p class="cap" id="pm" aria-live="polite">Tap each number in the subarray.</p>
       </div>
     </div>
     <div class="slide two" id="sy" inert data-st="1">
@@ -500,6 +501,7 @@ button[aria-expanded=true]{border-color:var(--mut)}
         <div class="fslot" id="fslot"></div>
         <div class="dock">
         <div class="cdo"><button id="crb" disabled>Check</button></div>
+        <p class="stpr" id="stpr"></p>
         <p class="cfb" id="cfb" aria-live="polite"></p>
         <p class="cap" id="cap" aria-live="polite"></p>
         <div class="ap"><button id="apb">Play</button></div>
@@ -669,7 +671,7 @@ function esc(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;')}
 /* which lines run at each step: m = the lines doing the work, c = conditions checked on the way */
 function renderCode(){var h=F.hl||{m:[],c:[]};codeRows.forEach(function(d,i){var k=i+1;d.classList.toggle('on',h.m.indexOf(k)>-1);d.classList.toggle('cx',h.m.indexOf(k)<0&&h.c.indexOf(k)>-1)})}
 function showProg(){var tt,d,pc;if(view===5){tt=Q.length;d=qi+(F.done?1:0)}else{tt=totalSteps();d=Math.min(H.length,tt)}pc=Math.round(d/tt*100);
-  $('pfill').style.width=pc+'%';$('pbar').setAttribute('aria-valuenow',pc);$('plab').textContent=d+' / '+tt}
+  $('pfill').style.width=pc+'%';$('pbar').setAttribute('aria-valuenow',pc);$('plab').textContent=d+' / '+tt;$('stpr').textContent='Step '+d+' of '+tt}
 function showF(){showProg();at(F.node);$('cap').innerHTML=view>=6?F.capV:F.cap;renderCode();$('nxb').disabled=F.done;$('bkb').disabled=!H.length;if(typeof askSync==='function')askSync();apSync()}
 function flowReset(){qClear();l=0;r=0;H=[];F={node:0,done:false,empty:true,S:0,pend:null,cap:'We start with an empty window.',capV:'',hl:{m:[],c:[]}};apOn=false;if(view===5){buildQ();qShow();return}render();showF()}
 /* ---- the learner picks the branch at the diamond (Algorithm view only) ---- */
@@ -720,8 +722,8 @@ $('achs').querySelector('[data-k=more]').onclick=function(){if(!(asking()&&F.nod
 /* Algorithm view: press Play and the flowchart runs itself, one decision at a time */
 var apOn=false;
 function apNext(){qt.push(setTimeout(function(){if(view!==4||!apOn)return;do{step()}while(!F.done&&F.node!==2);if(!F.done)apNext()},700))}
-function apSync(){var b=$('apb');if(!b)return;b.textContent=F.done?'Replay':'Play';b.disabled=apOn&&!F.done}
-$('apb').onclick=function(){if(view!==4)return;if(F.done)flowReset();apOn=true;apSync();apNext()};
+function apSync(){var b=$('apb');if(!b)return;b.textContent=F.done?'Replay':'Next step';b.disabled=false}
+$('apb').onclick=function(){if(view!==4)return;if(F.done)flowReset();else step()};
 /* ---- Code view: fill in the blanks; each blank points at its flowchart step ---- */
 var LMAP={4:{n:7},5:{n:2,lb:'match'},7:{n:2,lb:'small'},10:{n:3},11:{n:1},13:{n:4},14:{n:1}};
 var B=[],sel=-1,solved=false,cRun=false,cT=[];
@@ -831,16 +833,16 @@ $('ftog').onclick=function(){var o=app.hasAttribute('data-fopen');if(o)app.remov
 $('cp').onclick=function(){if(sid!==0)setView(ORDER[ORDER.indexOf(sid)-1])};
 $('cx').onclick=function(){if(sid!==6)setView(ORDER[ORDER.indexOf(sid)+1])};
 /* footer: one primary button in a fixed slot, driven by the state of the current section */
-var fb=$('fb'),rp=$('rp'),fAct=null,rAct=null;
+var RPI=$('rp').innerHTML,fb=$('fb'),rp=$('rp'),fAct=null,rAct=null;
 function nextSec(){if(sid!==6)setView(ORDER[ORDER.indexOf(sid)+1])}
-function footSync(){var lab='Next',dis=true,act=null,rep=null,b;
+function footSync(){var lab='Next',dis=true,act=null,rep=null,bk=false,b;
   if(sid===0){if($('pz').classList.contains('done')){dis=false;act=nextSec}else{lab='Check';dis=$('pc').disabled;act=function(){$('pc').click()}}}
   else if(sid===1||sid===7){b=sid===1?$('wp'):$('wp2');if(b.textContent==='Replay'){if(!b.disabled){dis=false;act=nextSec;rep=function(){b.click()}}}else{lab='Play';dis=b.disabled;act=function(){b.click()}}}
   else if(sid===2||sid===3){dis=$('s1').dataset.done!=='1';act=nextSec}
-  else if(sid===4){b=$('apb');if(F.done){dis=false;act=nextSec;rep=function(){b.click()}}else{lab='Play';dis=b.disabled;act=function(){b.click()}}}
+  else if(sid===4){if(F.done){dis=false;act=nextSec}else{lab='Next step';dis=false;act=function(){step()}}rep=H.length?function(){back()}:null;bk=true}
   else if(sid===5||sid===8){b=$('nbtn');if(b.style.visibility==='visible'&&!b.disabled){dis=false;act=function(){b.click()}}else if(F.done){dis=false;act=nextSec}}
   else if(sid===6){b=$('crb');if(b.textContent==='Replay'){lab='Done';rep=b.disabled?null:function(){b.click()}}else if(b.textContent==='Run'){lab='Run';dis=b.disabled;act=function(){b.click()}}else{lab='Check';dis=b.disabled;act=function(){b.click()}}}
-  fb.textContent=lab;fb.disabled=dis;fAct=act;rAct=rep;rp.hidden=!rep}
+  fb.textContent=lab;fb.disabled=dis;fAct=act;rAct=rep;rp.hidden=!rep;rp.setAttribute('aria-label',bk?'Back one step':'Replay');rp.innerHTML=bk?'<svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg>':RPI}
 fb.onclick=function(){if(fAct)fAct()};rp.onclick=function(){if(rAct)rAct()};
 new MutationObserver(footSync).observe(app,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['class','disabled','hidden','style','data-view','data-st','data-done']});
 footSync();
@@ -943,26 +945,26 @@ function setStage(n,quiet){sy.dataset.st=n;if(!quiet){if(n===2)wzReset();else wh
 /* the problem view: worked examples drawn with the same numbers-and-window visual */
 var PZ=[[[3,1,4,2,5,1],11],[[4,1,5,2,6],15]],pi=0,pa=-1,pb=-1,panc=-1,pprev=-1,pmv=false,plock=false,pdrag=false,pr=$('pr'),ptl=[];
 function pfind(a){var N=a[0],t=a[1],i,j,s;for(i=0;i<N.length;i++){s=0;for(j=i;j<N.length;j++){s+=N[j];if(s===t)return[i,j]}}return null}
-function psum(){var s=0,i;if(pa<0)return null;for(i=pa;i<=pb;i++)s+=PZ[pi][0][i];return s}
-function ppaint(){var sm=psum();ptl.forEach(function(t,i){t.classList.toggle('on',pa>=0&&i>=pa&&i<=pb)});
+var ps={};
+function psum(){var s=0,i,any=false;for(i in ps){if(ps[i]){s+=PZ[pi][0][i];any=true}}return any?s:null}
+function psel(){var k=[],i;for(i in ps)if(ps[i])k.push(+i);k.sort(function(x,y){return x-y});return k}
+function pcontig(k){return k.length>0&&k[k.length-1]-k[0]===k.length-1}
+function ppaint(){if(pa<0)ps={};var sm=psum(),k=psel();if(k.length){pa=k[0];pb=k[k.length-1]}else{pa=pb=-1}ptl.forEach(function(t,i){t.classList.toggle('on',!!ps[i])});
   $('pf').innerHTML='Sum <b>'+(sm===null?'\u2013':sm)+'</b><span class="sep">\u00b7</span>Target <b>'+PZ[pi][1]+'</b>';$('pc').disabled=pa<0||plock}
 function pmsg(t){$('pm').innerHTML=t}
 function pbuild(){var N=PZ[pi][0];pr.textContent='';ptl=[];pr.style.setProperty('--n',N.length);pr.className='pzr';
   N.forEach(function(v,i){var d=document.createElement('div');d.className='tl';d.textContent=v;d.setAttribute('role','button');d.tabIndex=0;
-    d.onkeydown=function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();pdn(i);pup(i)}};pr.appendChild(d);ptl.push(d)});
-  pa=pb=panc=-1;plock=false;$('pz').classList.remove('done');pmsg('Tap the first and last number of a subarray.');ppaint()}
-function pat(e){var b=pr.getBoundingClientRect(),n=PZ[pi][0].length;return Math.max(0,Math.min(n-1,Math.floor((e.clientX-b.left)/b.width*n)))}
-function pdn(i){if(plock)return;pprev=pa>=0&&pa===pb?pa:-1;pmv=false;panc=i;
-  if(pprev>=0&&i!==pprev){pa=Math.min(pprev,i);pb=Math.max(pprev,i)}else{pa=pb=i}ppaint()}
-function pup(i){if(plock)return;if(!pmv&&pprev===i&&pa===pb){pa=pb=-1}ppaint();panc=-1;if(pa>=0&&psum()===PZ[pi][1])pcorrect()}
-pr.addEventListener('pointerdown',function(e){e.stopPropagation();if(plock)return;pdrag=true;try{pr.setPointerCapture(e.pointerId)}catch(x){}pdn(pat(e))});
-pr.addEventListener('pointerup',function(e){e.stopPropagation();if(!pdrag)return;pdrag=false;pup(pat(e))});
-pr.addEventListener('pointercancel',function(){pdrag=false});
+    d.onclick=function(){ptap(i)};d.onkeydown=function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();ptap(i)}};pr.appendChild(d);ptl.push(d)});
+  pa=pb=panc=-1;ps={};plock=false;$('pz').classList.remove('done');pmsg('Tap each number in the subarray.');ppaint()}
+function ptap(i){if(plock)return;ps[i]=!ps[i];pa=0;ppaint();var k=psel();
+  if(k.length&&psum()===PZ[pi][1]){if(pcontig(k))pcorrect();else pwrong('Those numbers need to be next to each other.')}else pmsg('Tap each number in the subarray.')}
+pr.addEventListener('pointerdown',function(e){e.stopPropagation()});
 function pwrong(m){pr.classList.remove('no');void pr.offsetWidth;pr.classList.add('no');pmsg(m)}
 function pwin(m){plock=true;pr.classList.add('good','lock');$('pz').classList.add('done');pmsg(m);ppaint();$('pc').disabled=true}
 function pcorrect(){var t=PZ[pi][1];pwin('Yes! <b>'+PZ[pi][0].slice(pa,pb+1).join(' + ')+(pb>pa?' = '+t:'')+'</b>.')}
 $('pc').onclick=function(){if(pa<0||plock)return;var sm=psum(),t=PZ[pi][1];
-  if(sm===t)pcorrect();
+  if(sm===t&&!pcontig(psel()))pwrong('Those numbers need to be next to each other.');
+  else if(sm===t)pcorrect();
   else pwrong('That adds up to <b>'+sm+'</b>, not <b>'+t+'</b>.')};
 $('pn').onclick=function(){if(plock)return;var a=PZ[pi];
   if(pfind(a)){pa=pb=-1;ppaint();pwrong('There is a match. Keep looking.')}
