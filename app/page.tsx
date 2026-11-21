@@ -22,7 +22,7 @@ const lessons = [
 const points = [
   "16 patterns, from Two Pointers to Dynamic Programming",
   "120 lessons",
-  "100+ interactive visualizations used to help understand algorithm solutions",
+  "100+ interactive visualizations used to help understand algorithm patterns and solutions",
 ];
 
 const tiles = [
