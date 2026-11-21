@@ -89,6 +89,7 @@ button:disabled{opacity:.35;cursor:default}
 .tcall{display:none!important}
 .expl{display:none}#s1[data-ex] .expl{display:block}
 #s1[data-ex] :is(.tin,.tin3,.tctl){display:none!important}
+.expl .exh{margin:0 0 8px}
 .expl .say{margin:0 0 14px;font:600 14.5px/1.45 var(--font);text-wrap:pretty}
 .xl{display:flex;flex-direction:column;gap:6px}
 .xr{display:grid;grid-template-columns:1fr 34px;align-items:center;gap:8px}
@@ -288,17 +289,6 @@ code{font:600 .86em ui-monospace,SFMono-Regular,Menlo,monospace;background:color
 .ptx{display:flex;flex-direction:column;gap:12px;min-width:0}
 .ptx .wintro{text-align:left;text-wrap:pretty}
 .wrap{transition:max-width .35s var(--ease)}
-@media (min-width:820px){
-  #app{max-width:1040px}
-  .sec{margin-bottom:18px}
-  .slide.two{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);column-gap:0;align-items:stretch}
-  .ptx{padding:4px 44px 4px 0}
-  .pvz{padding-left:44px;border-left:1px solid var(--line)}
-  .ptx .pq,.ptx .wintro,.ptx .tin p{font:600 19px/1.5 var(--font)}
-  .tcall{font-size:17px;line-height:1.5;padding:14px 16px 14px 52px}.tcall::before{left:16px;top:15px}
-  .ptx .pq{font-weight:500}.ptx .pq b{font-weight:800}
-  .tin{gap:14px}
-}
 .skp{color:inherit;background:repeating-linear-gradient(135deg,color-mix(in srgb,var(--under) 50%,transparent) 0 2px,transparent 2px 5px),color-mix(in srgb,var(--mut) 28%,transparent);border-radius:4px;padding:1px 3px;-webkit-box-decoration-break:clone;box-decoration-break:clone}
 .swin{color:inherit;background:color-mix(in srgb,var(--under) 15%,transparent);box-shadow:0 0 0 2px var(--under);border-radius:8px;padding:1px 4px;margin:0 2px;-webkit-box-decoration-break:clone;box-decoration-break:clone}
 .tctl{display:flex;flex-direction:column;gap:6px}
@@ -399,13 +389,15 @@ button[aria-expanded=true]{border-color:var(--mut)}
 /* phones: one pane. Keep the thing you act on and what it changes on screen together. */
 .rs2{display:none}.ftog{display:none}.dock{display:contents}
 .cnt{display:none;font:700 13px var(--font);color:var(--mut);font-variant-numeric:tabular-nums;white-space:nowrap}
-.foot{display:none;position:fixed;left:0;right:0;bottom:0;z-index:30;gap:10px;align-items:center;background:var(--bg);border-top:1px solid var(--line);padding:12px max(16px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.foot{display:none;position:fixed;left:0;right:0;bottom:0;z-index:30;gap:10px;align-items:center;background:var(--bg);border-top:1px solid var(--line);padding:12px max(16px,calc((100% - 600px)/2 + 16px)) calc(12px + env(safe-area-inset-bottom,0px)) max(16px,calc((100% - 600px)/2 + 16px))}
 .foot #fb{flex:1;padding:14px 20px;font-size:16px;font-weight:700;border-radius:999px;background:var(--btn);color:var(--onbtn);border-color:var(--btn)}
 .foot #fb:disabled{opacity:.4}
 .foot .rp{flex:none;width:48px;height:48px;padding:0;border-radius:50%;display:grid;place-items:center;color:var(--mut)}
 .foot .rp[hidden]{display:none}
+.foot .sk{flex:none;padding:12px 10px;border:0;background:none;color:var(--mut);font:700 15px var(--font)}
+.foot .sk[hidden]{display:none}
 .foot .rp svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-@media (max-width:819px){
+@media (min-width:0px){
   .car{overflow:clip}
   .top{display:none!important}
   #cp,#cx{display:none}.cnt{display:inline}
@@ -500,7 +492,7 @@ button[aria-expanded=true]{border-color:var(--mut)}
         <p class="note" id="note" aria-live="polite"></p>
       </div>
         <p class="tcall ta" id="tcall" data-ek="tcall" hidden>By choosing to shrink the subarray here, we skip a number of unnecessary checks.</p>
-        <div class="expl" id="expl"><p class="say" id="xsay"></p><div class="xl" id="xl"></div></div>
+        <div class="expl" id="expl"><p class="exh">Explanation</p><p class="say" id="xsay"></p><div class="xl" id="xl"></div></div>
         <p class="tcall tb" id="tcall2" data-ek="tcall2" hidden>By choosing to extend the subarray here, we skip a number of unnecessary future checks.</p></div>
       <div class="pvz" id="pvz1">
       <div class="tlist" id="tlist" aria-hidden="true"><div class="tcr" id="tcr"></div></div>
@@ -564,7 +556,7 @@ button[aria-expanded=true]{border-color:var(--mut)}
     </div>
   </div></div>
 </div>
-<div class="foot" id="foot"><button class="rp" id="rp" aria-label="Replay" hidden><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.5-5.8M4 4v4.5h4.5"/></svg></button><button id="fb" disabled>Next</button></div>
+<div class="foot" id="foot"><button class="rp" id="rp" aria-label="Replay" hidden><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.5-5.8M4 4v4.5h4.5"/></svg></button><button class="sk" id="sk" hidden>Skip</button><button id="fb" disabled>Next</button></div>
 
 <script>
 (function(){
@@ -864,14 +856,14 @@ $('cx').onclick=function(){if(sid!==6)setView(ORDER[ORDER.indexOf(sid)+1])};
 /* footer: one primary button in a fixed slot, driven by the state of the current section */
 var RPI=$('rp').innerHTML,fb=$('fb'),rp=$('rp'),fAct=null,rAct=null;
 function nextSec(){if(sid!==6)setView(ORDER[ORDER.indexOf(sid)+1])}
-function footSync(){var lab='Next',dis=true,act=null,rep=null,bk=false,b;
+function footSync(){var lab='Next',dis=true,act=null,rep=null,bk=false,skp=null,b;
   if(sid===0){if($('pz').classList.contains('done')){dis=false;act=nextSec}else{lab='Check';dis=$('pc').disabled;act=function(){$('pc').click()}}}
-  else if(sid===1||sid===7){b=sid===1?$('wp'):$('wp2');if(b.textContent==='Replay'){if(!b.disabled){dis=false;act=nextSec;rep=function(){b.click()}}}else{lab='Play';dis=b.disabled;act=function(){b.click()}}}
+  else if(sid===1||sid===7){b=sid===1?$('wp'):$('wp2');if(b.textContent==='Replay'){if(!b.disabled){dis=false;act=nextSec;rep=function(){b.click()}}}else{lab='Play';dis=b.disabled;act=function(){b.click()};skp=sid===1?whySkip:bfSkip}}
   else if(sid===2||sid===3){dis=$('s1').dataset.done!=='1';act=exNext}
   else if(sid===4){if(F.done){dis=false;act=nextSec}else{lab='Next step';dis=false;act=function(){step()}}rep=H.length?function(){back()}:null;bk=true}
   else if(sid===5||sid===8){b=$('nbtn');if(b.style.visibility==='visible'&&!b.disabled){dis=false;act=function(){b.click()}}else if(F.done){dis=false;act=nextSec}}
   else if(sid===6){b=$('crb');if(b.textContent==='Replay'){lab='Done';rep=b.disabled?null:function(){b.click()}}else if(b.textContent==='Run'){lab='Run';dis=b.disabled;act=function(){b.click()}}else{lab='Check';dis=b.disabled;act=function(){b.click()}}}
-  fb.textContent=lab;fb.disabled=dis;fAct=act;rAct=rep;rp.hidden=!rep;rp.setAttribute('aria-label',bk?'Back one step':'Replay');rp.innerHTML=bk?'<svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg>':RPI}
+  $('sk').hidden=!skp;$('sk').onclick=skp;fb.textContent=lab;fb.disabled=dis;fAct=act;rAct=rep;rp.hidden=!rep;rp.setAttribute('aria-label',bk?'Back one step':'Replay');rp.innerHTML=bk?'<svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg>':RPI}
 fb.onclick=function(){if(fAct)fAct()};rp.onclick=function(){if(rAct)rAct()};
 new MutationObserver(footSync).observe(app,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['class','disabled','hidden','style','data-view','data-st','data-done','data-ex']});
 footSync();
@@ -934,6 +926,9 @@ function bfPlay(){bfReset();bfx.hidden=false;$('wp2').disabled=true;fitCar();var
   bfr.style.setProperty('--d','.06s');
   bft=setInterval(function(){i++;if(i>=WB.length){bfStop();$('wp2').disabled=false;$('wp2').textContent='Replay';return}bfShow(i)},75)}
 $('wp2').onclick=bfPlay;
+/* Skip: jump an animation to its finished picture */
+function whySkip(){whyStop();wi=Math.max(WB.length,WS.length);whyPaint();wp.disabled=false;wp.textContent='Replay'}
+function bfSkip(){bfStop();bfx.hidden=false;bfr.style.setProperty('--d','0s');for(var i=0;i<WB.length;i++)bfShow(i);$('wp2').disabled=false;$('wp2').textContent='Replay';fitCar()}
 whyPaint();
 /* part two: start right at the decision (already past the target); every move is the learner's */
 var wzc=$('wzc'),vl=$('wzv'),cmp=$('cmp'),wl=0,wr=0,wk=0,ww=0,wdone=false,W0=WB.filter(function(w){return w[0]===0}),WM=[],
