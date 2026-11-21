@@ -4,17 +4,17 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@500;600;700;800&display=swap">
 <style>
 :root{
-  --bg:#F5F6FA;--card:#FFFFFF;--line:#E0E4EE;--ink:#151A2D;--mut:#6C7390;
-  --ok:#3F5BD9;--onok:#FFFFFF;--tile:#F6F7FB;--fn:#CBD0E3;--loopbg:#EEF0F8;--fnt:#2C3352;--fa:#7A5BDD;--fat:#FFFFFF;--under:#4C68DF;--small:#59627F;--over:#DC3E42;--hit:#13986A;--gold:#D99A00;
+  --bg:#F4F3ED;--card:#FFFFFF;--line:#DAD8CB;--ink:#22251F;--mut:#6B6C62;
+  --ok:#3E6FB0;--onok:#FFFFFF;--tile:#F4F3ED;--fn:#D3D1C4;--loopbg:#EFEEE6;--fnt:#33362E;--fa:#7A5C9E;--fat:#FFFFFF;--under:#3E6FB0;--small:#6B6C62;--over:#BE6A38;--hit:#4F8A62;--gold:#D99A00;--btn:#16181D;--onbtn:#FFFFFF;
   --font:'Figtree',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
   --ease:cubic-bezier(.3,.8,.3,1);
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#0E1120;--card:#171B30;--line:#2A3050;--ink:#ECEEF8;--mut:#98A0BF;
-  --ok:#8EA2FF;--onok:#0E1120;--tile:#1F2440;--fn:#3A4262;--loopbg:#1F2542;--fnt:#DDE1F3;--fa:#B09CFF;--fat:#171433;--under:#8EA2FF;--small:#AEB7D4;--over:#FF7276;--hit:#4ED6A0;--gold:#FFC24D;color-scheme:dark}}
+  --bg:#1B1D1A;--card:#232622;--line:#363932;--ink:#ECE9DF;--mut:#9A9B90;
+  --ok:#8FB4E8;--onok:#1B1D1A;--tile:#2C2E2A;--fn:#4B4D46;--loopbg:#2C2E2A;--fnt:#ECE9DF;--fa:#B79BD6;--fat:#1B1D1A;--under:#8FB4E8;--small:#B3B4A8;--over:#DB8D5E;--hit:#8DB596;--gold:#FFC24D;--btn:#ECEEF2;--onbtn:#121417;color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#0E1120;--card:#171B30;--line:#2A3050;--ink:#ECEEF8;--mut:#98A0BF;
-  --ok:#8EA2FF;--onok:#0E1120;--tile:#1F2440;--fn:#3A4262;--loopbg:#1F2542;--fnt:#DDE1F3;--fa:#B09CFF;--fat:#171433;--under:#8EA2FF;--small:#AEB7D4;--over:#FF7276;--hit:#4ED6A0;--gold:#FFC24D;color-scheme:dark}
+  --bg:#1B1D1A;--card:#232622;--line:#363932;--ink:#ECE9DF;--mut:#9A9B90;
+  --ok:#8FB4E8;--onok:#1B1D1A;--tile:#2C2E2A;--fn:#4B4D46;--loopbg:#2C2E2A;--fnt:#ECE9DF;--fa:#B79BD6;--fat:#1B1D1A;--under:#8FB4E8;--small:#B3B4A8;--over:#DB8D5E;--hit:#8DB596;--gold:#FFC24D;--btn:#ECEEF2;--onbtn:#121417;color-scheme:dark}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:500 16px/1.4 var(--font);min-height:100vh}
 .wrap{max-width:600px;margin:0 auto;padding-block:32px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:20px}
@@ -42,7 +42,7 @@ h1{margin:0;font:800 22px var(--font);letter-spacing:-.01em}
 #app.match .win{animation:pop .45s var(--ease)}
 @keyframes pop{40%{transform:scale(1.04)}}
 
-button{all:unset;box-sizing:border-box;cursor:pointer;text-align:center;padding:12px 20px;border-radius:12px;background:var(--card);border:1px solid var(--line);font:700 15px var(--font);color:var(--ink);transition:transform .12s,opacity .2s,border-color .2s}
+button{all:unset;box-sizing:border-box;cursor:pointer;text-align:center;padding:12px 22px;border-radius:999px;background:var(--card);border:1px solid var(--line);font:700 15px var(--font);color:var(--ink);transition:transform .12s,opacity .2s,border-color .2s}
 button:hover:not(:disabled){border-color:var(--mut)}
 button:active:not(:disabled){transform:scale(.96)}
 button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
@@ -62,8 +62,8 @@ button:disabled{opacity:.35;cursor:default}
 .what{margin:8px 0 10px;font:700 18px/1.4 var(--font);color:var(--st);transition:color .3s}
 .slot{position:relative}
 .opts.off,.what.off{visibility:hidden}
-#st{position:absolute;top:0;left:0;right:0;padding:14px 16px;font-size:16px;border-radius:14px;background:var(--ok);color:var(--onok);border-color:var(--ok)}
-#st:hover:not(:disabled){border-color:var(--ok);filter:brightness(1.06)}
+#st{position:absolute;top:0;left:0;right:0;padding:14px 16px;font-size:16px;border-radius:999px;background:var(--btn);color:var(--onbtn);border-color:var(--btn)}
+#st:hover:not(:disabled){border-color:var(--btn);filter:brightness(1.06)}
 #st[hidden]{display:none}
 /* before we start there is no window yet: hide (not remove) the stats, so nothing jumps when we do */
 #app:is([data-view="2"],[data-view="3"]).empty :is(.fr,.trk){visibility:hidden}
@@ -73,7 +73,7 @@ button:disabled{opacity:.35;cursor:default}
 .win{transition:left .35s var(--ease),width .35s var(--ease),border-color .3s,background .3s,opacity .3s}
 .opts{display:flex;flex-direction:column;gap:8px}
 .opts[hidden]{display:none}
-.opts button{padding:14px 16px;font-size:16px;text-align:left;border-radius:14px}
+.opts button{padding:14px 20px;font-size:16px;text-align:left;border-radius:999px}
 .note{margin:2px 0 0;min-height:21px;font:500 14px/1.5 var(--font);color:var(--mut)}
 /* header buttons */
 .top{display:flex;justify-content:space-between;align-items:center;gap:12px}
@@ -81,8 +81,8 @@ button:disabled{opacity:.35;cursor:default}
 
 /* flowchart: neutral nodes, the step we are on lights up in the accent */
 .sr{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:22px}
-.seg{display:inline-flex;gap:2px;padding:3px;border:1px solid var(--line);border-radius:12px;background:var(--card)}
-.seg button{border:0;background:none;padding:7px 16px;border-radius:9px;font:700 14px var(--font);color:var(--mut);white-space:nowrap}
+.seg{display:inline-flex;gap:2px;padding:3px;border:1px solid var(--line);border-radius:999px;background:var(--card)}
+.seg button{border:0;background:none;padding:7px 16px;border-radius:999px;font:700 14px var(--font);color:var(--mut);white-space:nowrap}
 .seg button[aria-pressed=true]{background:var(--ink);color:var(--card)}
 #app:not([data-view="2"]):not([data-view="3"]) .ch{display:none}
 #pvz2 .card{padding:10px 12px}
@@ -91,11 +91,11 @@ button:disabled{opacity:.35;cursor:default}
 #app[data-view="4"] #fcard{display:none}
 #app[data-view="4"] #cap{display:none}
 .nxd{display:none;margin-top:8px}#app[data-view="5"] .nxd{display:block}
-.nxd button{padding:12px 28px;font-size:14.5px;border-radius:12px;color:var(--ok);border-color:color-mix(in srgb,var(--ok) 45%,var(--line))}
+.nxd button{padding:12px 28px;font-size:14.5px;border-radius:999px;color:var(--ok);border-color:color-mix(in srgb,var(--ok) 45%,var(--line))}
 .okc{color:var(--ok);font-weight:800;margin-right:2px}
 .ap{display:none}#app[data-view="4"] .ap{display:block}
-.ap button{padding:12px 28px;font-size:14.5px;border-radius:12px;color:var(--ok);border-color:color-mix(in srgb,var(--ok) 45%,var(--line))}.ap button:disabled{color:var(--mut);border-color:var(--line)}
-.achs button{padding:12px 8px;font-size:14.5px;border-radius:12px;color:var(--ok);border-color:color-mix(in srgb,var(--ok) 45%,var(--line))}
+.ap button{padding:12px 28px;font-size:14.5px;border-radius:999px;color:var(--ok);border-color:color-mix(in srgb,var(--ok) 45%,var(--line))}.ap button:disabled{color:var(--mut);border-color:var(--line)}
+.achs button{padding:12px 8px;font-size:14.5px;border-radius:999px;color:var(--ok);border-color:color-mix(in srgb,var(--ok) 45%,var(--line))}
 .achs button:disabled{color:var(--mut);border-color:var(--line)}
 .achs button.ok:disabled{color:var(--hit);border-color:var(--hit);background:color-mix(in srgb,var(--hit) 12%,var(--card));opacity:1}
 .achs button.ok::before{content:'\2713';margin-right:6px;font-weight:800}
@@ -206,8 +206,8 @@ code{font:600 .86em ui-monospace,SFMono-Regular,Menlo,monospace;background:color
 @keyframes shk2{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
 .pza{display:grid;grid-template-columns:1fr 1fr;gap:10px;position:relative}
 .pza button{padding:12px 10px}
-#pc{background:var(--ok);color:var(--onok);border-color:var(--ok)}
-.pzx{position:absolute;inset:0;visibility:hidden;background:var(--ok);color:var(--onok);border-color:var(--ok)}
+#pc{background:var(--btn);color:var(--onbtn);border-color:var(--btn)}
+.pzx{position:absolute;inset:0;visibility:hidden;background:var(--btn);color:var(--onbtn);border-color:var(--btn)}
 .pz.done .pzx{visibility:visible}.pz.done :is(#pc,#pn){visibility:hidden}
 .exh{margin:6px 0 -2px;font:700 11px var(--font);letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
 .exs{display:flex;flex-direction:column;gap:10px}
@@ -262,7 +262,7 @@ code{font:600 .86em ui-monospace,SFMono-Regular,Menlo,monospace;background:color
 #app.editing #s1.slide .tb,#app.editing #s1.slide .ta{display:block!important}#app.editing #s1.slide .tin.ta{display:flex!important}
 .tin3{margin:0;font:600 14.5px/1.45 var(--font);text-wrap:pretty}
 @media (min-width:820px){.tin3{font-size:19px;line-height:1.5}}
-.tnx{padding:12px 6px;font-size:14.5px;border-radius:12px;background:var(--ok);color:var(--onok);border-color:var(--ok)}
+.tnx{padding:12px 6px;font-size:14.5px;border-radius:999px;background:var(--btn);color:var(--onbtn);border-color:var(--btn)}
 .tctl.nx .tbtn{display:none}
 .tin{display:flex;flex-direction:column;gap:8px}.tin p{margin:0;font:600 14.5px/1.45 var(--font);text-wrap:pretty}
 /* two panels: the words on the left, the thing to look at and play with on the right */
@@ -336,8 +336,8 @@ button[aria-expanded=true]{border-color:var(--mut)}
 .wyc .hw{transition:left .12s var(--ease),width .12s var(--ease),border-color .2s,background .2s,opacity .2s}
 .wyc.idle .hw{opacity:0}
 .wyb{display:flex;justify-content:center}.ptx .wyb{justify-content:flex-start}.wyb2{display:none;justify-content:flex-start}#sy[data-st="3"] .wyb2{display:flex}
-#wp,#wp2{padding:12px 30px;border-radius:14px;background:var(--ok);color:var(--onok);border-color:var(--ok)}
-#wp:hover:not(:disabled),#wp2:hover:not(:disabled){border-color:var(--ok);filter:brightness(1.06)}
+#wp,#wp2{padding:12px 30px;border-radius:999px;background:var(--btn);color:var(--onbtn);border-color:var(--btn)}
+#wp:hover:not(:disabled),#wp2:hover:not(:disabled){border-color:var(--btn);filter:brightness(1.06)}
 #wp:disabled,#wp2:disabled{opacity:.55}
 /* why view, part two: spot the wasted checks, then make the call */
 .bfx{display:flex;flex-direction:column;gap:12px;margin-top:6px}
@@ -372,7 +372,7 @@ button[aria-expanded=true]{border-color:var(--mut)}
 .mb{position:absolute;top:0;bottom:0;left:calc(var(--l)/var(--n)*100%);width:calc((var(--r) - var(--l) + 1)/var(--n)*100%);border-radius:3px;background:var(--st)}
 .wzx{position:absolute;inset:0;display:grid;grid-template-columns:1fr 1fr;gap:10px;visibility:hidden}
 .wzx button{padding:12px 10px}
-#wzk{background:var(--ok);color:var(--onok);border-color:var(--ok)}
+#wzk{background:var(--btn);color:var(--onbtn);border-color:var(--btn)}
 .wzc.done .wzx{visibility:visible}.wzc.done :is(#wze,#wzd){visibility:hidden}
 .wzc.bad .wyn{color:var(--over)}
 @media (max-width:480px){
