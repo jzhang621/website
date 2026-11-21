@@ -18,10 +18,10 @@ const lessons = [
   },
 ];
 
-const stats = [
-  ["16", "patterns"],
+const points = [
+  ["16", "patterns, from Two Pointers to Dynamic Programming"],
   ["120", "lessons"],
-  ["300+", "interactive visualizations"],
+  ["300+", "interactive visualizations to play and step through"],
 ];
 
 export default function Home() {
@@ -61,24 +61,25 @@ export default function Home() {
       </section>
 
       <a href={HELLO_INTERVIEW} className="work-card group mt-8 flex flex-col p-5 sm:p-6">
-        <dl className="mb-5 grid grid-cols-3 gap-3 text-center">
-          {stats.map(([n, label]) => (
-            <div key={label} className="rounded-2xl border border-[var(--line)] px-2 py-4">
-              <dt className="text-3xl font-extrabold tracking-tight sm:text-5xl" style={{ color: "var(--accent)" }}>
-                {n}
-              </dt>
-              <dd className="mt-1 text-xs font-semibold text-[var(--muted)] sm:text-sm">{label}</dd>
-            </div>
+        <ul className="mb-6 space-y-2.5 text-lg sm:text-xl">
+          {points.map(([n, label]) => (
+            <li key={label} className="flex items-baseline gap-3">
+              <span aria-hidden style={{ color: "var(--accent)" }}>&#9679;</span>
+              <span>
+                <strong className="font-extrabold" style={{ color: "var(--accent)" }}>{n}</strong>{" "}
+                <span className="text-[var(--muted)]">{label}</span>
+              </span>
+            </li>
           ))}
-        </dl>
+        </ul>
 
         <div className="grid items-center gap-4 md:grid-cols-2">
           <div className="phone">
             <Image
-              src="/hello-interview-text.webp"
-              alt="A Hello Interview lesson page: an introduction and the Two Sum problem description"
+              src="/hello-interview-article.webp"
+              alt="A Hello Interview lesson article: a recursion tree for climbing stairs with explanatory text and a caption"
               width={1000}
-              height={550}
+              height={583}
               className="h-auto w-full"
             />
           </div>
