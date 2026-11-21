@@ -8,7 +8,7 @@ const lessons = [
   {
     href: "/sliding-window",
     preview: "/sliding-window-preview.webp",
-    alt: "Sliding window lesson on a phone: after choosing Expand right correctly, with the flowchart highlighting that step and a Next button",
+    alt: "Sliding window lesson on a phone: the Try it yourself question, with a five-number window highlighted and four choices to pick from",
     title: "Sliding window",
   },
   {
