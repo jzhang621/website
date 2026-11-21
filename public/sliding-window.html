@@ -451,7 +451,7 @@ button[aria-expanded=true]{border-color:var(--mut)}
         <div class="pzr" id="pr" role="group" aria-label="Numbers"></div>
         <div class="pza"><button id="pc" disabled>Check</button><button id="pn">No match</button></div>
       </section>
-      <p class="cap" id="pm" aria-live="polite">Tap each number in the subarray.</p>
+      <p class="cap" id="pm" aria-live="polite">Tap each number to select.</p>
       </div>
     </div>
     <div class="slide two" id="sy" inert data-st="1">
@@ -955,9 +955,9 @@ function pmsg(t){$('pm').innerHTML=t}
 function pbuild(){var N=PZ[pi][0];pr.textContent='';ptl=[];pr.style.setProperty('--n',N.length);pr.className='pzr';
   N.forEach(function(v,i){var d=document.createElement('div');d.className='tl';d.textContent=v;d.setAttribute('role','button');d.tabIndex=0;
     d.onclick=function(){ptap(i)};d.onkeydown=function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();ptap(i)}};pr.appendChild(d);ptl.push(d)});
-  pa=pb=panc=-1;ps={};plock=false;$('pz').classList.remove('done');pmsg('Tap each number in the subarray.');ppaint()}
+  pa=pb=panc=-1;ps={};plock=false;$('pz').classList.remove('done');pmsg('Tap each number to select.');ppaint()}
 function ptap(i){if(plock)return;ps[i]=!ps[i];pa=0;ppaint();var k=psel();
-  if(k.length&&psum()===PZ[pi][1]){if(pcontig(k))pcorrect();else pwrong('Those numbers need to be next to each other.')}else pmsg('Tap each number in the subarray.')}
+  if(k.length&&psum()===PZ[pi][1]){if(pcontig(k))pcorrect();else pwrong('Those numbers need to be next to each other.')}else pmsg('Tap each number to select.')}
 pr.addEventListener('pointerdown',function(e){e.stopPropagation()});
 function pwrong(m){pr.classList.remove('no');void pr.offsetWidth;pr.classList.add('no');pmsg(m)}
 function pwin(m){plock=true;pr.classList.add('good','lock');$('pz').classList.add('done');pmsg(m);ppaint();$('pc').disabled=true}
