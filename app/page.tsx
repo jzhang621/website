@@ -61,8 +61,8 @@ const tiles = [
 ];
 
 const quotes = [
-  "Animations and the style of explanation are top-notch - thank you!",
   "The interactive illustrations here are so helpful and really have made this so much easier to understand for me. Thank you!",
+  "Animations and the style of explanation are top-notch - thank you!",
   "This is the cleanest explanation I have read about Dynamic Programming. Love your work!",
 ];
 
