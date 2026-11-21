@@ -10,14 +10,14 @@ const lessons = [
     preview: "/sliding-window-preview.webp",
     alt: "Sliding window lesson on a phone: the Try it yourself question, with a five-number window highlighted above a flowchart of the algorithm",
     title: "Sliding window",
-    height: 865,
+    height: 763,
   },
   {
     href: "/basis-vectors",
     preview: "/basis-vectors-preview.webp",
     alt: "Linear transformations lesson on a phone: a sheared letter F with draggable basis arrows and a 2 by 2 matrix",
     title: "Linear transformations and matrices",
-    height: 865,
+    height: 763,
   },
 ];
 
