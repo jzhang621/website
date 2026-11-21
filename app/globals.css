@@ -56,6 +56,15 @@ a:focus-visible {
   color: var(--bg);
 }
 
+.lesson-card .phone {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.lesson-card:hover .phone {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 40px -18px color-mix(in srgb, var(--accent) 45%, transparent);
+}
+
 .phone {
   border: 1px solid var(--line);
   border-radius: 26px;
@@ -67,7 +76,8 @@ a:focus-visible {
   .work-card {
     transition: none;
   }
-  .work-card:hover {
+  .work-card:hover,
+  .lesson-card:hover .phone {
     transform: none;
   }
 }
