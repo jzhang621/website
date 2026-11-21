@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Carousel } from "./Carousel";
 
 const HELLO_INTERVIEW = "https://www.hellointerview.com/learn/code";
 
@@ -21,7 +22,28 @@ const lessons = [
 const points = [
   ["16", "patterns, from Two Pointers to Dynamic Programming"],
   ["120", "lessons"],
-  ["300+", "interactive visualizations to play and step through"],
+  ["100+", "interactive visualizations used to help understand algorithm solutions"],
+];
+
+const slides = [
+  {
+    src: "/hello-interview-preview.webp",
+    alt: "A Hello Interview lesson: an animated two-pointer visualization stepping through code",
+    width: 1000,
+    height: 702,
+  },
+  {
+    src: "/hello-interview-article.webp",
+    alt: "A Hello Interview lesson article: a recursion tree for climbing stairs with explanatory text and a caption",
+    width: 1000,
+    height: 583,
+  },
+  {
+    src: "/hello-interview-cycle.webp",
+    alt: "A Hello Interview linked list visualization: slow and fast pointers detecting a cycle",
+    width: 1000,
+    height: 745,
+  },
 ];
 
 const quotes = [
@@ -66,7 +88,7 @@ export default function Home() {
         ))}
       </section>
 
-      <a href={HELLO_INTERVIEW} className="work-card group mt-8 flex flex-col p-5 sm:p-6">
+      <article className="work-card mt-8 flex flex-col p-5 sm:p-6">
         <ul className="mb-6 space-y-2.5 text-lg sm:text-xl">
           {points.map(([n, label]) => (
             <li key={label} className="flex items-baseline gap-3">
@@ -79,26 +101,8 @@ export default function Home() {
           ))}
         </ul>
 
-        <div className="grid items-center gap-4 md:grid-cols-2">
-          <div className="phone">
-            <Image
-              src="/hello-interview-article.webp"
-              alt="A Hello Interview lesson article: a recursion tree for climbing stairs with explanatory text and a caption"
-              width={1000}
-              height={583}
-              className="h-auto w-full"
-            />
-          </div>
-          <div className="phone">
-            <Image
-              src="/hello-interview-preview.webp"
-              alt="A Hello Interview lesson: an animated two-pointer visualization stepping through code"
-              width={1000}
-              height={702}
-              className="h-auto w-full"
-            />
-          </div>
-        </div>
+        <Carousel label="Hello Interview lesson screenshots" slides={slides} />
+
         <ul className="mt-5 grid gap-3 md:grid-cols-3" aria-label="Learner comments on Hello Interview">
           {quotes.map((q) => (
             <li key={q} className="rounded-2xl border border-[var(--line)] p-4 text-sm leading-snug">
@@ -114,11 +118,13 @@ export default function Home() {
         <div className="mt-6 flex items-center justify-between gap-4">
           <div>
             <h2 className="text-xl font-extrabold tracking-tight">Learn DSA Through Visualizations</h2>
-            <p className="mt-1 text-sm text-[var(--muted)]">Hello Interview &middot; every lesson written by me</p>
+            <p className="mt-1 text-sm text-[var(--muted)]">Hello Interview &middot; primary author</p>
           </div>
-          <span className="work-cta shrink-0 rounded-2xl px-4 py-2.5 text-sm font-bold">See it &#8599;</span>
+          <a href={HELLO_INTERVIEW} className="work-cta shrink-0 rounded-2xl px-4 py-2.5 text-sm font-bold">
+            See it &#8599;
+          </a>
         </div>
-      </a>
+      </article>
 
       <footer className="mt-20 border-t border-[var(--line)] pt-8 text-sm text-[var(--muted)]">
         More lessons are on the way.
