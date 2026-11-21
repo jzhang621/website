@@ -8,16 +8,16 @@ const lessons = [
   {
     href: "/sliding-window",
     preview: "/sliding-window-preview.webp",
-    alt: "Sliding window lesson on a phone: the Try it yourself question, with a five-number window highlighted and four choices to pick from",
+    alt: "Sliding window lesson on a phone: the Try it yourself question, with a five-number window highlighted above a flowchart of the algorithm",
     title: "Sliding window",
-    height: 1125,
+    height: 763,
   },
   {
     href: "/basis-vectors",
     preview: "/basis-vectors-preview.webp",
     alt: "Linear transformations lesson on a phone: a sheared letter F with draggable basis arrows and a 2 by 2 matrix",
     title: "Linear transformations and matrices",
-    height: 865,
+    height: 763,
   },
 ];
 
@@ -84,8 +84,12 @@ export default function Home() {
       </header>
 
       <section className="pb-12 pt-14 sm:pt-20">
-        <h1 className="text-4xl font-extrabold tracking-tight sm:text-6xl">Jimmy Zhang</h1>
-        <p className="mt-3 text-sm font-bold uppercase tracking-widest text-[var(--muted)]">
+        <div className="flex items-center gap-4 sm:gap-6">
+          <span className="h-px flex-1 bg-[var(--line)]" aria-hidden />
+          <h1 className="text-4xl font-extrabold tracking-tight sm:text-6xl">Jimmy Zhang</h1>
+          <span className="h-px flex-1 bg-[var(--line)]" aria-hidden />
+        </div>
+        <p className="mt-3 text-center text-sm font-bold uppercase tracking-widest text-[var(--muted)]">
           Portfolio for Brilliant&rsquo;s Learning Designer roles
         </p>
       </section>
@@ -134,16 +138,30 @@ export default function Home() {
         </ul>
       </article>
 
-      <section aria-label="Interactive lessons" className="mt-8 grid gap-8 md:grid-cols-2">
+      <section aria-label="Interactive lessons" className="mt-14">
+        <div className="mb-8 flex items-center gap-4">
+          <span className="h-px flex-1 bg-[var(--line)]" aria-hidden />
+          <h2 className="text-xs font-bold uppercase tracking-widest text-[var(--muted)]">Interactive lessons</h2>
+          <span className="h-px flex-1 bg-[var(--line)]" aria-hidden />
+        </div>
+        <div className="grid gap-8 md:grid-cols-2 md:justify-items-center">
         {lessons.map((l) => (
-          <Link key={l.href} href={l.href} className="lesson-card group mx-auto flex w-full max-w-[300px] flex-col">
-            <h2 className="px-1 text-[22px] font-extrabold leading-tight tracking-tight">{l.title}</h2>
+          <Link key={l.href} href={l.href} className="lesson-card group mx-auto flex w-full max-w-[340px] flex-col p-4">
+            <h3 className="px-1 text-xl font-extrabold leading-tight tracking-tight md:min-h-[3.1rem]">
+              {l.title.slice(0, l.title.lastIndexOf(" ") + 1)}
+              <span className="whitespace-nowrap">
+                {l.title.slice(l.title.lastIndexOf(" ") + 1)}
+                <span className="ml-1.5 inline-block transition-transform group-hover:translate-x-1" aria-hidden>
+                  &rarr;
+                </span>
+              </span>
+            </h3>
             <div className="phone mt-3.5 w-full">
               <Image src={l.preview} alt={l.alt} width={520} height={l.height} className="h-auto w-full" />
             </div>
-            <span className="work-cta mt-4 self-start rounded-2xl px-4 py-2.5 text-sm font-bold">Open &rarr;</span>
           </Link>
         ))}
+        </div>
       </section>
     </main>
   );

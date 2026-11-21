@@ -56,7 +56,17 @@ a:focus-visible {
   color: var(--bg);
 }
 
-.lesson-card .phone {
+.lesson-card {
+  background: var(--card);
+  border-radius: 28px;
+  transition: transform 0.2s ease;
+}
+
+.lesson-card:hover {
+  transform: translateY(-3px);
+}
+
+.phone {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -77,7 +87,7 @@ a:focus-visible {
     transition: none;
   }
   .work-card:hover,
-  .lesson-card:hover .phone {
+  .lesson-card:hover {
     transform: none;
   }
 }
