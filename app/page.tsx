@@ -10,12 +10,14 @@ const lessons = [
     preview: "/sliding-window-preview.webp",
     alt: "Sliding window lesson on a phone: the Try it yourself question, with a five-number window highlighted and four choices to pick from",
     title: "Sliding window",
+    height: 1125,
   },
   {
     href: "/basis-vectors",
     preview: "/basis-vectors-preview.webp",
     alt: "Linear transformations lesson on a phone: a sheared letter F with draggable basis arrows and a 2 by 2 matrix",
     title: "Linear transformations and matrices",
+    height: 865,
   },
 ];
 
@@ -134,14 +136,12 @@ export default function Home() {
 
       <section aria-label="Interactive lessons" className="mt-8 grid gap-8 md:grid-cols-2">
         {lessons.map((l) => (
-          <Link key={l.href} href={l.href} className="lesson-card group flex flex-col">
-            <div className="phone mx-auto w-full max-w-[300px]">
-              <Image src={l.preview} alt={l.alt} width={520} height={1126} className="h-auto w-full" />
+          <Link key={l.href} href={l.href} className="lesson-card group mx-auto flex w-full max-w-[300px] flex-col">
+            <h2 className="px-1 text-[22px] font-extrabold leading-tight tracking-tight">{l.title}</h2>
+            <div className="phone mt-3.5 w-full">
+              <Image src={l.preview} alt={l.alt} width={520} height={l.height} className="h-auto w-full" />
             </div>
-            <div className="mx-auto mt-5 flex w-full max-w-[300px] flex-col items-start gap-3 px-1">
-              <h2 className="text-xl font-extrabold tracking-tight">{l.title}</h2>
-              <span className="work-cta shrink-0 rounded-2xl px-4 py-2.5 text-sm font-bold">Open &rarr;</span>
-            </div>
+            <span className="work-cta mt-4 self-start rounded-2xl px-4 py-2.5 text-sm font-bold">Open &rarr;</span>
           </Link>
         ))}
       </section>
