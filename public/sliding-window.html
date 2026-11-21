@@ -381,12 +381,20 @@ button[aria-expanded=true]{border-color:var(--mut)}
 
 /* phones: one pane. Keep the thing you act on and what it changes on screen together. */
 .rs2{display:none}.ftog{display:none}.dock{display:contents}
+.cnt{display:none;font:700 13px var(--font);color:var(--mut);font-variant-numeric:tabular-nums;white-space:nowrap}
+.foot{display:none;position:fixed;left:0;right:0;bottom:0;z-index:30;gap:10px;align-items:center;background:var(--bg);border-top:1px solid var(--line);padding:12px max(16px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.foot #fb{flex:1;padding:14px 20px;font-size:16px;font-weight:700;border-radius:999px;background:var(--btn);color:var(--onbtn);border-color:var(--btn)}
+.foot #fb:disabled{opacity:.4}
+.foot .rp{flex:none;width:48px;height:48px;padding:0;border-radius:50%;display:grid;place-items:center;color:var(--mut)}
+.foot .rp[hidden]{display:none}
+.foot .rp svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 @media (max-width:819px){
   .car{overflow:clip}
   .top{display:none!important}
-  .segs{display:none!important}
+  #cp,#cx{display:none}.cnt{display:inline}
   .rs2{display:grid}
-  .sec{margin-top:0;gap:0}
+  .sec{margin-top:0;gap:12px}
+  .foot{display:flex}
   .slide.two{gap:14px}.ptx,.pvz{display:contents}
   /* Try-it 2 and 3: the window card and the two buttons stay pinned while the list scrolls under them */
   #app:is([data-view="2"],[data-view="3"]) #wcard{order:1;position:sticky;top:0;z-index:7;box-shadow:0 0 0 8px var(--bg)}
@@ -401,19 +409,19 @@ button[aria-expanded=true]{border-color:var(--mut)}
   /* controls fixed to the bottom edge: no slide transform on phones, one section shown at a time */
   .track{transform:none!important;transition:none}
   .slide[inert]{display:none}
-  #app:is([data-view="2"],[data-view="3"],[data-view="4"],[data-view="5"],[data-view="6"]){padding-bottom:170px}
-  #app:is([data-view="0"],[data-view="1"]){padding-bottom:110px}
-  #app[data-view="0"] #pz .pza,#app[data-view="1"] :is(.wyb,.wyb2){position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--bg);border-top:1px solid var(--line);padding:12px max(16px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
-  #app[data-view="1"] :is(.wyb,.wyb2){justify-content:flex-start}
-  #app:is([data-view="2"],[data-view="3"]) .tctl,#app:is([data-view="4"],[data-view="5"],[data-view="6"]) .dock{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;flex-direction:column;gap:8px;background:var(--bg);border-top:1px solid var(--line);padding:12px max(16px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
-  .dock .cfb{order:-1}
+  #app:is([data-view="0"],[data-view="1"],[data-view="2"],[data-view="3"],[data-view="4"],[data-view="5"],[data-view="6"]){padding-bottom:110px}
+  /* the footer owns the one primary button; the page keeps only the answers */
+  #app[data-view="0"] #pc,#app[data-view="1"] :is(.wyb,.wyb2),.cdo,.ap,.nxd{display:none!important}
+  #app[data-view="0"] #pz .pza{grid-template-columns:1fr}
+  #app:is([data-view="4"],[data-view="5"],[data-view="6"]) .dock>*{order:9}
+  #app:is([data-view="4"],[data-view="5"],[data-view="6"]) .dock>:is(.cfb,.cap){order:8}
 }
 </style>
 
 </head><body><div class="wrap" id="app">
   <header>
     <div class="top"><h1>Sliding window</h1><div class="acts"><button id="ed" hidden>Edit text</button><button id="rs">Reset</button></div></div>
-<nav class="sec" aria-label="Sections"><div class="shd"><div><b class="stt" id="stt">The problem</b></div><div class="sa"><button id="rs2" class="rb rs2" aria-label="Reset"><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.5-5.8M4 4v4.5h4.5"/></svg></button><button id="cp" class="rb" aria-label="Previous section" disabled><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button><button id="cx" class="rb" aria-label="Next section"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button></div></div><div class="segs"><button id="v0" aria-label="The problem" aria-current="true"></button><button id="v1" aria-label="Why Sliding Window" aria-current="false"></button><button id="v7" aria-label="Why Sliding Window, continued" aria-current="false"></button><button id="v2" aria-label="Try it yourself" aria-current="false"></button><button id="v3" aria-label="Try it yourself, part two" aria-current="false"></button><button id="v4" aria-label="Algorithm" aria-current="false"></button><button id="v5" aria-label="Try it yourself, algorithm" aria-current="false"></button><button id="v8" aria-label="Try it yourself, no match" aria-current="false"></button><button id="v6" aria-label="Code" aria-current="false"></button></div></nav>
+<nav class="sec" aria-label="Sections"><div class="shd"><div><b class="stt" id="stt">The problem</b></div><div class="sa"><span class="cnt" id="cnt" aria-live="polite">1 / 9</span><button id="rs2" class="rb rs2" aria-label="Reset"><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.5-5.8M4 4v4.5h4.5"/></svg></button><button id="cp" class="rb" aria-label="Previous section" disabled><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button><button id="cx" class="rb" aria-label="Next section"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button></div></div><div class="segs"><button id="v0" aria-label="The problem" aria-current="true"></button><button id="v1" aria-label="Why Sliding Window" aria-current="false"></button><button id="v7" aria-label="Why Sliding Window, continued" aria-current="false"></button><button id="v2" aria-label="Try it yourself" aria-current="false"></button><button id="v3" aria-label="Try it yourself, part two" aria-current="false"></button><button id="v4" aria-label="Algorithm" aria-current="false"></button><button id="v5" aria-label="Try it yourself, algorithm" aria-current="false"></button><button id="v8" aria-label="Try it yourself, no match" aria-current="false"></button><button id="v6" aria-label="Code" aria-current="false"></button></div></nav>
     <div class="sr"><div class="seg" role="group" aria-label="Example"><button id="e1" aria-pressed="true">Match</button><button id="e2" aria-pressed="false">No match</button></div></div>
   </header>
 
@@ -537,6 +545,7 @@ button[aria-expanded=true]{border-color:var(--mut)}
     </div>
   </div></div>
 </div>
+<div class="foot" id="foot"><button class="rp" id="rp" aria-label="Replay" hidden><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.5-5.8M4 4v4.5h4.5"/></svg></button><button id="fb" disabled>Next</button></div>
 
 <script>
 (function(){
@@ -592,7 +601,7 @@ var tst=1,TW=[],tix={},tcur=null,tdone=false,tbusy=true,ttm=[],tlist=$('tlist'),
 function tat(ms,f){ttm.push(setTimeout(f,ms))}
 function tclear(){ttm.forEach(clearTimeout);ttm=[]}
 function wsum(a,b){var q=0,i;for(i=a;i<=b;i++)q+=A[i];return q}
-function tsync(){var off=tbusy||tdone;$('gr').disabled=off||r>=n-1;$('sl').disabled=off||l>=n-1}
+function tsync(){var off=tbusy||tdone;$('s1').dataset.done=tdone?'1':'';$('gr').disabled=off||r>=n-1;$('sl').disabled=off||l>=n-1}
 function tbuild(ord){tclear();Array.prototype.slice.call(tlist.querySelectorAll('.tr,.tsk')).forEach(function(e){tlist.removeChild(e)});
   TW=[];tix={};var a,b,q,o;
   var P=[];for(a=0;a<n;a++)for(b=a;b<n;b++)P.push([a,b]);
@@ -809,7 +818,7 @@ function setView(v){var part=v===7,no8=v===8;sid=v;if(part)v=1;if(no8)v=5;if(exN
   track.style.transform='translateX('+(-100*(v<=2?v:v===3?2:3))+'%)';
   s0.inert=v!==0;sy.inert=v!==1;s1.inert=v!==2&&v!==3;s2.inert=v<4;
   for(var i=0;i<=8;i++){$('v'+i).setAttribute('aria-current',i===sid);$('v'+i).classList.toggle('past',ORDER.indexOf(i)<ORDER.indexOf(sid))}
-  $('cp').disabled=sid===0;$('cx').disabled=sid===6;$('stt').innerHTML=TT[sid];
+  $('cnt').textContent=(ORDER.indexOf(sid)+1)+' / '+ORDER.length;$('cp').disabled=sid===0;$('cx').disabled=sid===6;$('stt').innerHTML=TT[sid];
   if(v===0)pzReset();if(v===0||v===2||v===3){l=0;r=0;resetE();render()}else if(v===1){whyReset();if(part){sy.dataset.st=3;bfReset();bfx.hidden=false;$('wp2').textContent='Play';$('wp2').disabled=false}}else flowReset();
   if(v===2)tstart();if(v===3)tstartB();
   if(v===6)$('fslot').appendChild(flowEl);else if(flowEl.parentNode!==fcardEl)fcardEl.insertBefore(flowEl,fcardEl.firstChild);
@@ -821,6 +830,20 @@ $('ftog').onclick=function(){var o=app.hasAttribute('data-fopen');if(o)app.remov
 [0,1,2,3,4,5,6,7,8].forEach(function(i){$('v'+i).onclick=function(){if(sid!==i)setView(i)}});
 $('cp').onclick=function(){if(sid!==0)setView(ORDER[ORDER.indexOf(sid)-1])};
 $('cx').onclick=function(){if(sid!==6)setView(ORDER[ORDER.indexOf(sid)+1])};
+/* footer: one primary button in a fixed slot, driven by the state of the current section */
+var fb=$('fb'),rp=$('rp'),fAct=null,rAct=null;
+function nextSec(){if(sid!==6)setView(ORDER[ORDER.indexOf(sid)+1])}
+function footSync(){var lab='Next',dis=true,act=null,rep=null,b;
+  if(sid===0){if($('pz').classList.contains('done')){dis=false;act=nextSec}else{lab='Check';dis=$('pc').disabled;act=function(){$('pc').click()}}}
+  else if(sid===1||sid===7){b=sid===1?$('wp'):$('wp2');if(b.textContent==='Replay'){if(!b.disabled){dis=false;act=nextSec;rep=function(){b.click()}}}else{lab='Play';dis=b.disabled;act=function(){b.click()}}}
+  else if(sid===2||sid===3){dis=$('s1').dataset.done!=='1';act=nextSec}
+  else if(sid===4){b=$('apb');if(F.done){dis=false;act=nextSec;rep=function(){b.click()}}else{lab='Play';dis=b.disabled;act=function(){b.click()}}}
+  else if(sid===5||sid===8){b=$('nbtn');if(b.style.visibility==='visible'&&!b.disabled){dis=false;act=function(){b.click()}}else if(F.done){dis=false;act=nextSec}}
+  else if(sid===6){b=$('crb');if(b.textContent==='Replay'){lab='Done';rep=b.disabled?null:function(){b.click()}}else if(b.textContent==='Run'){lab='Run';dis=b.disabled;act=function(){b.click()}}else{lab='Check';dis=b.disabled;act=function(){b.click()}}}
+  fb.textContent=lab;fb.disabled=dis;fAct=act;rAct=rep;rp.hidden=!rep}
+fb.onclick=function(){if(fAct)fAct()};rp.onclick=function(){if(rAct)rAct()};
+new MutationObserver(footSync).observe(app,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['class','disabled','hidden','style','data-view','data-st','data-done']});
+footSync();
 $('e1').onclick=function(){setExample(false)};$('e2').onclick=function(){setExample(true)};
 /* swipe between the two slides */
 (function(){var x0=null,y0=0;
