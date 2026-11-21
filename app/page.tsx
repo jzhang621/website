@@ -24,6 +24,12 @@ const points = [
   ["300+", "interactive visualizations to play and step through"],
 ];
 
+const quotes = [
+  "Animations and the style of explanation are top-notch - thank you!",
+  "The interactive illustrations here are so helpful and really have made this so much easier to understand for me. Thank you!",
+  "This is the cleanest explanation I have read about Dynamic Programming. Love your work!",
+];
+
 export default function Home() {
   return (
     <main className="mx-auto max-w-5xl px-5 pb-24 pt-8 sm:px-8">
@@ -93,10 +99,22 @@ export default function Home() {
             />
           </div>
         </div>
+        <ul className="mt-5 grid gap-3 md:grid-cols-3" aria-label="Learner comments on Hello Interview">
+          {quotes.map((q) => (
+            <li key={q} className="rounded-2xl border border-[var(--line)] p-4 text-sm leading-snug">
+              <span aria-hidden className="mr-1 text-xl font-extrabold leading-none" style={{ color: "var(--accent)" }}>
+                &ldquo;
+              </span>
+              {q}
+              <span className="mt-2 block text-xs font-semibold text-[var(--muted)]">Learner comment on Hello Interview</span>
+            </li>
+          ))}
+        </ul>
+
         <div className="mt-6 flex items-center justify-between gap-4">
           <div>
             <h2 className="text-xl font-extrabold tracking-tight">Learn DSA Through Visualizations</h2>
-            <p className="mt-1 text-sm text-[var(--muted)]">Hello Interview &middot; 2024&ndash;25</p>
+            <p className="mt-1 text-sm text-[var(--muted)]">Hello Interview &middot; every lesson written by me</p>
           </div>
           <span className="work-cta shrink-0 rounded-2xl px-4 py-2.5 text-sm font-bold">See it &#8599;</span>
         </div>
