@@ -5,7 +5,7 @@
 <style>
 :root{
   --bg:#F4F3ED;--card:#FFFFFF;--line:#DAD8CB;--ink:#22251F;--mut:#6B6C62;
-  --ok:#3E6FB0;--onok:#FFFFFF;--tile:#F4F3ED;--fn:#D3D1C4;--loopbg:#EFEEE6;--fnt:#33362E;--fa:#7A5C9E;--fat:#FFFFFF;--under:#3E6FB0;--small:#6B6C62;--over:#BE6A38;--hit:#4F8A62;--gold:#D99A00;--btn:#16181D;--onbtn:#FFFFFF;
+  --ok:#3E6FB0;--onok:#FFFFFF;--tile:#FBFAF6;--fn:#D3D1C4;--loopbg:#EFEEE6;--fnt:#33362E;--fa:#7A5C9E;--fat:#FFFFFF;--under:#3E6FB0;--small:#6B6C62;--over:#BE6A38;--hit:#4F8A62;--gold:#D99A00;--btn:#16181D;--onbtn:#FFFFFF;
   --font:'Figtree',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
   --ease:cubic-bezier(.3,.8,.3,1);
 }
@@ -219,10 +219,10 @@ code{font:600 .86em ui-monospace,SFMono-Regular,Menlo,monospace;background:color
 .cap b{font-weight:800;font-variant-numeric:tabular-nums}
 /* flowchart: a shaded loop region, neutral nodes, the current step lights up */
 #flow{display:block;width:100%;height:auto}
-#flow .region{fill:var(--loopbg)}
+#flow .region{fill:none;stroke:var(--line);stroke-width:1.5}
 #flow .lp{fill:var(--mut);font:600 10px var(--font);text-anchor:middle;letter-spacing:.03em}
 #flow .e{fill:none;stroke:var(--mut);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
-#flow .lb{fill:var(--mut);font:500 8.5px var(--font);text-anchor:middle;dominant-baseline:central;paint-order:stroke;stroke:var(--loopbg);stroke-width:5;stroke-linejoin:round}
+#flow .lb{fill:var(--mut);font:500 8.5px var(--font);text-anchor:middle;dominant-baseline:central;paint-order:stroke;stroke:var(--card);stroke-width:5;stroke-linejoin:round}
 #flow .lb.o{stroke:var(--card)}
 #flow .t{fill:var(--ink);font:600 11px var(--font);text-anchor:middle}
 #flow .dt{fill:var(--fnt);font:600 11px var(--font);text-anchor:middle;transition:fill .25s}
