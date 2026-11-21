@@ -89,6 +89,7 @@ button:disabled{opacity:.35;cursor:default}
 .tcall{display:none!important}
 .expl{display:none}#s1[data-ex] .expl{display:block}
 #s1[data-ex] :is(.tin,.tin3,.tctl){display:none!important}
+.expl .exh{margin:0 0 8px}
 .expl .say{margin:0 0 14px;font:600 14.5px/1.45 var(--font);text-wrap:pretty}
 .xl{display:flex;flex-direction:column;gap:6px}
 .xr{display:grid;grid-template-columns:1fr 34px;align-items:center;gap:8px}
@@ -499,7 +500,7 @@ button[aria-expanded=true]{border-color:var(--mut)}
         <p class="note" id="note" aria-live="polite"></p>
       </div>
         <p class="tcall ta" id="tcall" data-ek="tcall" hidden>By choosing to shrink the subarray here, we skip a number of unnecessary checks.</p>
-        <div class="expl" id="expl"><p class="say" id="xsay"></p><div class="xl" id="xl"></div></div>
+        <div class="expl" id="expl"><p class="exh">Explanation</p><p class="say" id="xsay"></p><div class="xl" id="xl"></div></div>
         <p class="tcall tb" id="tcall2" data-ek="tcall2" hidden>By choosing to extend the subarray here, we skip a number of unnecessary future checks.</p></div>
       <div class="pvz" id="pvz1">
       <div class="tlist" id="tlist" aria-hidden="true"><div class="tcr" id="tcr"></div></div>
