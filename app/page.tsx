@@ -136,8 +136,7 @@ export default function Home() {
 
       <section aria-label="Interactive lessons" className="mt-14">
         <div className="mb-8">
-          <p className="text-xs font-bold uppercase tracking-widest text-[var(--muted)]">Designed &amp; built by me</p>
-          <h2 className="mt-2 text-3xl font-extrabold leading-tight tracking-tight">Interactive lessons</h2>
+          <h2 className="text-3xl font-extrabold leading-tight tracking-tight">Interactive lessons</h2>
         </div>
         <div className="grid gap-8 md:grid-cols-2">
         {lessons.map((l) => (
