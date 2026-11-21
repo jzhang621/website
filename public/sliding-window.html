@@ -196,7 +196,7 @@ code{font:600 .86em ui-monospace,SFMono-Regular,Menlo,monospace;background:color
 .pz{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px 14px 14px;display:flex;flex-direction:column;gap:14px}
 .pzf{margin:0;font:500 15px/1.4 var(--font);text-align:center;font-variant-numeric:tabular-nums}
 .pzf b{font-weight:800}.pzf .sep{color:var(--mut);margin:0 6px}
-.pzr{display:grid;grid-template-columns:repeat(var(--n),1fr);gap:6px;touch-action:none;user-select:none;-webkit-user-select:none}
+.pzr{display:grid;grid-template-columns:repeat(var(--n),1fr);gap:6px;touch-action:manipulation;user-select:none;-webkit-user-select:none}
 .pzr .tl{height:54px;display:grid;place-items:center;border-radius:12px;background:var(--tile);border:2px solid transparent;font:800 20px var(--font);font-variant-numeric:tabular-nums;cursor:pointer;transition:background .15s,border-color .15s}
 .pzr .tl:focus{outline:none}.pzr .tl:focus-visible{border-color:var(--ink)}
 .pzr .tl.on{background:color-mix(in srgb,var(--ok) 16%,var(--card));border-color:var(--ok)}
@@ -450,7 +450,7 @@ button[aria-expanded=true]{border-color:var(--mut)}
         <div class="pzr" id="pr" role="group" aria-label="Numbers"></div>
         <div class="pza"><button id="pc" disabled>Check</button><button id="pn">No match</button></div>
       </section>
-      <p class="cap" id="pm" aria-live="polite">Drag across the numbers to pick a subarray.</p>
+      <p class="cap" id="pm" aria-live="polite">Tap the first and last number of a subarray.</p>
       </div>
     </div>
     <div class="slide two" id="sy" inert data-st="1">
@@ -950,13 +950,12 @@ function pmsg(t){$('pm').innerHTML=t}
 function pbuild(){var N=PZ[pi][0];pr.textContent='';ptl=[];pr.style.setProperty('--n',N.length);pr.className='pzr';
   N.forEach(function(v,i){var d=document.createElement('div');d.className='tl';d.textContent=v;d.setAttribute('role','button');d.tabIndex=0;
     d.onkeydown=function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();pdn(i);pup(i)}};pr.appendChild(d);ptl.push(d)});
-  pa=pb=panc=-1;plock=false;$('pz').classList.remove('done');pmsg('Drag across the numbers to pick a subarray.');ppaint()}
+  pa=pb=panc=-1;plock=false;$('pz').classList.remove('done');pmsg('Tap the first and last number of a subarray.');ppaint()}
 function pat(e){var b=pr.getBoundingClientRect(),n=PZ[pi][0].length;return Math.max(0,Math.min(n-1,Math.floor((e.clientX-b.left)/b.width*n)))}
 function pdn(i){if(plock)return;pprev=pa>=0&&pa===pb?pa:-1;pmv=false;panc=i;
   if(pprev>=0&&i!==pprev){pa=Math.min(pprev,i);pb=Math.max(pprev,i)}else{pa=pb=i}ppaint()}
 function pup(i){if(plock)return;if(!pmv&&pprev===i&&pa===pb){pa=pb=-1}ppaint();panc=-1;if(pa>=0&&psum()===PZ[pi][1])pcorrect()}
 pr.addEventListener('pointerdown',function(e){e.stopPropagation();if(plock)return;pdrag=true;try{pr.setPointerCapture(e.pointerId)}catch(x){}pdn(pat(e))});
-pr.addEventListener('pointermove',function(e){if(!pdrag||plock)return;var j=pat(e);if(j!==panc||pmv){if(j!==panc)pmv=true;pa=Math.min(panc,j);pb=Math.max(panc,j);ppaint()}});
 pr.addEventListener('pointerup',function(e){e.stopPropagation();if(!pdrag)return;pdrag=false;pup(pat(e))});
 pr.addEventListener('pointercancel',function(){pdrag=false});
 function pwrong(m){pr.classList.remove('no');void pr.offsetWidth;pr.classList.add('no');pmsg(m)}
