@@ -88,21 +88,7 @@ export default function Home() {
         </p>
       </section>
 
-      <section aria-label="Interactive lessons" className="grid gap-8 md:grid-cols-2">
-        {lessons.map((l) => (
-          <Link key={l.href} href={l.href} className="work-card group flex flex-col p-5 sm:p-6">
-            <div className="phone mx-auto w-full max-w-[300px]">
-              <Image src={l.preview} alt={l.alt} width={520} height={1126} className="h-auto w-full" />
-            </div>
-            <div className="mt-6 flex items-center justify-between gap-4">
-              <h2 className="text-xl font-extrabold tracking-tight">{l.title}</h2>
-              <span className="work-cta shrink-0 rounded-2xl px-4 py-2.5 text-sm font-bold">Open &rarr;</span>
-            </div>
-          </Link>
-        ))}
-      </section>
-
-      <article className="work-card mt-8 grid gap-8 p-5 sm:p-8 md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
+      <article className="work-card grid gap-8 p-5 sm:p-8 md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
         <div className="flex flex-col gap-5">
           <p className="text-xs font-bold uppercase tracking-widest text-[var(--muted)]">
             Hello Interview &middot; primary author
@@ -145,6 +131,20 @@ export default function Home() {
           ))}
         </ul>
       </article>
+
+      <section aria-label="Interactive lessons" className="mt-8 grid gap-8 md:grid-cols-2">
+        {lessons.map((l) => (
+          <Link key={l.href} href={l.href} className="work-card group flex flex-col p-5 sm:p-6">
+            <div className="phone mx-auto w-full max-w-[300px]">
+              <Image src={l.preview} alt={l.alt} width={520} height={1126} className="h-auto w-full" />
+            </div>
+            <div className="mt-6 flex items-center justify-between gap-4">
+              <h2 className="text-xl font-extrabold tracking-tight">{l.title}</h2>
+              <span className="work-cta shrink-0 rounded-2xl px-4 py-2.5 text-sm font-bold">Open &rarr;</span>
+            </div>
+          </Link>
+        ))}
+      </section>
 
       <footer className="mt-20 border-t border-[var(--line)] pt-8 text-sm text-[var(--muted)]">
         More lessons are on the way.
