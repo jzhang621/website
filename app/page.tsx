@@ -145,10 +145,6 @@ export default function Home() {
           </Link>
         ))}
       </section>
-
-      <footer className="mt-20 border-t border-[var(--line)] pt-8 text-sm text-[var(--muted)]">
-        More lessons are on the way.
-      </footer>
     </main>
   );
 }
