@@ -8,9 +8,9 @@ const lessons = [
   {
     href: "/sliding-window",
     preview: "/sliding-window-preview.webp",
-    alt: "Sliding window lesson on a phone: the Try it yourself question, with a five-number window highlighted and four choices to pick from",
+    alt: "Sliding window lesson on a phone: the Try it yourself question, with a five-number window highlighted above a flowchart of the algorithm",
     title: "Sliding window",
-    height: 1125,
+    height: 865,
   },
   {
     href: "/basis-vectors",
@@ -142,11 +142,15 @@ export default function Home() {
         <div className="grid gap-8 md:grid-cols-2 md:justify-items-center">
         {lessons.map((l) => (
           <Link key={l.href} href={l.href} className="lesson-card group mx-auto flex w-full max-w-[340px] flex-col p-4">
-            <h3 className="px-1 md:min-h-[3.45rem] text-[22px] font-extrabold leading-tight tracking-tight">{l.title}</h3>
+            <div className="flex items-start justify-between gap-3 px-1">
+              <h3 className="text-xl font-extrabold leading-tight tracking-tight md:min-h-[3.1rem]">{l.title}</h3>
+              <span className="work-cta grid h-9 w-9 shrink-0 place-items-center rounded-full text-base font-bold" aria-hidden>
+                &rarr;
+              </span>
+            </div>
             <div className="phone mt-3.5 w-full">
               <Image src={l.preview} alt={l.alt} width={520} height={l.height} className="h-auto w-full" />
             </div>
-            <span className="work-cta mt-4 self-start rounded-2xl px-4 py-2.5 text-sm font-bold">Open &rarr;</span>
           </Link>
         ))}
         </div>
