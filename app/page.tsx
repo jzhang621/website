@@ -134,16 +134,22 @@ export default function Home() {
         </ul>
       </article>
 
-      <section aria-label="Interactive lessons" className="mt-8 grid gap-8 md:grid-cols-2">
+      <section aria-label="Interactive lessons" className="mt-14">
+        <div className="mb-8">
+          <p className="text-xs font-bold uppercase tracking-widest text-[var(--muted)]">Designed &amp; built by me</p>
+          <h2 className="mt-2 text-3xl font-extrabold leading-tight tracking-tight">Interactive lessons</h2>
+        </div>
+        <div className="grid gap-8 md:grid-cols-2">
         {lessons.map((l) => (
-          <Link key={l.href} href={l.href} className="lesson-card group mx-auto flex w-full max-w-[300px] flex-col">
-            <h2 className="px-1 text-[22px] font-extrabold leading-tight tracking-tight">{l.title}</h2>
+          <Link key={l.href} href={l.href} className="lesson-card group flex w-full max-w-[300px] flex-col">
+            <h3 className="px-1 md:min-h-[3.45rem] text-[22px] font-extrabold leading-tight tracking-tight">{l.title}</h3>
             <div className="phone mt-3.5 w-full">
               <Image src={l.preview} alt={l.alt} width={520} height={l.height} className="h-auto w-full" />
             </div>
             <span className="work-cta mt-4 self-start rounded-2xl px-4 py-2.5 text-sm font-bold">Open &rarr;</span>
           </Link>
         ))}
+        </div>
       </section>
     </main>
   );
