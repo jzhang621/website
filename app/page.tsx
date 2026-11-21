@@ -84,8 +84,12 @@ export default function Home() {
       </header>
 
       <section className="pb-12 pt-14 sm:pt-20">
-        <h1 className="text-4xl font-extrabold tracking-tight sm:text-6xl">Jimmy Zhang</h1>
-        <p className="mt-3 text-sm font-bold uppercase tracking-widest text-[var(--muted)]">
+        <div className="flex items-center gap-4 sm:gap-6">
+          <span className="h-px flex-1 bg-[var(--line)]" aria-hidden />
+          <h1 className="text-4xl font-extrabold tracking-tight sm:text-6xl">Jimmy Zhang</h1>
+          <span className="h-px flex-1 bg-[var(--line)]" aria-hidden />
+        </div>
+        <p className="mt-3 text-center text-sm font-bold uppercase tracking-widest text-[var(--muted)]">
           Portfolio for Brilliant&rsquo;s Learning Designer roles
         </p>
       </section>
@@ -136,6 +140,7 @@ export default function Home() {
 
       <section aria-label="Interactive lessons" className="mt-14">
         <div className="mb-8 flex items-center gap-4">
+          <span className="h-px flex-1 bg-[var(--line)]" aria-hidden />
           <h2 className="text-xs font-bold uppercase tracking-widest text-[var(--muted)]">Interactive lessons</h2>
           <span className="h-px flex-1 bg-[var(--line)]" aria-hidden />
         </div>
