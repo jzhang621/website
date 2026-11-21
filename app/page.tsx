@@ -8,7 +8,7 @@ const lessons = [
   {
     href: "/sliding-window",
     preview: "/sliding-window-preview.webp",
-    alt: "Sliding window lesson on a phone: a flowchart to step through with Expand, Shrink, Found it and No match buttons",
+    alt: "Sliding window lesson on a phone: after choosing Expand right correctly, with the flowchart highlighting that step and a Next button",
     title: "Sliding window",
   },
   {
