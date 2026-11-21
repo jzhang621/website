@@ -44,7 +44,7 @@ export default function Home() {
         {lessons.map((l) => (
           <Link key={l.href} href={l.href} className="work-card group flex flex-col p-5 sm:p-6">
             <div className="phone mx-auto w-full max-w-[300px]">
-              <Image src={l.preview} alt={l.alt} width={520} height={1040} className="h-auto w-full" />
+              <Image src={l.preview} alt={l.alt} width={520} height={1126} className="h-auto w-full" />
             </div>
             <div className="mt-6 flex items-center justify-between gap-4">
               <h2 className="text-xl font-extrabold tracking-tight">{l.title}</h2>
@@ -55,14 +55,25 @@ export default function Home() {
       </section>
 
       <a href={HELLO_INTERVIEW} className="work-card group mt-8 flex flex-col p-5 sm:p-6">
-        <div className="phone">
-          <Image
-            src="/hello-interview-preview.webp"
-            alt="A Hello Interview lesson: an animated two-pointer visualization stepping through code"
-            width={1100}
-            height={773}
-            className="h-auto w-full"
-          />
+        <div className="grid items-center gap-4 md:grid-cols-2">
+          <div className="phone">
+            <Image
+              src="/hello-interview-text.webp"
+              alt="A Hello Interview lesson page: an introduction and the Two Sum problem description"
+              width={1000}
+              height={550}
+              className="h-auto w-full"
+            />
+          </div>
+          <div className="phone">
+            <Image
+              src="/hello-interview-preview.webp"
+              alt="A Hello Interview lesson: an animated two-pointer visualization stepping through code"
+              width={1000}
+              height={702}
+              className="h-auto w-full"
+            />
+          </div>
         </div>
         <div className="mt-6 flex items-center justify-between gap-4">
           <div>
