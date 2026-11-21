@@ -55,7 +55,7 @@ button:disabled{opacity:.35;cursor:default}
 
 .ask{display:flex;flex-direction:column;gap:6px}
 .fr{display:flex;flex-wrap:nowrap;justify-content:space-between;align-items:center;gap:8px;padding-top:12px;border-top:1px solid var(--line)}
-.facts{margin:0;font:500 15px/1.4 var(--font);white-space:nowrap}
+.facts{margin:0;font:500 16px/1.4 var(--font);white-space:nowrap}
 .facts .sep{color:var(--mut);margin:0 6px}
 .fr .pill{font-size:12.5px;padding:4px 11px}
 .facts b{font-weight:800;font-variant-numeric:tabular-nums}
@@ -74,7 +74,7 @@ button:disabled{opacity:.35;cursor:default}
 .opts{display:flex;flex-direction:column;gap:8px}
 .opts[hidden]{display:none}
 .opts button{padding:14px 20px;font-size:16px;text-align:left;border-radius:999px}
-.note{margin:2px 0 0;min-height:21px;font:500 14px/1.5 var(--font);color:var(--mut)}
+.note{margin:2px 0 0;min-height:22px;font:500 15px/1.5 var(--font);color:var(--mut)}
 /* header buttons */
 .top{display:flex;justify-content:space-between;align-items:center;gap:12px}
 .acts{display:flex;gap:8px}
@@ -90,7 +90,7 @@ button:disabled{opacity:.35;cursor:default}
 .expl{display:none}#s1[data-ex] .expl{display:block}
 #s1[data-ex] :is(.tin,.tin3,.tctl){display:none!important}
 .expl .exh{margin:0 0 8px}
-.expl .say{margin:0 0 14px;font:600 14.5px/1.45 var(--font);text-wrap:pretty}
+.expl .say{margin:0 0 14px;font:600 17px/1.5 var(--font);text-wrap:pretty}
 .xl{display:flex;flex-direction:column;gap:6px}
 .xr{display:grid;grid-template-columns:1fr 34px;align-items:center;gap:8px}
 .xn{position:relative;display:grid;grid-template-columns:repeat(var(--n),1fr);height:28px;align-items:center;text-align:center;font:700 12.5px var(--font);color:var(--mut);border-radius:8px;background:color-mix(in srgb,var(--mut) 10%,transparent)}
@@ -116,14 +116,14 @@ button:disabled{opacity:.35;cursor:default}
 .achs button:disabled{color:var(--mut);border-color:var(--line)}
 .achs button.ok:disabled{color:var(--hit);border-color:var(--hit);background:color-mix(in srgb,var(--hit) 12%,var(--card));opacity:1}
 .achs button.ok::before{content:'\2713';margin-right:6px;font-weight:800}
-.ld{margin:0;font:600 14.5px/1.45 var(--font);text-wrap:pretty;display:none}
+.ld{margin:0;font:600 17px/1.5 var(--font);text-wrap:pretty;display:none}
 #app[data-view="4"] #ld4,#app[data-view="6"] #ld6{display:block}
 #app[data-view="5"].ask #ldT,#app[data-view="5"].editing #ldT,#app[data-view="5"]:not(.ask) #ldS{display:block}
 #app[data-view="5"].ask[data-lp] #ldN{display:block}#app[data-lp] #ldT{display:none!important}
 .achs .lpb{display:none}#app[data-lp] .achs button:not(.lpb){display:none}#app[data-lp] .achs .lpb{display:block}
 #flow.lp7 .region{stroke:var(--fa);stroke-width:2}#flow.lp7 .lp{fill:var(--fa);font-weight:800}#flow.lp7 #lbNo{fill:var(--fa);font-weight:800}
 .ptx .cap{text-align:left;min-height:0}
-@media (min-width:820px){.ld{font-size:19px;line-height:1.5}.ptx .cap{font-size:17px;line-height:1.5;font-weight:500}}
+@media (min-width:820px){.ptx .cap{font-size:17px;line-height:1.5;font-weight:500}}
 /* third view: variables */
 .vars{display:none;grid-template-columns:1fr 1fr 1.35fr 1fr;gap:8px}
 #app[data-view="6"] .fr{display:none}
@@ -156,7 +156,7 @@ code{font:600 .86em ui-monospace,SFMono-Regular,Menlo,monospace;background:color
 .fslot,.cdo,.cfb{display:none}
 #app[data-view="6"] :is(.fslot,.cdo,.cfb){display:block}
 .fslot{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:10px 12px}
-.cfb{margin:0;font:500 14.5px/1.45 var(--font);min-height:1.45em;text-wrap:pretty}
+.cfb{margin:0;font:500 16px/1.5 var(--font);min-height:1.45em;text-wrap:pretty}
 .cdo button{padding:12px 28px;font-size:14.5px;color:var(--ok);border-color:color-mix(in srgb,var(--ok) 45%,var(--line))}
 .cdo button:disabled{color:var(--mut);border-color:var(--line)}
 #app[data-view="6"] .pg{display:none}
@@ -207,12 +207,12 @@ code{font:600 .86em ui-monospace,SFMono-Regular,Menlo,monospace;background:color
 /* first view: the problem, with worked examples drawn like the window below */
 #app[data-view="0"] #wcard,#app[data-view="0"] #rs,#app:is([data-view="0"],[data-view="1"],[data-view="2"],[data-view="3"]) #rs2,#app[data-view="0"] .seg,#app[data-view="1"] #wcard,#app[data-view="1"] #rs,#app[data-view="1"] .seg,#app[data-view="2"] .seg,#app[data-view="2"] .sr,#app[data-view="3"] .seg,#app[data-view="3"] .sr{display:none}
 #s0{gap:10px}
-.pq{margin:0;font:500 16px/1.45 var(--font)}
+.pq{margin:0;font:500 18px/1.5 var(--font)}
 .pq b{font-weight:800}
 .pq.sub{font-size:14px;color:var(--mut)}
 /* the sample problem: drag across the numbers, then check */
 .pz{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px 14px 14px;display:flex;flex-direction:column;gap:14px}
-.pzf{margin:0;font:500 15px/1.4 var(--font);text-align:center;font-variant-numeric:tabular-nums}
+.pzf{margin:0;font:500 16px/1.4 var(--font);text-align:center;font-variant-numeric:tabular-nums}
 .pzf b{font-weight:800}.pzf .sep{color:var(--mut);margin:0 6px}
 .pzr{display:grid;grid-template-columns:repeat(var(--n),1fr);gap:6px;touch-action:manipulation;user-select:none;-webkit-user-select:none}
 .pzr .tl{height:54px;display:grid;place-items:center;border-radius:12px;background:var(--tile);border:2px solid transparent;font:800 20px var(--font);font-variant-numeric:tabular-nums;cursor:pointer;transition:background .15s,border-color .15s}
@@ -233,7 +233,7 @@ code{font:600 .86em ui-monospace,SFMono-Regular,Menlo,monospace;background:color
 .hr .exc{grid-column:1/-1;margin-left:4px;font:600 12px var(--font);letter-spacing:.02em;color:var(--mut)}
 .hr .exc b{color:var(--ink);font-weight:800}
 #cp{font-size:22px;line-height:1;padding:2px 8px}
-.cap{margin:0;min-height:46px;font:600 15px/1.45 var(--font);text-align:center}
+.cap{margin:0;min-height:46px;font:600 16.5px/1.5 var(--font);text-align:center}
 .cap b{font-weight:800;font-variant-numeric:tabular-nums}
 /* flowchart: a shaded loop region, neutral nodes, the current step lights up */
 #flow{display:block;width:100%;height:auto}
@@ -278,11 +278,10 @@ code{font:600 .86em ui-monospace,SFMono-Regular,Menlo,monospace;background:color
 #ed{margin-right:8px}
 #s1[data-ts="2"] .ta,#s1:not([data-ts="2"]) .tb{display:none!important}
 #app.editing #s1.slide .tb,#app.editing #s1.slide .ta{display:block!important}#app.editing #s1.slide .tin.ta{display:flex!important}
-.tin3{margin:0;font:600 14.5px/1.45 var(--font);text-wrap:pretty}
-@media (min-width:820px){.tin3{font-size:19px;line-height:1.5}}
+.tin3{margin:0;font:600 17px/1.5 var(--font);text-wrap:pretty}
 .tnx{padding:12px 6px;font-size:14.5px;border-radius:999px;background:var(--btn);color:var(--onbtn);border-color:var(--btn)}
 .tctl.nx .tbtn{display:none}
-.tin{display:flex;flex-direction:column;gap:8px}.tin p{margin:0;font:600 14.5px/1.45 var(--font);text-wrap:pretty}
+.tin{display:flex;flex-direction:column;gap:8px}.tin p{margin:0;font:600 17px/1.5 var(--font);text-wrap:pretty}
 /* two panels: the words on the left, the thing to look at and play with on the right */
 .slide.two{display:flex;flex-direction:column;gap:20px}
 .pvz{display:flex;flex-direction:column;gap:20px;min-width:0}
@@ -352,7 +351,7 @@ button[aria-expanded=true]{border-color:var(--mut)}
 .bfc .tr.match:not(.vis){--c:var(--ok)}.bfc .tr.match:not(.vis)::after{display:none}.bfc .tr.match:not(.vis) i{opacity:.34}
 .tlist.sm{--p:9px;padding-top:6px}.tlist.sm .tr{height:6px;margin-bottom:3px;border-radius:3px}.tlist.sm .tr i{border-radius:3px}
 .tlist.sm .tr.match::after{font-size:11px;right:3px}.tlist.sm .tcr{height:12px;border-radius:6px;top:6px}
-.wintro{margin:0;font:600 15px/1.45 var(--font);text-align:center;text-wrap:balance}
+.wintro{margin:0;font:600 17px/1.5 var(--font);text-align:center;text-wrap:balance}
 .wtab{display:inline-flex;gap:2px;padding:3px;border:1px solid var(--line);border-radius:12px;background:var(--card)}
 .wtab button{border:0;background:none;padding:7px 16px;border-radius:9px;font:700 14px var(--font);color:var(--mut);white-space:nowrap}
 .wtab button[aria-pressed=true]{background:var(--ink);color:var(--card)}
