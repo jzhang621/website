@@ -195,6 +195,7 @@ code{font:600 .86em ui-monospace,SFMono-Regular,Menlo,monospace;background:color
 .stt{font:800 20px/1.2 var(--font);letter-spacing:-.005em}
 .sa{display:flex;gap:8px;flex:none}
 .segs{display:flex;gap:4px}
+.segs button[hidden]{display:none}
 .segs button{position:relative;flex:1;height:5px;padding:0;border:0;border-radius:99px;background:var(--line);transition:background .25s}
 .segs button::before{content:"";position:absolute;inset:-10px 0}
 .segs button.past{background:var(--mut);opacity:.55}
@@ -437,7 +438,7 @@ button[aria-expanded=true]{border-color:var(--mut)}
 </head><body><div class="wrap" id="app">
   <header>
     <div class="top"><h1>Sliding window</h1><div class="acts"><button id="ed" hidden>Edit text</button><button id="rs">Reset</button></div></div>
-<nav class="sec" aria-label="Sections"><div class="shd"><div><b class="stt" id="stt">The problem</b></div><div class="sa"><span class="cnt" id="cnt" aria-live="polite">1 / 9</span><button id="rs2" class="rb rs2" aria-label="Reset"><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.5-5.8M4 4v4.5h4.5"/></svg></button><button id="cp" class="rb" aria-label="Previous section" disabled><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button><button id="cx" class="rb" aria-label="Next section"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button></div></div><div class="segs"><button id="v0" aria-label="The problem" aria-current="true"></button><button id="v1" aria-label="Why Sliding Window" aria-current="false"></button><button id="v7" aria-label="Why Sliding Window, continued" aria-current="false"></button><button id="v2" aria-label="Try it yourself" aria-current="false"></button><button id="v3" aria-label="Try it yourself, part two" aria-current="false"></button><button id="v4" aria-label="Algorithm" aria-current="false"></button><button id="v5" aria-label="Try it yourself, algorithm" aria-current="false"></button><button id="v8" aria-label="Try it yourself, no match" aria-current="false"></button><button id="v6" aria-label="Code" aria-current="false"></button></div></nav>
+<nav class="sec" aria-label="Sections"><div class="shd"><div><b class="stt" id="stt">The problem</b></div><div class="sa"><span class="cnt" id="cnt" aria-live="polite">1 / 9</span><button id="rs2" class="rb rs2" aria-label="Reset"><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.5-5.8M4 4v4.5h4.5"/></svg></button><button id="cp" class="rb" aria-label="Previous section" disabled><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button><button id="cx" class="rb" aria-label="Next section"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button></div></div><div class="segs"><button id="v0" aria-label="The problem" aria-current="true"></button><button id="v1" aria-label="Why Sliding Window" aria-current="false"></button><button id="v7" aria-label="Why Sliding Window, continued" aria-current="false"></button><button id="v2" aria-label="Try it yourself" aria-current="false"></button><button id="v3" aria-label="Try it yourself, part two" aria-current="false"></button><button id="v4" hidden aria-label="Algorithm" aria-current="false"></button><button id="v5" aria-label="Try it yourself, algorithm" aria-current="false"></button><button id="v8" aria-label="Try it yourself, no match" aria-current="false"></button><button id="v6" aria-label="Code" aria-current="false"></button></div></nav>
     <div class="sr"><div class="seg" role="group" aria-label="Example"><button id="e1" aria-pressed="true">Match</button><button id="e2" aria-pressed="false">No match</button></div></div>
   </header>
 
@@ -833,7 +834,7 @@ var s0=$('s0'),s1=$('s1'),sy=$('sy'),s2=$('s2'),car=$('car'),track=$('track');
 function fitCar(){app.style.setProperty('--ch',wcd.offsetHeight+'px');var a=[s0,sy,s1,s1,s2,s2,s2][view];car.style.height=(a.offsetHeight+12)+'px'}
 car.addEventListener('scroll',function(){if(car.scrollLeft||car.scrollTop){car.scrollLeft=0;car.scrollTop=0}});
 if(window.ResizeObserver){var ro=new ResizeObserver(fitCar);ro.observe(s0);ro.observe(s1);ro.observe(sy);ro.observe(s2)}
-var TT=['The problem','Why Sliding Window','','','Algorithm','Try it yourself','Code','Why (cont.)','Try it yourself: no match'],ORDER=[0,1,7,2,3,4,5,8,6],sid=0;
+var TT=['The problem','Why Sliding Window','','','Algorithm','Try it yourself','Code','Why (cont.)','Try it yourself: no match'],ORDER=[0,1,7,2,3,5,8,6],sid=0;
 var wcd=$('wcard'),pvz1=$('pvz1'),varsEl=$('vars');
 /* the two try-it sections reuse the race's numbers (and its target); everything after goes back to the short example */
 function useData(){A=WX.slice();n=A.length;T=exNo?19:WG;build()}
