@@ -86,6 +86,9 @@ button:disabled{opacity:.35;cursor:default}
 .seg button[aria-pressed=true]{background:var(--ink);color:var(--card)}
 #app:not([data-view="2"]):not([data-view="3"]) .ch{display:none}
 #tlist{display:none}
+/* flowchart removed from the lesson (markup kept, hidden) */
+#app[data-view="5"] #fcard{display:none!important}
+#app[data-view="6"] :is(.ftog,#fslot){display:none!important}
 .tcall{display:none!important}
 .expl{display:none}#s1[data-ex] .expl{display:block}
 #s1[data-ex] :is(.tin,.tin3,.tctl){display:none!important}
@@ -504,7 +507,7 @@ button[aria-expanded=true]{border-color:var(--mut)}
         <p class="ld" id="ldS"></p>
         <p class="ld" id="ldN">Are there any numbers left to add?</p>
         <p class="ld" id="ld5" data-ek="ld5">Each move changes one variable, and the sum follows.</p>
-        <p class="ld" id="ld6" data-ek="ld6">Every line of code is one step of the flowchart.</p>
+        <p class="ld" id="ld6" data-ek="ld6">Every line of code is one step of the algorithm.</p>
         <button class="ftog" id="ftog" aria-expanded="false">Flowchart</button>
         <div class="fslot" id="fslot"></div>
         <div class="dock">
