@@ -8,7 +8,7 @@ const lessons = [
   {
     href: "/sliding-window",
     preview: "/sliding-window-preview.webp",
-    alt: "Sliding window lesson on a phone: the Try it yourself question, with a five-number window highlighted above a flowchart of the algorithm",
+    alt: "Sliding window lesson on a phone: the Try it yourself question, with a five-number window highlighted above four answer buttons",
     title: "Sliding window",
     height: 763,
   },
