@@ -626,8 +626,6 @@ body{padding:24px 0;display:flex;justify-content:center}
         grp = gGhost;
         if (!wc) {
         } else {
-          ghosts.push(mk('rect', { x: 76, y: 66, width: 288, height: 208, rx: 4, fill: 'none', stroke: 'var(--line)', 'stroke-width': 1, 'stroke-dasharray': '4 4' }));
-          ghosts.push(mk('text', { x: 220, y: 170, 'text-anchor': 'middle', fill: 'var(--muted)', style: 'font:500 12px FigtreeHead,system-ui,sans-serif' }, '64 × 96 matrix'));
           colv.forEach(function (a, i) { rowv.forEach(function (b, j) {
             var x = 76 + j * 24, y = 66 + i * 26;
             if (a == null || b == null) { var el0 = mk('text', { x: x + 12, y: y + 13, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: 'var(--muted)', style: 'font-size:15px' }, a == null && b == null ? '⋱' : a == null ? '⋮' : '⋯'); el0.__d = i + j; vcs.push(el0); return; }
