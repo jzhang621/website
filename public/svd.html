@@ -1823,6 +1823,22 @@ body{padding:24px 0;display:flex;justify-content:center}
       var ob = f1.querySelector('.next'), nb0 = ob.cloneNode(false); nb0.textContent = 'Next'; ob.parentNode.replaceChild(nb0, ob); nb0.addEventListener('click', function () { fade(0, 1); });
       var f2 = all[1], o2 = f2.querySelector('.next'), nb2 = o2.cloneNode(false); nb2.textContent = 'Next'; o2.parentNode.replaceChild(nb2, o2); nb2.addEventListener('click', function () { fade(1, 4); });
       var sz2 = f2.querySelector('.stksz'); if (sz2) sz2.style.display = 'none'; var ar = f2.querySelector('.arr'); if (ar) { ar.style.display = 'flex'; ar.style.alignItems = 'center'; ar.style.justifyContent = 'center'; ar.style.gap = '8px'; var sl2 = document.createElement('span'); sl2.textContent = 'SVD'; sl2.style.cssText = 'font:400 13px Inter,system-ui,sans-serif;color:var(--muted)'; ar.appendChild(sl2); }
+      (function () { var bx = f2.querySelector('.stkbox'), cs = Array.prototype.slice.call(bx.querySelectorAll('canvas')), mm = f2.querySelector('.mid'), oc2 = f2.querySelector('.stkorig'); bx.style.display = 'none'; oc2.style.width = '116px'; mm.style.gap = '12px';
+        var vc = document.createElement('canvas'); vc.width = 96; vc.height = 64; vc.style.cssText = 'width:200px;height:133px;image-rendering:pixelated;border-radius:4px;display:block;margin-top:4px'; var vx = vc.getContext('2d');
+        var lb = document.createElement('div'); lb.style.cssText = 'font:400 13px Inter,system-ui,sans-serif;color:var(--muted);margin-top:-4px;line-height:1.2';
+        var W = 236 - 22, N = 10, k = 0, down = false, sl = document.createElement('div'); sl.style.cssText = 'position:relative;width:236px;height:34px;touch-action:none;cursor:grab;margin-top:6px;flex:none';
+        var tr = document.createElement('div'); tr.style.cssText = 'position:absolute;left:11px;right:11px;top:15px;height:4px;border-radius:2px;background:var(--line)'; var fl = document.createElement('div'); fl.style.cssText = 'position:absolute;left:11px;top:15px;height:4px;border-radius:2px;background:var(--ink);width:0'; sl.appendChild(tr); sl.appendChild(fl);
+        for (var i = 0; i < N; i++) { var dt = document.createElement('div'); dt.style.cssText = 'position:absolute;top:13px;width:8px;height:8px;border-radius:50%;background:var(--line);margin-left:-4px;left:' + (11 + i * W / (N - 1)) + 'px'; sl.appendChild(dt); }
+        var kb = document.createElement('div'); kb.style.cssText = 'position:absolute;top:6px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 0 0 1px rgba(0,0,0,.3),0 2px 6px rgba(0,0,0,.25)'; sl.appendChild(kb);
+        function draw(i) { k = i; vx.clearRect(0, 0, 96, 64); vx.drawImage(cs[i], 0, 0); lb.textContent = 'Layer ' + (i + 1); }
+        function pos(x, a) { kb.style.transition = a ? 'left .18s ease' : 'none'; fl.style.transition = a ? 'width .18s ease' : 'none'; kb.style.left = x + 'px'; fl.style.width = x + 'px'; }
+        function mv(e) { var r = sl.getBoundingClientRect(), x = Math.max(0, Math.min(W, e.clientX - r.left - 11)); pos(x, false); var i = Math.round(x / W * (N - 1)); if (i !== k) draw(i); }
+        sl.addEventListener('pointerdown', function (e) { down = true; sl.style.cursor = 'grabbing'; sl.setPointerCapture(e.pointerId); mv(e); });
+        sl.addEventListener('pointermove', function (e) { if (down) mv(e); });
+        function up() { if (!down) return; down = false; sl.style.cursor = 'grab'; pos(k * W / (N - 1), true); } sl.addEventListener('pointerup', up); sl.addEventListener('pointercancel', up);
+        mm.appendChild(vc); mm.appendChild(lb); mm.appendChild(sl); pos(0, false);
+        new MutationObserver(function () { if (f2.style.display !== 'none') { setTimeout(function () { draw(k); }, 50); } }).observe(f2, { attributes: true, attributeFilter: ['style'] }); draw(0); setTimeout(function () { draw(0); }, 400); })();
+
     })();
     var h0 = parseInt((location.hash || '').slice(1), 10); show(h0 >= 1 && h0 <= order.length ? h0 - 1 : 0);
     var nav = document.createElement('div'); nav.id = 'svdnav'; nav.style.cssText = 'position:fixed;left:0;right:0;bottom:8px;display:flex;flex-wrap:wrap;justify-content:center;gap:6px;z-index:100;padding:0 8px';
