@@ -309,6 +309,7 @@ body{padding:24px 0;display:flex;justify-content:center}
       var dots = [], knob = el('position:absolute;top:4px;width:22px;height:22px;margin-left:-11px;border-radius:50%;background:#fff;box-shadow:0 0 0 1px rgba(0,0,0,.3),0 2px 6px rgba(0,0,0,.25)', sl);
       for (var d = 0; d < 6; d++) dots.push(el('position:absolute;top:11px;width:8px;height:8px;margin-left:-4px;border-radius:50%;background:var(--line)', sl));
       sl.appendChild(knob);
+      var hintD = el('position:absolute;left:0;top:-22px;font-size:13px;line-height:1;font-weight:400;color:var(--muted);pointer-events:none;transition:opacity .3s;white-space:nowrap', sl, 'Drag me \u2192'); hintD.setAttribute('data-role', 'drag-hint');
       var row = document.createElement('div'); row.className = 'five lab5'; row.style.gridTemplateColumns = 'repeat(6,1fr)'; row.style.gap = '7px 6px'; ctl.appendChild(row);
       var KSL = ['o', 1, 2, 3, 5, 10], its = [], cvs = []; function dat(k) { return k === 'o' ? A : R[k]; }
       KSL.forEach(function (k, i) { var it = document.createElement('div'); it.className = 'it'; it.style.cursor = 'pointer'; var c = mkCanvas(); paint(c, dat(k)); it.appendChild(c); if (k === 'o') { var ol2 = document.createElement('div'); ol2.className = 'ln5'; ol2.style.cssText = 'font-family:Inter,system-ui,sans-serif;font-weight:700;font-size:11px;height:28px;line-height:28px;white-space:nowrap'; ol2.textContent = 'original'; it.appendChild(ol2); } else cnt(it, k); row.appendChild(it); its.push(it); cvs.push(c); it.addEventListener('click', function () { snap(i); }); });
@@ -320,7 +321,7 @@ body{padding:24px 0;display:flex;justify-content:center}
       function nearest(x) { var b = 0; for (var j = 1; j < 6; j++) if (Math.abs(cx[j] - x) < Math.abs(cx[b] - x)) b = j; return b; }
       var down = false;
       function move(e) { var r = sl.getBoundingClientRect(), x = Math.max(cx[0], Math.min(cx[5], e.clientX - r.left)); place(x, false); var n = nearest(x); if (n !== idx) setView(n); }
-      sl.addEventListener('pointerdown', function (e) { down = true; sl.style.cursor = 'grabbing'; sl.setPointerCapture(e.pointerId); centers(); move(e); });
+      sl.addEventListener('pointerdown', function (e) { hintD.style.opacity = 0; down = true; sl.style.cursor = 'grabbing'; sl.setPointerCapture(e.pointerId); centers(); move(e); });
       sl.addEventListener('pointermove', function (e) { if (down) move(e); });
       function up() { if (!down) return; down = false; sl.style.cursor = 'grab'; place(cx[idx], true); }
       sl.addEventListener('pointerup', up); sl.addEventListener('pointercancel', up);
@@ -1817,6 +1818,7 @@ body{padding:24px 0;display:flex;justify-content:center}
     });
     var h0 = parseInt((location.hash || '').slice(1), 10); show(h0 >= 1 && h0 <= order.length ? h0 - 1 : 0);
     var nav = document.createElement('div'); nav.id = 'svdnav'; nav.style.cssText = 'position:fixed;left:0;right:0;bottom:8px;display:flex;flex-wrap:wrap;justify-content:center;gap:6px;z-index:100;padding:0 8px';
+    order.forEach(function (f, j) { if (!j) return; var ph = f.querySelector('.mid').parentNode; ph.style.position = 'relative'; var bk = document.createElement('button'); bk.type = 'button'; bk.setAttribute('aria-label', 'Back'); bk.innerHTML = '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.5 4.5L7 10l5.5 5.5"/></svg>'; bk.style.cssText = 'position:absolute;left:8px;top:8px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border:0;border-radius:50%;background:transparent;color:var(--muted);cursor:pointer;z-index:70;padding:0'; bk.addEventListener('click', function () { location.hash = '#' + j; location.reload(); }); ph.appendChild(bk); });
     var nbs = [];
     function curIdx() { for (var q = 0; q < order.length; q++) if (order[q].style.display !== 'none') return q; return 0; }
     function hl() { var c = curIdx(); nbs.forEach(function (b, q) { b.style.background = q === c ? 'var(--ink)' : 'var(--card)'; b.style.color = q === c ? 'var(--bg)' : 'var(--ink)'; }); try { history.replaceState(null, '', '#' + (c + 1)); } catch (e) {} if (sp) setTimeout(drawSp, 60); if (typeof bDel !== 'undefined') bDel.style.display = c >= NBASE + BUILTIN.length ? '' : 'none'; }
