@@ -1822,7 +1822,7 @@ body{padding:24px 0;display:flex;justify-content:center}
       wrap.appendChild(g); m1.appendChild(wrap);
       var ob = f1.querySelector('.next'), nb0 = ob.cloneNode(false); nb0.textContent = 'Next'; ob.parentNode.replaceChild(nb0, ob); nb0.addEventListener('click', function () { fade(0, 1); });
       var f2 = all[1], o2 = f2.querySelector('.next'), nb2 = o2.cloneNode(false); nb2.textContent = 'Next'; o2.parentNode.replaceChild(nb2, o2); nb2.addEventListener('click', function () { fade(1, 4); });
-      var ar = f2.querySelector('.arr'); if (ar) { ar.style.display = 'flex'; ar.style.alignItems = 'center'; ar.style.justifyContent = 'center'; ar.style.gap = '8px'; var sl2 = document.createElement('span'); sl2.textContent = 'SVD'; sl2.style.cssText = 'font:400 13px Inter,system-ui,sans-serif;color:var(--muted)'; ar.appendChild(sl2); }
+      var sz2 = f2.querySelector('.stksz'); if (sz2) sz2.style.display = 'none'; var ar = f2.querySelector('.arr'); if (ar) { ar.style.display = 'flex'; ar.style.alignItems = 'center'; ar.style.justifyContent = 'center'; ar.style.gap = '8px'; var sl2 = document.createElement('span'); sl2.textContent = 'SVD'; sl2.style.cssText = 'font:400 13px Inter,system-ui,sans-serif;color:var(--muted)'; ar.appendChild(sl2); }
     })();
     var h0 = parseInt((location.hash || '').slice(1), 10); show(h0 >= 1 && h0 <= order.length ? h0 - 1 : 0);
     var nav = document.createElement('div'); nav.id = 'svdnav'; nav.style.cssText = 'position:fixed;left:0;right:0;bottom:8px;display:flex;flex-wrap:wrap;justify-content:center;gap:6px;z-index:100;padding:0 8px';
