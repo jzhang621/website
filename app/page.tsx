@@ -24,7 +24,7 @@ const lessons = [
     preview: "/svd-preview.webp",
     alt: "Singular value decomposition lesson on a phone: a pixel-art city image beside versions rebuilt from 1, 2, 5, 10, and 14 layers",
     title: "Singular value decomposition",
-    height: 833,
+    height: 763,
   },
 ];
 
