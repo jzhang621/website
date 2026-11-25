@@ -1963,7 +1963,7 @@ body{padding:24px 0;display:flex;justify-content:center}
           r1.style.cssText += ';left:' + (-1.5 * th) + 'px;top:' + (-1.5 * th) + 'px;width:' + w + 'px;height:' + (9 * th) + 'px'; c1.style.cssText += ';left:' + (-1.5 * th) + 'px;top:' + (-1.5 * th) + 'px;width:' + (9 * th) + 'px;height:' + h + 'px';
           wr.appendChild(r1); wr.appendChild(c1);
           // slide 23: every layer image gets its own strips (outside, like slide 22)
-          var f22 = order[21], f23 = order[22], bx = [kids(f22)[2].children[0].children[0].children[1], kids(f22)[2].children[0].children[2].children[1]], rows = kids(f23)[2].children, T = 5, G = 2;
+          var f22 = order[21], f23 = order[22], bx = [kids(f22)[2].children[0].children[0].children[1], kids(f22)[2].children[0].children[2].children[1]], rows = kids(f23)[2].children, T = 4, G = 2, IW = 52, IH = 35; kids(f23)[2].style.gap = '16px';
           for (var k = 0; k < 5; k++) {
             var cv = rows[k].children[0], sr, sc;
             if (k < 2) { var q = bx[k].querySelectorAll('canvas'); sr = q[1]; sc = q[2]; }
@@ -1973,9 +1973,9 @@ body{padding:24px 0;display:flex;justify-content:center}
               sr = document.createElement('canvas'); sr.width = 96; sr.height = 1; sr.getContext('2d').putImageData(cx.getImageData(0, ri, 96, 1), 0, 0);
               sc = document.createElement('canvas'); sc.width = 1; sc.height = 64; sc.getContext('2d').putImageData(cx.getImageData(cj, 0, 1, 64), 0, 0);
             }
-            var w2 = document.createElement('div'); w2.style.cssText = 'position:relative;flex:none;width:' + (74 + T + G) + 'px;height:' + (49 + T + G) + 'px'; rows[k].insertBefore(w2, cv); w2.appendChild(cv); cv.style.cssText += ';position:absolute;left:' + (T + G) + 'px;top:' + (T + G) + 'px';
+            var w2 = document.createElement('div'); w2.style.cssText = 'position:relative;flex:none;width:' + (IW + T + G) + 'px;height:' + (IH + T + G) + 'px'; rows[k].insertBefore(w2, cv); w2.appendChild(cv); cv.style.width = IW + 'px'; cv.style.height = IH + 'px'; cv.style.cssText += ';position:absolute;left:' + (T + G) + 'px;top:' + (T + G) + 'px';
             var a = mkS(sr, false, 1.5, '#0E9F8E'), b = mkS(sc, true, 1.5, '#8B5CF6');
-            a.style.cssText += ';left:' + (T + G) + 'px;top:0;width:74px;height:' + T + 'px'; b.style.cssText += ';left:0;top:' + (T + G) + 'px;width:' + T + 'px;height:49px';
+            a.style.cssText += ';left:' + (T + G) + 'px;top:0;width:' + IW + 'px;height:' + T + 'px'; b.style.cssText += ';left:0;top:' + (T + G) + 'px;width:' + T + 'px;height:' + IH + 'px';
             w2.appendChild(a); w2.appendChild(b);
           }
         } catch (e) { console.error('strip prep', e); }
