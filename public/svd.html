@@ -717,7 +717,7 @@ body{padding:24px 0;display:flex;justify-content:center}
   function render(k) {
     var L = layers[k], T = target(k), P = prod(k), el = L.el, p, i, j, M = 40, tot = 0;
     for (p = 0; p < R * C; p++) { M = Math.max(M, Math.abs(T[p]), Math.abs(P[p])); var e0 = P[p] - T[p]; tot += e0 * e0; }
-    var MX = 1; for (p = 0; p < R * C; p++) { var e1 = P[p] - T[p]; MX = Math.max(MX, e1 * e1); }
+    var MX = 1; for (p = 0; p < R * C; p++) { var e1 = P[p] - T[p], q1 = Math.round(e1 * e1); MX = Math.max(MX, q1); }
     for (j = 0; j < C; j++) {
       var tc = el.tcells[j], on = active && active.k === k && active.t === 'r' && active.i === j;
       tc.textContent = neg(String(Math.round(L.r[j]))); tc.classList.toggle('on', !!on);
@@ -729,7 +729,7 @@ body{padding:24px 0;display:flex;justify-content:center}
     for (p = 0; p < R * C; p++) {
       var cell = el.cells[p], bg, fg, txt;
       if (L.tab === 'err') {
-        var e = P[p] - T[p], q = e * e;
+        var e = P[p] - T[p], q = Math.round(e * e);
         bg = 'rgba(var(--green),' + (.12 + .6 * Math.sqrt(q / MX)).toFixed(3) + ')'; fg = 'var(--ink)'; txt = fsq(q);
       } else {
         var v = L.tab === 'target' ? T[p] : P[p], col;
