@@ -1854,6 +1854,114 @@ body{padding:24px 0;display:flex;justify-content:center}
           setTimeout(function () { oc.style.opacity = 1; if (cl.parentNode) cl.parentNode.removeChild(cl); window.__stkHold = false; if (window.__stkRun) window.__stkRun(); fo.forEach(function (e) { e.style.transition = ''; e.style.opacity = ''; }); tiles[0].im.style.opacity = ''; busy0 = false; }, 700); }, 320); });
       var b3 = all[4].querySelector('.next'); if (b3) b3.textContent = 'Start Learning';
     })();
+    (function () {
+      var DUR = 650, FADE = 300, TRS = {}, busyT = false;
+      function RC(el) { var r = el.getBoundingClientRect(); return { l: r.left, t: r.top, w: r.width, h: r.height }; }
+      function kids(fr) { return fr.querySelector('.mid').children; }
+      function cloneEl(el) {
+        var c;
+        if (el.tagName === 'CANVAS') { c = document.createElement('canvas'); c.width = el.width; c.height = el.height; c.className = el.className; c.getContext('2d').drawImage(el, 0, 0); return c; }
+        c = el.cloneNode(true); var a = el.querySelectorAll('canvas'), b = c.querySelectorAll('canvas');
+        for (var i = 0; i < a.length; i++) { b[i].getContext('2d').drawImage(a[i], 0, 0); }
+        return c;
+      }
+      function place(n, r) { n.style.cssText += ';position:fixed;margin:0;box-sizing:border-box;z-index:250;pointer-events:none;transform-origin:0 0;left:' + r.l + 'px;top:' + r.t + 'px;width:' + r.w + 'px;height:' + r.h + 'px;max-width:none'; return n; }
+      // ghost from an HTML element
+      function gEl(el, rect) { var r = rect || RC(el), n = cloneEl(el); n.style.opacity = 1; n.style.visibility = 'visible'; place(n, r); return { n: n, r: r, src: [el] }; }
+      // ghost from an svg rect + text pair
+      function gPair(rect, text) {
+        var r = RC(rect), cs = getComputedStyle(rect), ts = text ? getComputedStyle(text) : null, sc = r.w / (rect.width.baseVal.value || r.w), n = document.createElement('div');
+        n.style.cssText = 'display:flex;align-items:center;justify-content:center;background:' + cs.fill + ';border:' + (parseFloat(cs.strokeWidth) * sc) + 'px solid ' + cs.stroke + ';border-radius:' + ((parseFloat(rect.getAttribute('rx')) || 0) * sc) + 'px;opacity:' + (cs.fillOpacity || 1) + ';overflow:hidden';
+        if (text) { n.textContent = text.textContent; n.style.color = ts.fill; n.style.fontWeight = ts.fontWeight; n.style.fontFamily = ts.fontFamily; n.style.fontSize = (parseFloat(ts.fontSize) * sc) + 'px'; }
+        place(n, r); n.style.opacity = 1; return { n: n, r: r, src: text ? [rect, text] : [rect] };
+      }
+      function pairs(svg, color) { var out = [], ch = svg.children; for (var i = 0; i < ch.length; i++) { if (ch[i].tagName === 'rect' && (ch[i].getAttribute('fill') || '').toLowerCase() === color.toLowerCase()) out.push([ch[i], ch[i + 1]]); } return out; }
+      function reg(I, fn) { TRS[I] = fn; }
+      function run(I, plan) {
+        var f = order[I - 1], mm = f.querySelector('.mid'), ks = Array.prototype.slice.call(mm.children), ov = document.createElement('div'); ov.style.cssText = 'position:fixed;left:0;top:0;width:0;height:0;z-index:250'; document.body.appendChild(ov);
+        plan.forEach(function (p) { p.src.forEach(function (e) { e.__vis = e.style.visibility; e.style.visibility = 'hidden'; }); ov.appendChild(p.n); if (p.under) ov.insertBefore(p.n, ov.firstChild); });
+        ks.forEach(function (k) { k.style.transition = 'opacity ' + FADE + 'ms'; k.style.opacity = 0; });
+        plan.forEach(function (p) { if (!p.tgt) { p.n.style.transition = 'opacity ' + (FADE + 100) + 'ms'; void p.n.offsetWidth; p.n.style.opacity = 0; } });
+        setTimeout(function () {
+          show(I);
+          var to = order[I]; var tg = [];
+          plan.forEach(function (p) { if (!p.tgt) return; var te = p.tgt(to); if (!te) { p.n.style.opacity = 0; return; } var tl = Array.isArray(te) ? te : [te]; p.te = tl[0]; tl.forEach(function (e) { e.__vis = e.style.visibility; e.style.visibility = 'hidden'; tg.push(e); }); });
+          plan.forEach(function (p) {
+            if (!p.te) return; var r1 = RC(p.te), dx = r1.l - p.r.l, dy = r1.t - p.r.t, sx = r1.w / (p.r.w || 1), sy = r1.h / (p.r.h || 1);
+            p.n.style.transition = 'transform ' + DUR + 'ms cubic-bezier(.4,0,.2,1), opacity .3s ease ' + (DUR - 160) + 'ms'; void p.n.offsetWidth;
+            p.n.style.transform = 'translate(' + dx + 'px,' + dy + 'px) scale(' + sx + ',' + sy + ')'; p.n.style.opacity = 0;
+          });
+          setTimeout(function () { tg.forEach(function (te) { te.style.visibility = te.__vis || ''; }); }, DUR - 120);
+          setTimeout(function () {
+            if (ov.parentNode) ov.parentNode.removeChild(ov);
+            plan.forEach(function (p) { p.src.forEach(function (e) { e.style.visibility = e.__vis || ''; }); });
+            ks.forEach(function (k) { k.style.transition = ''; k.style.opacity = ''; }); busyT = false;
+          }, DUR + 450);
+        }, FADE + 20);
+      }
+      function hook(I) {
+        var f = order[I - 1], btn = f.querySelector('.next');
+        btn.addEventListener('click', function (e) {
+          if (btn.disabled) return; e.stopImmediatePropagation(); if (busyT) return;
+          var mm = f.querySelector('.mid'); if (mm.__step && mm.__step()) return;
+          var plan = TRS[I](f); if (!plan) return; busyT = true; run(I, plan);
+        }, true);
+      }
+      // ---- 9 -> 10: the column and row of the product grid become the quiz column and row
+      reg(9, function (f) {
+        var s = kids(f)[2], plan = [], te = pairs(s, '#0E9F8E'), pu = pairs(s, '#8B5CF6');
+        function tsvg(t) { return kids(t)[2].querySelector('svg'); }
+        te.forEach(function (pr, k) { var g = gPair(pr[0], pr[1]); if (k < 3) g.tgt = function (t) { return pairs(tsvg(t), '#0E9F8E')[k] || null; }; plan.push(g); });
+        pu.forEach(function (pr, k) { var g = gPair(pr[0], pr[1]); if (k < 2) g.tgt = function (t) { return pairs(tsvg(t), '#8B5CF6')[k] || null; }; plan.push(g); });
+        return plan;
+      });
+      // ---- 10 -> 11: that column and row become the column and row on each answer card
+      reg(10, function (f) {
+        var s = kids(f)[2].querySelector('svg'), plan = [], te = pairs(s, '#0E9F8E'), pu = pairs(s, '#8B5CF6');
+        for (var c = 0; c < 3; c++) (function (c) {
+          te.forEach(function (pr, k) { var g = gPair(pr[0], pr[1]); g.src = c ? [] : [pr[0], pr[1]]; g.tgt = function (t) { return kids(t)[3].children[c].children[1 + k]; }; plan.push(g); });
+          pu.forEach(function (pr, k) { var g = gPair(pr[0], pr[1]); g.src = c ? [] : [pr[0], pr[1]]; g.tgt = function (t) { return kids(t)[3].children[c].children[4 + k]; }; plan.push(g); });
+        })(c);
+        return plan;
+      });
+      // ---- 11 -> 12: the matrix becomes the 3x3 original
+      reg(11, function (f) { var g = gEl(kids(f)[2]); g.tgt = function (t) { return kids(t)[3]; }; return [g]; });
+      // ---- 12 -> 13: same layout, only the words change
+      reg(12, function (f) { var k = kids(f), out = []; [0, 2, 3].forEach(function (i) { var g = gEl(k[i]); g.tgt = function (t) { return kids(t)[i]; }; out.push(g); }); return out; });
+      // ---- 13 -> 14: the matrix becomes the quiz matrix
+      reg(13, function (f) { var g = gEl(kids(f)[3]); g.tgt = function (t) { return kids(t)[2]; }; return [g]; });
+      // ---- 14 -> 15: the matrix becomes the image
+      reg(14, function (f) { var g = gEl(kids(f)[2]); g.tgt = function (t) { return kids(t)[3].children[0]; }; return [g]; });
+      // ---- 15 -> 16: the original shrinks left, Layer 1 slides out from behind it
+      reg(15, function (f) {
+        var st = kids(f)[3], c0 = st.children[0], c1 = st.children[1], r0 = RC(c0), gl = gEl(c1, r0); gl.src = []; gl.under = true; gl.n.style.opacity = 1;
+        gl.tgt = function (t) { return kids(t)[2].children[1].children[1]; };
+        var go = gEl(c0); go.tgt = function (t) { return kids(t)[2].children[0].children[1]; }; return [gl, go];
+      });
+      // ---- 16 -> 17: the two images move up into the equation
+      reg(16, function (f) {
+        var s = kids(f)[2], a = gEl(s.children[0]), b = gEl(s.children[1]);
+        a.tgt = function (t) { return kids(t)[2].children[0].children[0]; }; b.tgt = function (t) { return kids(t)[2].children[0].children[2]; }; return [a, b];
+      });
+      // ---- 18 -> 19: the residual image stays
+      reg(18, function (f) { var cv = kids(f)[2].children[0].querySelector('canvas'), g = gEl(cv); g.tgt = function (t) { return kids(t)[3].children[0]; }; return [g]; });
+      // ---- 20 -> 21: the Original and Layer 1 grids stay
+      reg(20, function (f) { var g = gEl(kids(f)[2].children[0]); g.tgt = function (t) { return kids(t)[2].children[0]; }; return [g]; });
+      // ---- 21 -> 22: the Layer 1 grid becomes the Layer 1 image
+      reg(21, function (f) { var g = gEl(kids(f)[2].children[0].children[1]); g.tgt = function (t) { return kids(t)[2].children[0].children[0].children[1]; }; return [g]; });
+      // ---- 22 -> 23: Layer 1 and Layer 2 drop into the layer list
+      reg(22, function (f) {
+        var s = kids(f)[2].children[0], a = gEl(s.children[0].children[1]), b = gEl(s.children[2].children[1]);
+        a.tgt = function (t) { return kids(t)[2].children[0].children[0]; }; b.tgt = function (t) { return kids(t)[2].children[1].children[0]; }; return [a, b];
+      });
+      // ---- 23 -> 24: the five rows shrink into the first five cells of the grid
+      reg(23, function (f) {
+        var rows = kids(f)[2].children, out = [];
+        for (var i = 0; i < 5; i++) (function (i) { var g = gEl(rows[i].children[0]); g.tgt = function (t) { return kids(t)[2].children[0].children[i]; }; out.push(g); })(i);
+        return out;
+      });
+      Object.keys(TRS).forEach(function (k) { hook(parseInt(k, 10)); });
+    })();
     var h0 = parseInt((location.hash || '').slice(1), 10); show(h0 >= 1 && h0 <= order.length ? h0 - 1 : 0);
     var nav = document.createElement('div'); nav.id = 'svdnav'; nav.style.cssText = 'position:fixed;left:0;right:0;bottom:8px;display:flex;flex-wrap:wrap;justify-content:center;gap:6px;z-index:100;padding:0 8px';
     order.forEach(function (f, j) { if (!j) return; var nx = f.querySelector('.next'); if (!nx) return; var ft = nx.parentNode; ft.style.position = 'relative'; var bk = document.createElement('button'); bk.type = 'button'; bk.setAttribute('aria-label', 'Back'); bk.textContent = 'Back'; bk.style.cssText = 'position:absolute;left:14px;top:50%;transform:translateY(-50%);border:0;background:transparent;color:var(--muted);font:400 13px Inter,system-ui,sans-serif;cursor:pointer;padding:8px 6px;z-index:70'; bk.addEventListener('click', function () { location.hash = '#' + (j === 4 ? 3 : j); location.reload(); }); ft.appendChild(bk); });
