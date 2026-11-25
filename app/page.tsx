@@ -19,6 +19,13 @@ const lessons = [
     title: "Linear transformations and matrices",
     height: 763,
   },
+  {
+    href: "/svd",
+    preview: "/svd-preview.webp",
+    alt: "Singular value decomposition lesson on a phone: a pixel-art city image with a draggable window and the grid of numbers it covers",
+    title: "Singular value decomposition",
+    height: 835,
+  },
 ];
 
 const points = [
@@ -144,7 +151,7 @@ export default function Home() {
           <h2 className="text-xs font-bold uppercase tracking-widest text-[var(--muted)]">Interactive lessons</h2>
           <span className="h-px flex-1 bg-[var(--line)]" aria-hidden />
         </div>
-        <div className="grid gap-8 md:grid-cols-2 md:justify-items-center">
+        <div className="grid items-start gap-8 md:grid-cols-2 lg:grid-cols-3 md:justify-items-center">
         {lessons.map((l) => (
           <Link key={l.href} href={l.href} className="lesson-card group mx-auto flex w-full max-w-[340px] flex-col p-4">
             <h3 className="px-1 text-xl font-extrabold leading-tight tracking-tight md:min-h-[3.1rem]">
