@@ -1889,7 +1889,7 @@ body{padding:24px 0;display:flex;justify-content:center}
           plan.forEach(function (p) {
             if (!p.te) return; var r1 = RC(p.te), dx = r1.l - p.r.l, dy = r1.t - p.r.t, sx = r1.w / (p.r.w || 1), sy = r1.h / (p.r.h || 1);
             p.n.style.transition = 'transform ' + DUR + 'ms cubic-bezier(.4,0,.2,1), opacity .3s ease ' + (DUR - 160) + 'ms'; void p.n.offsetWidth;
-            p.n.style.transform = 'translate(' + dx + 'px,' + dy + 'px) scale(' + sx + ',' + sy + ')'; p.n.style.opacity = 0;
+            p.n.style.transform = 'translate(' + dx + 'px,' + dy + 'px) scale(' + sx + ',' + sy + ')'; if (!p.hold) p.n.style.opacity = 0;
           });
           setTimeout(function () { tg.forEach(function (te) { te.style.visibility = te.__vis || ''; }); }, DUR - 120);
           setTimeout(function () {
@@ -1927,7 +1927,7 @@ body{padding:24px 0;display:flex;justify-content:center}
       // ---- 11 -> 12: the matrix becomes the 3x3 original
       reg(11, function (f) { var g = gEl(kids(f)[2]); g.tgt = function (t) { return kids(t)[3]; }; return [g]; });
       // ---- 12 -> 13: same layout, only the words change
-      reg(12, function (f) { var k = kids(f), out = []; [0, 2, 3].forEach(function (i) { var g = gEl(k[i]); g.tgt = function (t) { return kids(t)[i]; }; out.push(g); }); return out; });
+      reg(12, function (f) { var k = kids(f), out = []; [0, 2, 3].forEach(function (i) { var g = gEl(k[i]); g.tgt = function (t) { return kids(t)[i]; }; g.hold = true; out.push(g); }); return out; });
       // ---- 15 -> 16: only the original shrinks left
       reg(15, function (f) { var go = gEl(kids(f)[3].children[0]); go.tgt = function (t) { return kids(t)[2].children[0].children[1]; }; return [go]; });
       // ---- 16 -> 17: the two images move up into the equation (strips travel with Layer 1)
