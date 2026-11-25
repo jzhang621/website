@@ -1398,7 +1398,7 @@ body{padding:24px 0;display:flex;justify-content:center}
           bt.addEventListener('click', function () {
             if (done8) return; K8.forEach(function (x) { x.style.borderColor = 'var(--line)'; x.style.borderWidth = '1.5px'; }); bt.style.borderColor = 'var(--ink)'; bt.style.borderWidth = '2.5px';
             if (o[1]) {
-              done8 = true; h8.textContent = '100 + 100 = 200, only 2% of 10,000.'; bt.style.borderColor = '#16A34A'; K8.forEach(function (x) { x.style.pointerEvents = 'none'; if (x !== bt) x.style.opacity = .45; });
+              done8 = true; bt.style.borderColor = '#16A34A'; K8.forEach(function (x) { x.style.pointerEvents = 'none'; if (x !== bt) x.style.opacity = .45; });
               var bd = document.createElement('div'); bd8 = bd; bd.style.cssText = 'position:absolute;width:28px;height:28px;border-radius:50%;background:#16A34A;display:flex;align-items:center;justify-content:center;right:-10px;top:-10px;pointer-events:none';
               bd.innerHTML = '<svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5l3.2 3.2L14 5.5"/></svg>'; bt.appendChild(bd);
               try { bd.animate([{ transform: 'scale(0)' }, { transform: 'scale(1.25)', offset: .6 }, { transform: 'scale(1)' }], { duration: 420, easing: 'ease-out' }); } catch (e) {}
