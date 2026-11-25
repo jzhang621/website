@@ -1929,16 +1929,16 @@ body{padding:24px 0;display:flex;justify-content:center}
       // ---- 12 -> 13: same layout, only the words change
       reg(12, function (f) { var k = kids(f), out = []; [0, 2, 3].forEach(function (i) { var g = gEl(k[i]); g.tgt = function (t) { return kids(t)[i]; }; g.hold = true; out.push(g); }); return out; });
       // ---- 15 -> 16: only the original shrinks left
-      reg(15, function (f) { var go = gEl(kids(f)[3].children[0]); go.tgt = function (t) { return kids(t)[2].children[0].children[1]; }; return [go]; });
+      reg(15, function (f) { var go = gEl(kids(f)[3].children[0]); go.tgt = function (t) { return kids(t)[2].children[0].children[1]; }; go.hold = true; return [go]; });
       // ---- 16 -> 17: the two images move up into the equation (strips travel with Layer 1)
       reg(16, function (f) {
-        var s = kids(f)[2], a = gEl(s.children[0]), b = gEl(s.children[1]);
-        a.tgt = function (t) { return kids(t)[2].children[0].children[0]; }; b.tgt = function (t) { return kids(t)[2].children[0].children[2]; }; return [a, b];
+        var s = kids(f)[2], a = gEl(s.children[0].children[1]), b = gEl(s.children[1].children[1]);
+        a.tgt = function (t) { return kids(t)[2].children[0].children[0].children[1]; }; b.tgt = function (t) { return kids(t)[2].children[0].children[2].children[1]; }; a.hold = b.hold = true; return [a, b];
       });
       // ---- 18 -> 19: the residual image stays
-      reg(18, function (f) { var cv = kids(f)[2].children[0].querySelector('canvas'), g = gEl(cv); g.tgt = function (t) { return kids(t)[3].children[0]; }; return [g]; });
+      reg(18, function (f) { var cv = kids(f)[2].children[0].querySelector('canvas'), g = gEl(cv); g.tgt = function (t) { return kids(t)[3].children[0]; }; g.hold = true; return [g]; });
       // ---- 20 -> 21: the Original and Layer 1 grids stay
-      reg(20, function (f) { var g = gEl(kids(f)[2].children[0]); g.tgt = function (t) { return kids(t)[2].children[0]; }; return [g]; });
+      reg(20, function (f) { var g = gEl(kids(f)[2].children[0]); g.tgt = function (t) { return kids(t)[2].children[0]; }; g.hold = true; return [g]; });
       // ---- 22 -> 23: Layer 1 and Layer 2 drop into the layer list
       reg(22, function (f) {
         var s = kids(f)[2].children[0], a = gEl(s.children[0].children[1]), b = gEl(s.children[2].children[1]);
