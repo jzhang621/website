@@ -718,7 +718,7 @@ body{padding:24px 0;display:flex;justify-content:center}
         var SQ = RK.map(function (r, i) { return r.map(function (v, j) { return Math.pow(v - OO[i][j], 2); }); }), MX = 484;
         var cq = document.createElement('div'); cq.className = 'cedit'; cq.innerHTML = 'We can measure how well a rank-one matrix approximates the original by taking the <b>squared difference</b>\u00A0of each cell.';
         cq.style.cssText = 'font-weight:400;font-size:16px;line-height:1.4;text-align:center;color:var(--ink);align-self:center;max-width:340px;margin:20px 0 0'; mid.appendChild(cq);
-        var cg = document.createElement('div'); cg.style.cssText = 'display:grid;grid-template-columns:42px 8px repeat(3,' + CS + 'px);grid-template-rows:' + CS + 'px 8px repeat(3,' + CS + 'px);gap:0;align-self:center;margin:10px 0 0;padding:0;position:relative;left:-25px';
+        var cg = document.createElement('div'); cg.style.cssText = 'display:grid;grid-template-columns:42px 8px repeat(3,' + CS + 'px);grid-template-rows:' + CS + 'px 8px repeat(3,' + CS + 'px);gap:0;align-self:center;margin:10px 0 10px;padding:0;position:relative;left:-25px';
         var fcs = [], mcs = [];
         FR.forEach(function (v, j) { var d = document.createElement('div'); d.textContent = v; d.style.cssText = 'display:flex;align-items:center;justify-content:center;box-sizing:border-box;margin:-1px;grid-row:1;grid-column:' + (j + 3) + ';border:2px solid ' + CR + ';background:rgba(14,159,142,.2);font:' + MQ + ';color:var(--ink);opacity:0;transition:opacity .35s ease'; fcs.push(d); cg.appendChild(d); });
         OO.forEach(function (r, i) {
@@ -863,7 +863,7 @@ body{padding:24px 0;display:flex;justify-content:center}
         var SQ = RK.map(function (r, i) { return r.map(function (v, j) { return Math.pow(v - OO[i][j], 2); }); }), MX = 0; SQ.forEach(function (r) { r.forEach(function (v) { MX = Math.max(MX, v); }); }); MX = Math.max(MX, 1);
         var cq = document.createElement('div'); cq.className = 'cedit'; cq.textContent = 'SVD finds the rank-one matrix with the lowest squared error.';
         cq.style.cssText = 'font-weight:400;font-size:16px;line-height:1.4;text-align:center;color:var(--ink);align-self:center;max-width:340px;margin:20px 0 0'; mid.appendChild(cq);
-        var cg = document.createElement('div'); cg.style.cssText = 'display:grid;grid-template-columns:42px 8px repeat(3,' + CS + 'px);grid-template-rows:' + CS + 'px 8px repeat(3,' + CS + 'px);gap:0;align-self:center;margin:10px 0 0;padding:0;position:relative;left:-25px';
+        var cg = document.createElement('div'); cg.style.cssText = 'display:grid;grid-template-columns:42px 8px repeat(3,' + CS + 'px);grid-template-rows:' + CS + 'px 8px repeat(3,' + CS + 'px);gap:0;align-self:center;margin:10px 0 10px;padding:0;position:relative;left:-25px';
         var fcs = [], mcs = [];
         FR.forEach(function (v, j) { var d = document.createElement('div'); d.textContent = v; d.style.cssText = 'display:flex;align-items:center;justify-content:center;box-sizing:border-box;margin:-1px;grid-row:1;grid-column:' + (j + 3) + ';border:2px solid ' + CR + ';background:rgba(14,159,142,.2);font:' + MQ + ';color:var(--ink);opacity:0;transition:opacity .35s ease'; fcs.push(d); cg.appendChild(d); });
         OO.forEach(function (r, i) {
