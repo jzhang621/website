@@ -1928,17 +1928,9 @@ body{padding:24px 0;display:flex;justify-content:center}
       reg(11, function (f) { var g = gEl(kids(f)[2]); g.tgt = function (t) { return kids(t)[3]; }; return [g]; });
       // ---- 12 -> 13: same layout, only the words change
       reg(12, function (f) { var k = kids(f), out = []; [0, 2, 3].forEach(function (i) { var g = gEl(k[i]); g.tgt = function (t) { return kids(t)[i]; }; out.push(g); }); return out; });
-      // ---- 13 -> 14: the matrix becomes the quiz matrix
-      reg(13, function (f) { var g = gEl(kids(f)[3]); g.tgt = function (t) { return kids(t)[2]; }; return [g]; });
-      // ---- 14 -> 15: the matrix becomes the image
-      reg(14, function (f) { var g = gEl(kids(f)[2]); g.tgt = function (t) { return kids(t)[3].children[0]; }; return [g]; });
-      // ---- 15 -> 16: the original shrinks left, Layer 1 slides out from behind it
-      reg(15, function (f) {
-        var st = kids(f)[3], c0 = st.children[0], c1 = st.children[1], r0 = RC(c0), gl = gEl(c1, r0); gl.src = []; gl.under = true; gl.n.style.opacity = 1;
-        gl.tgt = function (t) { return kids(t)[2].children[1].children[1]; };
-        var go = gEl(c0); go.tgt = function (t) { return kids(t)[2].children[0].children[1]; }; return [gl, go];
-      });
-      // ---- 16 -> 17: the two images move up into the equation
+      // ---- 15 -> 16: only the original shrinks left
+      reg(15, function (f) { var go = gEl(kids(f)[3].children[0]); go.tgt = function (t) { return kids(t)[2].children[0].children[1]; }; return [go]; });
+      // ---- 16 -> 17: the two images move up into the equation (strips travel with Layer 1)
       reg(16, function (f) {
         var s = kids(f)[2], a = gEl(s.children[0]), b = gEl(s.children[1]);
         a.tgt = function (t) { return kids(t)[2].children[0].children[0]; }; b.tgt = function (t) { return kids(t)[2].children[0].children[2]; }; return [a, b];
@@ -1947,8 +1939,6 @@ body{padding:24px 0;display:flex;justify-content:center}
       reg(18, function (f) { var cv = kids(f)[2].children[0].querySelector('canvas'), g = gEl(cv); g.tgt = function (t) { return kids(t)[3].children[0]; }; return [g]; });
       // ---- 20 -> 21: the Original and Layer 1 grids stay
       reg(20, function (f) { var g = gEl(kids(f)[2].children[0]); g.tgt = function (t) { return kids(t)[2].children[0]; }; return [g]; });
-      // ---- 21 -> 22: the Layer 1 grid becomes the Layer 1 image
-      reg(21, function (f) { var g = gEl(kids(f)[2].children[0].children[1]); g.tgt = function (t) { return kids(t)[2].children[0].children[0].children[1]; }; return [g]; });
       // ---- 22 -> 23: Layer 1 and Layer 2 drop into the layer list
       reg(22, function (f) {
         var s = kids(f)[2].children[0], a = gEl(s.children[0].children[1]), b = gEl(s.children[2].children[1]);
@@ -1957,9 +1947,39 @@ body{padding:24px 0;display:flex;justify-content:center}
       // ---- 23 -> 24: the five rows shrink into the first five cells of the grid
       reg(23, function (f) {
         var rows = kids(f)[2].children, out = [];
-        for (var i = 0; i < 5; i++) (function (i) { var g = gEl(rows[i].children[0]); g.tgt = function (t) { return kids(t)[2].children[0].children[i]; }; out.push(g); })(i);
+        for (var i = 0; i < 5; i++) (function (i) { var g = gEl(rows[i].children[0].querySelector('canvas')); g.tgt = function (t) { return kids(t)[2].children[0].children[i]; }; out.push(g); })(i);
         return out;
       });
+
+      // ---- strips: carry the teal row / purple column onto slide 17 and the layer list on slide 23
+      function mkS(cv, vert, th, col) { var c = document.createElement('canvas'); c.width = cv.width; c.height = cv.height; c.getContext('2d').drawImage(cv, 0, 0); c.style.cssText = 'position:absolute;image-rendering:pixelated;outline:' + th + 'px solid ' + col + ';' + (vert ? 'width:' + 0 + 'px' : ''); return c; }
+      setTimeout(function prep() {
+        try {
+          // slide 17: Layer 1 image gets the strips from slide 16
+          var f16 = order[15], f17 = order[16], sb = kids(f16)[2].children[1].children[1], rs = sb.querySelectorAll('canvas');
+          var grp = kids(f17)[2].children[0].children[2], im = grp.querySelector('canvas'), w = parseFloat(im.style.width), h = parseFloat(im.style.height), th = w / 148;
+          var wr = document.createElement('div'); wr.style.cssText = 'position:relative;width:' + w + 'px;height:' + h + 'px'; im.parentNode.insertBefore(wr, im); wr.appendChild(im);
+          var r1 = mkS(rs[0], false, 2 * th, '#0E9F8E'), c1 = mkS(rs[1], true, 2 * th, '#8B5CF6');
+          r1.style.cssText += ';left:' + (-1.5 * th) + 'px;top:' + (-1.5 * th) + 'px;width:' + w + 'px;height:' + (9 * th) + 'px'; c1.style.cssText += ';left:' + (-1.5 * th) + 'px;top:' + (-1.5 * th) + 'px;width:' + (9 * th) + 'px;height:' + h + 'px';
+          wr.appendChild(r1); wr.appendChild(c1);
+          // slide 23: every layer image gets its own strips (outside, like slide 22)
+          var f22 = order[21], f23 = order[22], bx = [kids(f22)[2].children[0].children[0].children[1], kids(f22)[2].children[0].children[2].children[1]], rows = kids(f23)[2].children, T = 5, G = 2;
+          for (var k = 0; k < 5; k++) {
+            var cv = rows[k].children[0], sr, sc;
+            if (k < 2) { var q = bx[k].querySelectorAll('canvas'); sr = q[1]; sc = q[2]; }
+            else {
+              var L = window.__dbg.layerK(k), bi = 0, bm = 0; for (var z = 0; z < L.length; z++) if (Math.abs(L[z]) > bm) { bm = Math.abs(L[z]); bi = z; }
+              var ri = (bi / 96) | 0, cj = bi % 96, cx = cv.getContext('2d');
+              sr = document.createElement('canvas'); sr.width = 96; sr.height = 1; sr.getContext('2d').putImageData(cx.getImageData(0, ri, 96, 1), 0, 0);
+              sc = document.createElement('canvas'); sc.width = 1; sc.height = 64; sc.getContext('2d').putImageData(cx.getImageData(cj, 0, 1, 64), 0, 0);
+            }
+            var w2 = document.createElement('div'); w2.style.cssText = 'position:relative;flex:none;width:' + (74 + T + G) + 'px;height:' + (49 + T + G) + 'px'; rows[k].insertBefore(w2, cv); w2.appendChild(cv); cv.style.cssText += ';position:absolute;left:' + (T + G) + 'px;top:' + (T + G) + 'px';
+            var a = mkS(sr, false, 1.5, '#0E9F8E'), b = mkS(sc, true, 1.5, '#8B5CF6');
+            a.style.cssText += ';left:' + (T + G) + 'px;top:0;width:74px;height:' + T + 'px'; b.style.cssText += ';left:0;top:' + (T + G) + 'px;width:' + T + 'px;height:49px';
+            w2.appendChild(a); w2.appendChild(b);
+          }
+        } catch (e) { console.error('strip prep', e); }
+      }, 0);
       Object.keys(TRS).forEach(function (k) { hook(parseInt(k, 10)); });
     })();
     var h0 = parseInt((location.hash || '').slice(1), 10); show(h0 >= 1 && h0 <= order.length ? h0 - 1 : 0);
