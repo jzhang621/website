@@ -848,6 +848,78 @@ body{padding:24px 0;display:flex;justify-content:center}
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(renderAll);
 })(root);
     }
+  function nextVis() {
+  var A = [[0.6, 1.9], [0.9, 0.7]];
+  var TEAL = '#0E9F8E', PURP = '#8B5CF6';
+  function svd() {
+    var a = A[0][0], b = A[0][1], c = A[1][0], d = A[1][1], p = a * a + c * c, q = a * b + c * d, r = b * b + d * d, T = p + r, D = p * r - q * q;
+    var disc = Math.sqrt(Math.max(0, T * T / 4 - D)), l1 = T / 2 + disc, l2 = T / 2 - disc;
+    var v1 = Math.abs(q) > 1e-9 ? [l1 - r, q] : (p >= r ? [1, 0] : [0, 1]), n = Math.hypot(v1[0], v1[1]); v1 = [v1[0] / n, v1[1] / n]; if (v1[0] + v1[1] < 0) v1 = [-v1[0], -v1[1]];
+    var v2 = [-v1[1], v1[0]], s1 = Math.sqrt(l1), s2 = Math.sqrt(Math.max(0, l2));
+    function mul(v) { return [a * v[0] + b * v[1], c * v[0] + d * v[1]]; }
+    var u1 = mul(v1).map(function (x) { return x / s1; }), u2 = mul(v2).map(function (x) { return x / s2; });
+    return { s1: s1, s2: s2, v1: v1, v2: v2, u1: u1, u2: u2 };
+  }
+  var S = svd();
+  function f1(x) { return (Math.round(x * 10) / 10).toFixed(1).replace('-', '−'); }
+  function f2(x) { var t = (Math.round(x * 100) / 100).toFixed(2).replace('-', '−'); return t.replace(/^(−?)0\./, '$1.'); }
+  function mulA(v) { return [A[0][0] * v[0] + A[0][1] * v[1], A[1][0] * v[0] + A[1][1] * v[1]]; }
+  var N = 36, CIRC = [], ELL = [];
+  for (var i = 0; i < N; i++) { var th = 2 * Math.PI * i / N, x = Math.cos(th), y = Math.sin(th); CIRC.push([x, y]); ELL.push(mulA([x, y])); }
+  function lerp(a, b, t) { return a + (b - a) * t; }
+  function mixc(t) { var a = [14, 159, 142], b = [139, 92, 246]; return 'rgb(' + a.map(function (v, k) { return Math.round(lerp(v, b[k], t)); }).join(',') + ')'; }
+  function ease(p) { return p < .5 ? 2 * p * p : 1 - 2 * (1 - p) * (1 - p); }
+  function tween(ms, cb, done) { var t0 = performance.now(); (function st(now) { var p = Math.min(1, (now - t0) / ms); cb(ease(p)); if (p < 1) requestAnimationFrame(st); else if (done) done(); })(t0); }
+
+  /* ---- svg helpers (cx,cy centre; u pixels per unit) ---- */
+  function X(cx, u, x) { return (cx + x * u).toFixed(1); }
+  function Y(cy, u, y) { return (cy - y * u).toFixed(1); }
+  function arrow(cx, cy, u, p, col, w, op) {
+    var x2 = cx + p[0] * u, y2 = cy - p[1] * u, a = Math.atan2(y2 - cy, x2 - cx), h = 8, sp = 0.45, bx = x2 - Math.cos(a) * h * 0.6, by = y2 - Math.sin(a) * h * 0.6;
+    return '<g opacity="' + (op == null ? 1 : op) + '"><line x1="' + cx + '" y1="' + cy + '" x2="' + bx.toFixed(1) + '" y2="' + by.toFixed(1) + '" stroke="' + col + '" stroke-width="' + w + '" stroke-linecap="round"/><polygon points="' + x2.toFixed(1) + ',' + y2.toFixed(1) + ' ' + (x2 - Math.cos(a - sp) * h).toFixed(1) + ',' + (y2 - Math.sin(a - sp) * h).toFixed(1) + ' ' + (x2 - Math.cos(a + sp) * h).toFixed(1) + ',' + (y2 - Math.sin(a + sp) * h).toFixed(1) + '" fill="' + col + '"/></g>';
+  }
+  function head(x, y, a, col, h) { var sp = 0.45; return '<polygon points="' + x.toFixed(1) + ',' + y.toFixed(1) + ' ' + (x - Math.cos(a - sp) * h).toFixed(1) + ',' + (y - Math.sin(a - sp) * h).toFixed(1) + ' ' + (x - Math.cos(a + sp) * h).toFixed(1) + ',' + (y - Math.sin(a + sp) * h).toFixed(1) + '" fill="' + col + '"/>'; }
+  function cross(cx, cy, rx, ry) { return '<path d="M' + (cx - rx) + ' ' + cy + 'H' + (cx + rx) + 'M' + cx + ' ' + (cy - ry) + 'V' + (cy + ry) + '" stroke="var(--line)" stroke-width="1"/>'; }
+  function dots(cx, cy, u, arr, r, col) { return arr.map(function (p) { return '<circle cx="' + X(cx, u, p[0]) + '" cy="' + Y(cy, u, p[1]) + '" r="' + r + '" fill="' + col + '"/>'; }).join(''); }
+  function outline(cx, cy, u, arr, col, w, dash) { return '<path d="M' + arr.map(function (p) { return X(cx, u, p[0]) + ' ' + Y(cy, u, p[1]); }).join('L') + 'Z" fill="none" stroke="' + col + '" stroke-width="' + w + '"' + (dash ? ' stroke-dasharray="' + dash + '"' : '') + '/>'; }
+  function txt(x, y, s, col, size, anchor, mono) { return '<text x="' + x + '" y="' + y + '" fill="' + col + '" font-size="' + (size || 11) + '" text-anchor="' + (anchor || 'middle') + '" font-family="' + (mono ? '\'IBM Plex Mono\',monospace' : 'Figtree,sans-serif') + '" font-weight="600">' + s + '</text>'; }
+
+  /* ---- equation ---- */
+  function eqEl(interactive) {
+    var d = document.createElement('div'); d.className = 'eq';
+    function w(cls, h, key) { return interactive ? '<button type="button" class="' + cls + '" data-k="' + key + '">' + h + '</button>' : '<span class="' + cls + '">' + h + '</span>'; }
+    d.innerHTML = '<span>A</span><span class="op">=</span>' +
+      '<span class="term t1">' + w('s', 'σ<sub>1</sub>', 's1') + w('u', 'u<sub>1</sub>', 'u1') + w('v', 'v<sub>1</sub><sup>T</sup>', 'v1') + '<small>Layer 1</small></span>' +
+      '<span class="op">+</span>' +
+      '<span class="term t2">' + w('s', 'σ<sub>2</sub>', 's2') + w('u', 'u<sub>2</sub>', 'u2') + w('v', 'v<sub>2</sub><sup>T</sup>', 'v2') + '<small>Layer 2</small></span>';
+    return d;
+  }
+  function eqSet(d, o) {
+    function on(sel, v) { var e = d.querySelectorAll(sel); for (var k = 0; k < e.length; k++) e[k].classList.toggle('on', !!v); }
+    on('.t1 .u', o.u1); on('.t1 .v', o.v1); on('.t1 .s', o.s1); on('.t2 .u', o.u2); on('.t2 .v', o.v2); on('.t2 .s', o.s2);
+    var t1 = d.querySelector('.t1'), t2 = d.querySelector('.t2'); t1.classList.toggle('dim', o.t1 === false); t2.classList.toggle('dim', o.t2 !== true); t1.classList.toggle('ring', !!o.ring);
+    d.querySelector('.t1 small').style.opacity = o.lab ? 1 : 0; d.querySelector('.t2 small').style.opacity = o.lab ? 1 : 0;
+  }
+
+  var o = { U: 28, cx1: 82, cx2: 240, cy: 92, cr: 80, cv: 80, h: 184, w: 322 };
+  var wrap = document.createElement('div'); wrap.className = 'nxv'; wrap.style.cssText = 'margin:auto 0;align-self:center;width:322px;max-width:100%;display:flex;flex-direction:column;align-items:center;gap:6px';
+  var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'), eq = eqEl(false), U = o.U, cx1 = o.cx1, cx2 = o.cx2, cy = o.cy;
+  svg.setAttribute('viewBox', '0 0 ' + o.w + ' ' + o.h); eq.style.fontSize = '25px';
+  var t1 = [S.u1[0] * S.s1, S.u1[1] * S.s1], t2 = [S.u2[0] * S.s2, S.u2[1] * S.s2], mid2 = (cx1 + cx2) / 2;
+  var s = cross(cx1, cy, o.cr, o.cv) + cross(cx2, cy, o.cr, o.cv) + outline(cx1, cy, U, CIRC, 'var(--line)', 1.5) + dots(cx1, cy, U, CIRC, 2.3, 'var(--muted)') + outline(cx2, cy, U, ELL, 'var(--line)', 1.5) + dots(cx2, cy, U, ELL, 2.3, 'var(--muted)');
+  var mnx = Math.min.apply(null, ELL.map(function (p) { return p[0]; })), ax1 = cx1 + U * 1.4, ax2 = cx2 + U * mnx - U * .3;
+  s += '<path d="M' + ax1 + ' ' + cy + 'H' + (ax2 - 6) + '" stroke="var(--muted)" stroke-width="1.5"/>' + head(ax2, cy, 0, 'var(--muted)', 9) + txt(mid2, cy - 9, 'A', 'var(--muted)', 14);
+  s += '<line x1="' + X(cx2, U, -t2[0]) + '" y1="' + Y(cy, U, -t2[1]) + '" x2="' + X(cx2, U, t2[0]) + '" y2="' + Y(cy, U, t2[1]) + '" stroke="var(--muted)" stroke-width="2.4" stroke-linecap="round" opacity=".55"/>' + arrow(cx1, cy, U, S.v2, 'var(--muted)', 2.4, .55);
+  s += '<line x1="' + X(cx2, U, -t1[0]) + '" y1="' + Y(cy, U, -t1[1]) + '" x2="' + X(cx2, U, t1[0]) + '" y2="' + Y(cy, U, t1[1]) + '" stroke="' + PURP + '" stroke-width="3" stroke-linecap="round"/>' + arrow(cx2, cy, U, t1, PURP, 3) + arrow(cx1, cy, U, S.v1, TEAL, 3.2);
+  var qx0 = +X(cx1, U, S.v1[0]), qy0 = +Y(cy, U, S.v1[1]), qx1 = +X(cx2, U, t1[0]), qy1 = +Y(cy, U, t1[1]), qcx = mid2, qcy = cy - U * 2.6, ta = Math.atan2(qy1 - qcy, qx1 - qcx), ex = qx1 - Math.cos(ta) * 9, ey = qy1 - Math.sin(ta) * 9;
+  s += '<path d="M' + qx0 + ' ' + qy0 + 'Q' + qcx + ' ' + qcy + ' ' + ex.toFixed(1) + ' ' + ey.toFixed(1) + '" fill="none" stroke="var(--muted)" stroke-width="1.2" stroke-dasharray="3 3"/>' + head(ex + Math.cos(ta) * 2, ey + Math.sin(ta) * 2, ta, 'var(--muted)', 8);
+  svg.innerHTML = s;
+  eqSet(eq, { u1: true, v1: true, s1: true, t1: true, t2: false, ring: true, lab: true });
+  eq.querySelector('.t2').classList.remove('dim'); eq.querySelector('.t2').style.opacity = .5;
+  wrap.appendChild(svg); wrap.appendChild(eq);
+  return wrap;
+  }
+  (function () { var st = document.createElement('style'); st.textContent = '\n.nxv .eq{font-family:"STIX Two Text","Times New Roman",Georgia,serif;font-style:italic;font-size:25px;display:flex;align-items:flex-start;justify-content:center;gap:10px;white-space:nowrap;padding:2px 0 24px}\n.nxv .eq .op{font-style:normal;opacity:.8}\n.nxv .eq sub{font-size:.58em;font-style:normal;vertical-align:-.28em;margin-left:1px}\n.nxv .eq sup{font-size:.58em;font-style:normal;vertical-align:.55em}\n.nxv .eq .term{position:relative;display:inline-flex;transition:opacity .5s;padding:0 6px;border-radius:10px}\n.nxv .eq .term.dim{opacity:.38}\n.nxv .eq .term.ring{box-shadow:0 0 0 1.5px var(--ink) inset}\n.nxv .eq .term small{position:absolute;left:0;right:0;top:100%;text-align:center;font:400 12px Figtree,sans-serif;font-style:normal;color:var(--muted);margin-top:2px}\n.nxv .eq .u,.eq .v,.eq .s{transition:color .5s;background:none;border:0;padding:0;color:inherit;font:inherit}\n.nxv .eq .u.on{color:#8B5CF6}\n.nxv .eq .v.on{color:#0E9F8E}\n.nxv .eq .s.on{font-weight:700}\n.nxv svg{display:block;width:100%;height:auto;overflow:visible}\n'; document.head.appendChild(st); })();
     var BUILTIN = [{ title: 'Rank-One Matrices', mt: 34, block: 'rank1', badge: 2 }, { title: 'Rank-One Matrices', mt: 34, block: 'rank1b', badge: 2 }, { title: 'Check your understanding', mt: 34, block: 'quiz' }, { title: 'Check your understanding', mt: 34, block: 'quiz3' }, { title: 'Rank-One Matrices', mt: 34, block: 'cmp', badge: 2 }, { title: 'Rank-One Matrices', mt: 34, block: 'cmp2', badge: 2 }, { title: 'Check your understanding', mt: 34, block: 'quiz4' }, { title: 'Finding Layers', mt: 34, block: 'cmp3', badge: 3 }, { title: 'Finding Layers', mt: 34, block: 'lay2z', badge: 3 }, { title: 'Check your understanding', mt: 34, block: 'quiz8' }, { title: 'Finding Layers', mt: 34, block: 'lay2e', badge: 3 }, { title: 'Finding Layers', mt: 34, block: 'lay2n', badge: 3 }, { title: 'Finding Layers', mt: 34, block: 'lay2t', badge: 3 }, { title: 'Check your understanding', mt: 34, block: 'quiz5a' }, { title: 'Check your understanding', mt: 34, block: 'quiz5b' }, { title: 'Finding Layers', mt: 34, block: 'lay2q', badge: 3 }, { title: 'Finding Layers', mt: 34, block: 'lay3a', badge: 3 }, { title: 'Finding Layers', mt: 34, block: 'lay3d', badge: 3 }, { title: 'Try it yourself', mt: 34, block: 'play' }, { title: 'Next up', mt: 34, block: 'endmath' }];
     function clean(l) { return (l || []).filter(function (x) { return x && x.title !== 'Rank One Matrices'; }); }
     customs = clean(customs);
@@ -1691,8 +1763,7 @@ body{padding:24px 0;display:flex;justify-content:center}
       if (c.block === 'endmath') {
         var e8 = document.createElement('div'); e8.className = 'cedit'; e8.textContent = 'We’ll look at the math behind SVD in part 2!';
         e8.style.cssText = 'font-weight:400;font-size:16px;line-height:1.4;text-align:center;color:var(--ink);align-self:center;max-width:300px;margin:20px 0 0'; mid.appendChild(e8);
-        var f8 = document.createElement('div'); f8.style.cssText = 'margin:auto 0;align-self:center;display:flex;align-items:baseline;gap:14px;font:italic 500 54px/1 "Times New Roman",Times,serif;color:var(--ink);white-space:nowrap';
-        f8.innerHTML = 'A<span style="font-style:normal;color:var(--muted)">=</span>U<span style="font-style:normal">Σ</span><span>V<sup style="font-size:.5em;font-style:normal;vertical-align:super;line-height:0;margin-left:2px">T</sup></span>'; mid.appendChild(f8); var nb8 = mid.parentNode && mid.parentNode.querySelector('.next'); if (nb8) nb8.style.visibility = 'hidden';
+        var f8 = nextVis(); mid.appendChild(f8); var nb8 = mid.parentNode && mid.parentNode.querySelector('.next'); if (nb8) nb8.style.visibility = 'hidden';
         mid.__anim = function () { var its = [[t, 0, .45], [e8, .55, .6], [f8, .55, .6]]; its.forEach(function (it) { it[0].style.transition = 'none'; it[0].style.opacity = 0; }); void mid.offsetWidth; its.forEach(function (it) { it[0].style.transition = 'opacity ' + it[2] + 's ease ' + it[1] + 's'; it[0].style.opacity = 1; }); };
       }
 
