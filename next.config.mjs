@@ -5,6 +5,7 @@ const nextConfig = {
     return [
       { source: "/sliding-window", destination: "/sliding-window.html" },
       { source: "/basis-vectors", destination: "/basis-vectors.html" },
+      { source: "/svd", destination: "/svd.html" },
     ];
   },
 };
