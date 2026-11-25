@@ -1380,10 +1380,21 @@ body{padding:24px 0;display:flex;justify-content:center}
         q8.style.cssText = 'font-weight:400;font-size:16px;line-height:1.4;text-align:center;color:var(--ink);align-self:center;max-width:320px;margin:20px 0 0'; mid.appendChild(q8);
         var g8 = document.createElement('div'); g8.style.cssText = 'display:flex;flex-direction:column;align-items:center;width:100%;margin:auto 0;position:relative;gap:10px'; mid.appendChild(g8);
         var h8 = document.createElement('div'); h8.style.cssText = 'min-height:40px;text-align:center;font-weight:500;font-size:14px;line-height:1.35;color:var(--ink);margin-top:6px'; 
-        var K8 = [], done8 = false, bd8 = null;
+        var K8 = [], done8 = false, bd8 = null, row8 = document.createElement('div'); row8.style.cssText = 'display:flex;gap:8px;justify-content:center'; g8.appendChild(row8);
+        function cv8(w, h, cw, ch, fn) { var cv = document.createElement('canvas'); cv.width = cw; cv.height = ch; cv.style.cssText = 'width:' + w + 'px;height:' + h + 'px;image-rendering:pixelated;display:block'; var cx = cv.getContext('2d'), im = cx.createImageData(cw, ch); for (var q = 0; q < cw * ch; q++) { var cc = fn(q); im.data[q * 4] = cc[0]; im.data[q * 4 + 1] = cc[1]; im.data[q * 4 + 2] = cc[2]; im.data[q * 4 + 3] = 255; } cx.putImageData(im, 0, 0); return cv; }
+        var VS = 76, VT = 8, X0 = 16, i8 = 0, j8 = 48, m8 = 0;
+        for (var z8 = 0; z8 < 64 * 64; z8++) { var v8 = LAYER1[((z8 / 64) | 0) * W2 + X0 + (z8 % 64)]; if (v8 > m8) { m8 = v8; i8 = (z8 / 64) | 0; j8 = z8 % 64; } }
+        function vis8(k) {
+          if (k === 0) { var cv0 = cv8(VS, VS, 64, 64, function (q) { return seqC(LAYER1[((q / 64) | 0) * W2 + X0 + (q % 64)]); }); cv0.style.borderRadius = '4px'; return cv0; }
+          var bx = document.createElement('div'); bx.style.cssText = 'position:relative;width:' + VS + 'px;height:' + VS + 'px;box-sizing:border-box;border:1.5px dashed var(--dash);border-radius:4px';
+          var rw = cv8(VS, VT, 64, 1, function (q) { return seqC(LAYER1[i8 * W2 + X0 + q]); }); rw.style.cssText += ';position:absolute;left:-1.5px;top:-1.5px;outline:2px solid #0E9F8E;box-sizing:border-box'; bx.appendChild(rw);
+          if (k === 1) { var cl = cv8(VT, VS, 1, 64, function (q) { return seqC(LAYER1[q * W2 + X0 + j8]); }); cl.style.cssText += ';position:absolute;left:-1.5px;top:-1.5px;outline:2px solid #8B5CF6;box-sizing:border-box'; bx.appendChild(cl); }
+          return bx;
+        }
         [['10,000', false], ['200', true], ['100', false]].forEach(function (o, oi) {
-          var bt = document.createElement('button'); bt.type = 'button'; bt.textContent = o[0]; bt.setAttribute('aria-label', 'Option ' + (oi + 1));
-          bt.style.cssText = 'font:600 20px/1 "IBM Plex Mono",ui-monospace,Menlo,monospace;width:200px;padding:16px 0;border-radius:12px;border:1.5px solid var(--line);background:var(--card);cursor:pointer;color:var(--ink);position:relative';
+          var bt = document.createElement('button'); bt.type = 'button'; bt.setAttribute('aria-label', 'Option ' + (oi + 1));
+          bt.style.cssText = 'font:inherit;width:100px;padding:12px 8px;border-radius:12px;border:1.5px solid var(--line);background:var(--card);cursor:pointer;color:var(--ink);position:relative;display:flex;flex-direction:column;align-items:center;gap:10px';
+          bt.appendChild(vis8(oi === 0 ? 0 : oi === 1 ? 1 : 2)); var nn = document.createElement('div'); nn.textContent = o[0]; nn.style.cssText = 'font:600 16px/1 "IBM Plex Mono",ui-monospace,Menlo,monospace'; bt.appendChild(nn);
           bt.addEventListener('click', function () {
             if (done8) return; K8.forEach(function (x) { x.style.borderColor = 'var(--line)'; x.style.borderWidth = '1.5px'; }); bt.style.borderColor = 'var(--ink)'; bt.style.borderWidth = '2.5px';
             if (o[1]) {
@@ -1393,7 +1404,7 @@ body{padding:24px 0;display:flex;justify-content:center}
               try { bd.animate([{ transform: 'scale(0)' }, { transform: 'scale(1.25)', offset: .6 }, { transform: 'scale(1)' }], { duration: 420, easing: 'ease-out' }); } catch (e) {}
             } else h8.textContent = 'Not quite. A rank-one matrix is built from one column and one row.';
           });
-          K8.push(bt); g8.appendChild(bt);
+          K8.push(bt); row8.appendChild(bt);
         });
         g8.appendChild(h8);
         mid.__anim = function () {
