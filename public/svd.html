@@ -1681,8 +1681,9 @@ body{padding:24px 0;display:flex;justify-content:center}
 
       if (c.block === 'play') {
         if (!document.getElementById('pgcss')) { var pst = document.createElement('style'); pst.id = 'pgcss'; pst.textContent = PLAY_CSS; document.head.appendChild(pst); }
+        t.style.display = 'none';
         var pt = document.createElement('div'); pt.className = 'cedit'; pt.textContent = 'Try playing around with SVD on the images below.';
-        pt.style.cssText = 'font-weight:400;font-size:16px;line-height:1.4;text-align:center;color:var(--ink);align-self:center;max-width:320px;margin:14px 0 10px;flex:none'; mid.appendChild(pt);
+        pt.style.cssText = 'font-weight:400;font-size:16px;line-height:1.4;text-align:center;color:var(--ink);align-self:center;max-width:320px;margin:6px 0 12px;flex:none'; mid.appendChild(pt);
         mid.style.justifyContent = 'flex-start'; mid.style.gap = '0'; mid.style.overflowY = 'auto'; mid.style.paddingBottom = '14px'; mid.style.setProperty('padding-top', '4px', 'important'); mid.style.marginTop = '30px'; mid.__play = true;
         var pg = document.createElement('div'); pg.className = 'pg hide'; pg.innerHTML = PLAY_HTML; pg.style.flex = 'none'; mid.appendChild(pg); initPlayground(pg);
         mid.__anim = function () { mid.scrollTop = 0; var its = [[t, 0, .45], [pt, .55, .6], [pg, .55, .6]]; its.forEach(function (it) { it[0].style.transition = 'none'; it[0].style.opacity = 0; }); void mid.offsetWidth; its.forEach(function (it) { it[0].style.transition = 'opacity ' + it[2] + 's ease ' + it[1] + 's'; it[0].style.opacity = 1; }); };
