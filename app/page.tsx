@@ -22,9 +22,9 @@ const lessons = [
   {
     href: "/svd",
     preview: "/svd-preview.webp",
-    alt: "Singular value decomposition lesson on a phone: a pixel-art city image with a draggable window and the grid of numbers it covers",
+    alt: "Singular value decomposition lesson on a phone: a pixel-art city image beside versions rebuilt from 1, 2, 5, 10, and 14 layers",
     title: "Singular value decomposition",
-    height: 835,
+    height: 833,
   },
 ];
 
