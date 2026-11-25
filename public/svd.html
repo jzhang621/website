@@ -619,10 +619,10 @@ body{padding:24px 0;display:flex;justify-content:center}
         var colv = [cf(0), cf(1), cf(2), cf(3), null, cf(61), cf(62), cf(63)], rowv = [rf(0), rf(1), rf(2), null, rf(46), rf(47), rf(48), rf(49), null, rf(93), rf(94), rf(95)];
         function nc(x, y, w, v, vert, clr, emph) {
           if (v == null) { mk('text', { x: x + w / 2, y: y + 13, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: 'var(--muted)', style: 'font-size:15px' }, vert ? '⋮' : '⋯'); return; }
-          mk('rect', { x: x, y: y, width: w, height: 26, fill: clr || 'var(--card)', 'fill-opacity': clr ? (emph ? .55 : .2) : 1, stroke: clr || 'var(--ink)', 'stroke-width': 2 });
+          var er = mk('rect', { x: x, y: y, width: w, height: 26, fill: clr || 'var(--card)', 'fill-opacity': clr ? (emph ? .55 : .2) : 1, stroke: clr || 'var(--ink)', 'stroke-width': 2 }); if (emph) emphs.push(er);
           mk('text', { x: x + w / 2, y: y + 13, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: 'var(--ink)', style: 'font:600 12px "IBM Plex Mono",ui-monospace,Menlo,monospace' }, v);
         }
-        var vcs = [], ghosts = [];
+        var vcs = [], ghosts = [], emphs = [];
         grp = gGhost;
         if (!wc) {
         } else {
@@ -645,7 +645,7 @@ body{padding:24px 0;display:flex;justify-content:center}
           items.forEach(function (it) { it[0].style.transition = 'none'; it[0].style.opacity = 0; }); void sv.getBoundingClientRect();
           items.forEach(function (it) { it[0].style.transition = 'opacity ' + it[2] + 's ease ' + it[1] + 's'; it[0].style.opacity = 1; });
         };
-        if (wc) { vcs.forEach(function (e) { e.style.opacity = 0; }); mid.__anim = function () { vcs.forEach(function (e) { e.style.transition = 'none'; e.style.opacity = 0; }); ghosts.forEach(function (e) { e.style.transition = 'none'; e.style.opacity = 1; }); void sv.getBoundingClientRect(); ghosts.forEach(function (e) { e.style.transition = 'opacity .6s ease .1s'; e.style.opacity = 0; }); vcs.forEach(function (e) { e.style.transition = 'opacity .45s ease ' + (150 + e.__d * 60) + 'ms'; e.style.opacity = 1; }); }; }
+        if (wc) { vcs.forEach(function (e) { e.style.opacity = 0; }); mid.__anim = function () { vcs.forEach(function (e) { e.style.transition = 'none'; e.style.opacity = 0; }); ghosts.forEach(function (e) { e.style.transition = 'none'; e.style.opacity = 1; }); void sv.getBoundingClientRect(); ghosts.forEach(function (e) { e.style.transition = 'opacity .6s ease .1s'; e.style.opacity = 0; }); vcs.forEach(function (e) { e.style.transition = 'opacity .45s ease ' + (150 + e.__d * 60) + 'ms'; e.style.opacity = 1; }); emphs.forEach(function (e) { e.style.transition = 'none'; e.setAttribute('fill-opacity', .2); e.style.fillOpacity = .2; }); void sv.getBoundingClientRect(); emphs.forEach(function (e) { e.style.transition = 'fill-opacity .7s ease .15s'; e.style.fillOpacity = .55; }); }; }
       }
 
       if (c.block === 'quiz') {
