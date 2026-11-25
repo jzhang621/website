@@ -2037,8 +2037,26 @@ body{padding:24px 0;display:flex;justify-content:center}
         var n = parseInt(h, 10); return n >= 1 && n <= order.length ? n - 1 : 0;
       };
       var _show0 = show;
-      show = function (i) { _show0(i); try { var s = secOf(i), k = i + 1 - SECS[s]; history.replaceState(null, '', '#' + s + (k ? '/' + (k + 1) : '')); } catch (e) {} };
+      show = function (i) { _show0(i); try { if (window.__slUpdate) window.__slUpdate(i); } catch (e) {} try { var s = secOf(i), k = i + 1 - SECS[s]; history.replaceState(null, '', '#' + s + (k ? '/' + (k + 1) : '')); } catch (e) {} };
       window.addEventListener('hashchange', function () { try { show(window.__hashIdx()); } catch (e) {} });
+      // ---- story-line progress bar in every footer (display only)
+      (function () {
+        var SKIP = { 3: 1 }, VIS = [], st = document.createElement('style');
+        st.textContent = '.cta{position:relative;padding-top:30px!important}.slbar{position:absolute;left:0;right:0;top:9px;display:flex;justify-content:center;align-items:flex-end;gap:2px;pointer-events:none}.slbar .sl{display:flex;flex-direction:column;align-items:center;gap:2px}.slbar .sq{font:600 9px/1 system-ui,sans-serif;height:10px;color:var(--line)}.slbar .sg{width:7px;height:4px;border-radius:2px;background:var(--line);transition:background .25s}.slbar .sl.qz .sg{width:12px}.slbar .sl.done .sg,.slbar .sl.done .sq{background-color:var(--muted);color:var(--muted)}.slbar .sl.done .sq{background:none}.slbar .sl.cur .sg{background:var(--ink)}.slbar .sl.cur .sq{color:var(--ink)}';
+        document.head.appendChild(st);
+        order.forEach(function (f, i) { if (!SKIP[i]) VIS.push(i); });
+        var qz = {}; order.forEach(function (f, i) { var h = f.querySelector('.mid'); var m = h && h.children[0]; if (/^Check your understanding/.test((m && m.textContent) || '')) qz[i] = 1; });
+        order.forEach(function (f, fi) {
+          var cta = f.querySelector('.cta'); if (!cta) return; var bar = document.createElement('div'); bar.className = 'slbar'; bar.setAttribute('aria-hidden', 'true');
+          VIS.forEach(function (vi) { var d = document.createElement('div'); d.className = 'sl' + (qz[vi] ? ' qz' : ''); var q = document.createElement('div'); q.className = 'sq'; q.textContent = qz[vi] ? '?' : ''; var s = document.createElement('div'); s.className = 'sg'; d.appendChild(q); d.appendChild(s); bar.appendChild(d); });
+          cta.insertBefore(bar, cta.firstChild); f.__slbar = bar;
+        });
+        window.__slUpdate = function (i) {
+          var f = order[i]; if (!f || !f.__slbar) return; var pos = VIS.indexOf(i); if (pos < 0) pos = VIS.filter(function (v) { return v < i; }).length;
+          Array.prototype.forEach.call(f.__slbar.children, function (d, k) { d.className = 'sl' + (qz[VIS[k]] ? ' qz' : '') + (k < pos ? ' done' : '') + (k === pos ? ' cur' : ''); });
+        };
+        order.forEach(function (f, i) { window.__slUpdate(i); });
+      })();
     show(window.__hashIdx());
     var nav = document.createElement('div'); nav.id = 'svdnav'; nav.style.cssText = 'position:fixed;left:0;right:0;bottom:8px;display:flex;flex-wrap:wrap;justify-content:center;gap:6px;z-index:100;padding:0 8px';
     order.forEach(function (f, j) { if (!j) return; var nx = f.querySelector('.next'); if (!nx) return; var ft = nx.parentNode; ft.style.position = 'relative'; var bk = document.createElement('button'); bk.type = 'button'; bk.setAttribute('aria-label', 'Back'); bk.textContent = 'Back'; bk.style.cssText = 'position:absolute;left:14px;top:50%;transform:translateY(-50%);border:0;background:transparent;color:var(--muted);font:400 13px Inter,system-ui,sans-serif;cursor:pointer;padding:8px 6px;z-index:70'; bk.addEventListener('click', function () { location.hash = '#' + (j === 4 ? 3 : j); location.reload(); }); ft.appendChild(bk); });
