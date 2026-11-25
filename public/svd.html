@@ -2038,6 +2038,7 @@ body{padding:24px 0;display:flex;justify-content:center}
       };
       var _show0 = show;
       show = function (i) { _show0(i); try { var s = secOf(i), k = i + 1 - SECS[s]; history.replaceState(null, '', '#' + s + (k ? '/' + (k + 1) : '')); } catch (e) {} };
+      window.addEventListener('hashchange', function () { try { show(window.__hashIdx()); } catch (e) {} });
     show(window.__hashIdx());
     var nav = document.createElement('div'); nav.id = 'svdnav'; nav.style.cssText = 'position:fixed;left:0;right:0;bottom:8px;display:flex;flex-wrap:wrap;justify-content:center;gap:6px;z-index:100;padding:0 8px';
     order.forEach(function (f, j) { if (!j) return; var nx = f.querySelector('.next'); if (!nx) return; var ft = nx.parentNode; ft.style.position = 'relative'; var bk = document.createElement('button'); bk.type = 'button'; bk.setAttribute('aria-label', 'Back'); bk.textContent = 'Back'; bk.style.cssText = 'position:absolute;left:14px;top:50%;transform:translateY(-50%);border:0;background:transparent;color:var(--muted);font:400 13px Inter,system-ui,sans-serif;cursor:pointer;padding:8px 6px;z-index:70'; bk.addEventListener('click', function () { location.hash = '#' + (j === 4 ? 3 : j); location.reload(); }); ft.appendChild(bk); });
